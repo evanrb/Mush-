@@ -15,28 +15,44 @@ GamePlay.prototype.preload = function() {
     var p2;
     var p3;
     var transformed; 
-    var shadowTexture;
-    var lightSprite;
-    var LIGHT_RADIUS;
+//    var shadowTexture;
+//    var lightSprite;
+//    var LIGHT_RADIUS;
+//    var lights;
 };
 GamePlay.prototype.create = function() {
     
+   // Set stage background color
+    this.game.stage.backgroundColor = 0x78453A;
+
+    // The radius of the circle of light
     this.LIGHT_RADIUS = 100;
+    
+    // Create the shadow texture
     this.shadowTexture = this.game.add.bitmapData(this.game.width, this.game.height);
-    this.lightSprite = this.game.add.image(0,0, this.shadorTexture);
-    this.lightSprite.blendMode = Phaser.blendModes.MULTIPLY;
-    //console.log(this.shadorTexture)
+
+    // Create an object that will use the bitmap as a texture
+    var lightSprite = this.game.add.image(0, 0, this.shadowTexture);
+
+    // Set the blend mode to MULTIPLY. This will darken the colors of
+    // everything below this sprite.
+    lightSprite.blendMode = Phaser.blendModes.MULTIPLY;
+
+    // Create the lights
+    this.lights = this.game.add.group();
     
 //add player
    // game.physics.startSystem(Phaser.Physics.ARCADE);
     //player = game.add.sprite(100, 300, 'puppy');
     player = new mushroom(game, 'puppy', 0, 1, 100, 300);
+    player.anchor.x = .5;
+    player.anchor.y = .5;
     game.add.existing(player);
     p2 = game.add.sprite(550, 320, 'puppy');
     transformed = false;
     game.world.setBounds(0, 0, 800, 1100);
     
-    
+    this.lights.add(player);
     
     map = game.add.tilemap('map');
     map.addTilesetImage('hedges 2', 'hedgeSheet');
@@ -108,12 +124,29 @@ GamePlay.prototype.update = function() {
 GamePlay.prototype.updateShadowTexture = function(){
     this.shadowTexture.context.fillStyle = 'rgb(100, 100, 100)';
     this.shadowTexture.context.fillRect(0, 0, this.game.width, this.game.height);
-    
-    this.shadowTexture.context.beginPath();
-    this.shadowTexture.context.fillStyle = 'rgb(255, 255, 255)';
-    this.shadowTexture.context.arc(p2.x, p2.y,
-        this.LIGHT_RADIUS, 0, Math.PI*2);
-    this.shadowTexture.context.fill();
+    this.shadowTexture.context.fillOpacity = -100;
+    console.log(this.shadowTexture);
+
+    // Iterate through each of the lights and draw the glow
+    this.lights.forEach(function(light) {
+        // Randomly change the radius each frame
+        var radius = this.LIGHT_RADIUS + this.game.rnd.integerInRange(1,10);
+
+        // Draw circle of light with a soft edge
+        var gradient =
+            this.shadowTexture.context.createRadialGradient(
+                light.x, light.y,this.LIGHT_RADIUS * 0.75,
+                light.x, light.y, radius);
+        gradient.addColorStop(0, 'rgba(255, 255, 255, 1.0)');
+        gradient.addColorStop(1, 'rgba(255, 255, 255, 0.0)');
+
+        this.shadowTexture.context.beginPath();
+        this.shadowTexture.context.fillStyle = gradient;
+        this.shadowTexture.context.arc(light.x, light.y, radius, 0, Math.PI*2);
+        this.shadowTexture.context.fill();
+    }, this);
+
+    // This just tells the engine it should update the texture cache
     this.shadowTexture.dirty = true;
     
 };
