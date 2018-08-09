@@ -15,7 +15,9 @@ function preload() {
 function create() {
 //add player
    // game.physics.startSystem(Phaser.Physics.ARCADE);
-    player = game.add.sprite(100, 300, 'puppy');
+    //player = game.add.sprite(100, 300, 'puppy');
+    player = new mushroom(game, 'puppy', 0, 1, 100, 300);
+    game.add.existing(player);
     p2 = game.add.sprite(550, 320, 'puppy');
     transformed = false;
     game.world.setBounds(0, 0, 800, 1100);
