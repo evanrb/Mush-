@@ -44,15 +44,18 @@ GamePlay.prototype.create = function() {
 //add player
    // game.physics.startSystem(Phaser.Physics.ARCADE);
     //player = game.add.sprite(100, 300, 'puppy');
-    player = new mushroom(game, 'puppy', 0, 1, 100, 300);
+    player = new mushroom(game, 'puppy', 0, 33, 100, 300);
     player.anchor.x = .5;
     player.anchor.y = .5;
     game.add.existing(player);
-    p2 = game.add.sprite(550, 320, 'puppy');
+    //p2 = game.add.sprite(550, 320, 'puppy');
+    p2 = new mushroom(game, 'puppy', 0, 1, 100, 320);
+    game.add.existing(p2);
     transformed = false;
     game.world.setBounds(0, 0, 800, 1100);
     
     this.lights.add(player);
+    this.lights.add(p2);
     
     map = game.add.tilemap('map');
     map.addTilesetImage('hedges 2', 'hedgeSheet');
@@ -70,6 +73,7 @@ GamePlay.prototype.create = function() {
 GamePlay.prototype.update = function() {
     //get user input
     game.physics.arcade.collide(player, mapLayer);
+    
     
         if(player.alive == true ){
             if(game.input.keyboard.justPressed(Phaser.Keyboard.UP)){
@@ -98,23 +102,23 @@ GamePlay.prototype.update = function() {
             }
         }else{
             if((game.input.keyboard.justPressed(Phaser.Keyboard.UP))&&(game.input.keyboard.isDown(Phaser.Keyboard.W))){
-                p3.y -= 10;
+                p3.y -= 32;
             }
             if ((game.input.keyboard.justPressed(Phaser.Keyboard.RIGHT))&&(game.input.keyboard.isDown(Phaser.Keyboard.D))) {
-                p3.x += 10;
+                p3.x += 32;
             }
             if((game.input.keyboard.justPressed(Phaser.Keyboard.LEFT))&&(game.input.keyboard.isDown(Phaser.Keyboard.A))){
-                p3.x-=10;
+                p3.x-=32;
             }
             if((game.input.keyboard.justPressed(Phaser.Keyboard.DOWN))&&(game.input.keyboard.isDown(Phaser.Keyboard.S))){
-                p3.y+=10;
+                p3.y+=32;
             }
             
         }
     this.updateShadowTexture();
         
     
-    if(player.x == p2.x && player.y == p2.y && transformed == false){
+    if(game.physics.arcade.collide(player, p2) && transformed == false){//player.x == p2.x && player.y == p2.y && transformed == false){
         p3 = game.add.sprite(player.x, player.y, 'puppy');
         transformed = true;
         player.destroy();
@@ -124,8 +128,7 @@ GamePlay.prototype.update = function() {
 GamePlay.prototype.updateShadowTexture = function(){
     this.shadowTexture.context.fillStyle = 'rgb(100, 100, 100)';
     this.shadowTexture.context.fillRect(0, 0, this.game.width, this.game.height);
-    this.shadowTexture.context.fillOpacity = -100;
-    console.log(this.shadowTexture);
+    //console.log(this.shadowTexture);
 
     // Iterate through each of the lights and draw the glow
     this.lights.forEach(function(light) {
