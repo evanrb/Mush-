@@ -1,7 +1,11 @@
 
-var game = new Phaser.Game(896, 550, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+var game = new Phaser.Game(896, 550, Phaser.AUTO, 'game');//, '', { preload: preload, create: create, update: update });
 
-function preload() {
+var GamePlay = function(game){
+    
+};
+
+GamePlay.prototype.preload = function() {
     //load atlas
     game.load.tilemap('map','Assets/level11.json', null, Phaser.Tilemap.TILED_JSON);
     game.load.image('puppy', 'Assets/puppy.png');
@@ -11,8 +15,18 @@ function preload() {
     var p2;
     var p3;
     var transformed; 
-}
-function create() {
+    var shadowTexture;
+    var lightSprite;
+    var LIGHT_RADIUS;
+};
+GamePlay.prototype.create = function() {
+    
+    this.LIGHT_RADIUS = 100;
+    this.shadowTexture = this.game.add.bitmapData(this.game.width, this.game.height);
+    this.lightSprite = this.game.add.image(0,0, this.shadorTexture);
+    this.lightSprite.blendMode = Phaser.blendModes.MULTIPLY;
+    //console.log(this.shadorTexture)
+    
 //add player
    // game.physics.startSystem(Phaser.Physics.ARCADE);
     //player = game.add.sprite(100, 300, 'puppy');
@@ -36,8 +50,8 @@ function create() {
     //this.player.collideWorldBounds = true;
 //    
     
-}
-function update() {
+};
+GamePlay.prototype.update = function() {
     //get user input
     game.physics.arcade.collide(player, mapLayer);
     
@@ -81,6 +95,7 @@ function update() {
             }
             
         }
+    this.updateShadowTexture();
         
     
     if(player.x == p2.x && player.y == p2.y && transformed == false){
@@ -89,4 +104,17 @@ function update() {
         player.destroy();
         p2.destroy();
     }
-}
+};
+GamePlay.prototype.updateShadowTexture = function(){
+    this.shadowTexture.context.fillStyle = 'rgb(100, 100, 100)';
+    this.shadowTexture.context.fillRect(0, 0, this.game.width, this.game.height);
+    
+    this.shadowTexture.context.beginPath();
+    this.shadowTexture.context.fillStyle = 'rgb(255, 255, 255)';
+    this.shadowTexture.context.arc(p2.x, p2.y,
+        this.LIGHT_RADIUS, 0, Math.PI*2);
+    this.shadowTexture.context.fill();
+    this.shadowTexture.dirty = true;
+    
+};
+game.state.add('game', GamePlay, true);
