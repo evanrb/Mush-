@@ -1,5 +1,5 @@
 
-var game = new Phaser.Game(896, 550, Phaser.AUTO, 'game');//, '', { preload: preload, create: create, update: update });
+var game = new Phaser.Game(896, 480, Phaser.AUTO, 'game');//, '', { preload: preload, create: create, update: update });
 
 var GamePlay = function(game){
     
@@ -7,7 +7,7 @@ var GamePlay = function(game){
 
 GamePlay.prototype.preload = function() {
     //load atlas
-    game.load.tilemap('map','Assets/level11.json', null, Phaser.Tilemap.TILED_JSON);
+    game.load.tilemap('map','Assets/level1.json', null, Phaser.Tilemap.TILED_JSON);
     game.load.image('puppy', 'Assets/puppy.png');
     game.load.spritesheet('hedgeSheet', 'Assets/hedge tiles 2.png', 32, 32);
         
