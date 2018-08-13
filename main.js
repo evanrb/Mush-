@@ -8,11 +8,13 @@ var GamePlay = function(game){
 GamePlay.prototype.preload = function() {
     //load atlas
     game.load.tilemap('map','Assets/level1.json', null, Phaser.Tilemap.TILED_JSON);
-    game.load.spritesheet('RED', 'Assets/Red.png', 64, 56);
+    game.load.spritesheet('RED', 'Assets/Red.png', 32, 56);
     game.load.spritesheet('BLUE', 'Assets/Blue.png',32, 64 );
     game.load.spritesheet('hedgeSheet', 'Assets/hedge tiles 2.png', 32, 32);
     game.load.image('background', 'Assets/level1-background.png');
+    game.load.spritesheet('glowfly', 'Assets/glowFly.png', 32, 32);
         
+    var flies;
     var back;
     var player;
     var p2;
@@ -28,8 +30,29 @@ GamePlay.prototype.create = function() {
    // Set stage background color
     this.game.stage.backgroundColor = 0x78453A;
     back = game.add.sprite(0,0, 'background');
-
     
+    flyLocations = [
+        [48, 144, 368, 560, 912, 1232, 1264]
+        [112, 80, 240, 784]
+        [144, 432, 1552]
+        [208, 80, 240, 368, 688]
+        [304, 208, 1264, 1392]
+        [336, 688]
+        [368, 1040]
+        [400, 80]
+        [464, 592, 656]
+        [560, 144]
+        [592, 496]
+        [624, 368]
+        [656, 48, 112, 1264]
+        [688, 240, 592, 944]
+        [720, 368]
+        [752, 48, 176]
+        [784, 1136, 1552]
+        [816, 112, 240, 752, 848]
+    ];
+
+    flies = this.game.add.goup();
     
 //add player
    // game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -52,9 +75,11 @@ GamePlay.prototype.create = function() {
     mapLayer = map.createLayer('Tile Layer 1');
     mapLayer.resizeWorld();
     
-    
+    game.physics.enable(map, Phaser.Physics.ARCADE);
     game.physics.enable(player, Phaser.Physics.ARCADE);
     game.physics.enable(p2, Phaser.Physics.ARCADE);
+    
+    p2.body.setSize(32, 32, 0, 32);
     //this.player.collideWorldBounds = true;
     
     
@@ -136,6 +161,12 @@ GamePlay.prototype.update = function() {
         player.destroy();
         p2.destroy();
     }
+};
+GamePlay.prototype.render = function(){
+    //game.debug.bodyInfo(player, 32, 32);
+    game.debug.body(player);
+    game.debug.body(p2);
+    game.debug.body(map);
 };
 GamePlay.prototype.updateShadowTexture = function(){
     this.shadowTexture.context.fillStyle = 'rgb(0, 0, 0)';
