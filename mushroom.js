@@ -11,3 +11,4 @@ function mushroom(game, key, playerNum, xPos, yPos){
 
 mushroom.prototype = Object.create(Phaser.Sprite.prototype);
 mushroom.prototype.constructor = mushroom;
+

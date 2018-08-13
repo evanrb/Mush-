@@ -8,9 +8,12 @@ var GamePlay = function(game){
 GamePlay.prototype.preload = function() {
     //load atlas
     game.load.tilemap('map','Assets/level1.json', null, Phaser.Tilemap.TILED_JSON);
-    game.load.image('puppy', 'Assets/puppy.png');
+    game.load.spritesheet('RED', 'Assets/Red.png', 64, 56);
+    game.load.spritesheet('BLUE', 'Assets/Blue.png',32, 64 );
     game.load.spritesheet('hedgeSheet', 'Assets/hedge tiles 2.png', 32, 32);
+    game.load.image('background', 'Assets/level1-background.png');
         
+    var back;
     var player;
     var p2;
     var p3;
@@ -24,9 +27,41 @@ GamePlay.prototype.create = function() {
     
    // Set stage background color
     this.game.stage.backgroundColor = 0x78453A;
+    back = game.add.sprite(0,0, 'background');
 
+    
+    
+//add player
+   // game.physics.startSystem(Phaser.Physics.ARCADE);
+    //player = game.add.sprite(100, 300, 'puppy');
+    player = new mushroom(game, 'RED', 1, 48, 48);
+    player.anchor.x = .5;
+    player.anchor.y = .5;
+    game.add.existing(player);
+    //p2 = game.add.sprite(550, 320, 'puppy');
+    p2 = new mushroom(game, 'BLUE', 2, 848, 48);
+    p2.anchor.x = .5;
+    p2.anchor.y = .75;
+    game.add.existing(p2);
+    transformed = false;
+    game.world.setBounds(0, 0, 896, 1600);
+  
+    map = game.add.tilemap('map');
+    map.addTilesetImage('hedges 2', 'hedgeSheet');
+    map.setCollisionByExclusion([]);
+    mapLayer = map.createLayer('Tile Layer 1');
+    mapLayer.resizeWorld();
+    
+    
+    game.physics.enable(player, Phaser.Physics.ARCADE);
+    game.physics.enable(p2, Phaser.Physics.ARCADE);
+    //this.player.collideWorldBounds = true;
+    
+    
     // The radius of the circle of light
-    this.LIGHT_RADIUS = 100;
+    this.P1_LIGHT_RADIUS = 70;
+    this.p2_LIGHT_RADIUS = 100;
+    this.LIGHT_RADIUS = 0;
     
     // Create the shadow texture
     this.shadowTexture = this.game.add.bitmapData(this.game.width, this.game.height);
@@ -41,33 +76,10 @@ GamePlay.prototype.create = function() {
     // Create the lights
     this.lights = this.game.add.group();
     
-//add player
-   // game.physics.startSystem(Phaser.Physics.ARCADE);
-    //player = game.add.sprite(100, 300, 'puppy');
-    player = new mushroom(game, 'puppy', 0, 33, 100, 300);
-    player.anchor.x = .5;
-    player.anchor.y = .5;
-    game.add.existing(player);
-    //p2 = game.add.sprite(550, 320, 'puppy');
-    p2 = new mushroom(game, 'puppy', 0, 1, 100, 320);
-    game.add.existing(p2);
-    transformed = false;
-    game.world.setBounds(0, 0, 800, 1100);
-    
-    this.lights.add(player);
+      
+    var playerLight = this.lights.add(player);
     this.lights.add(p2);
-    
-    map = game.add.tilemap('map');
-    map.addTilesetImage('hedges 2', 'hedgeSheet');
-    map.setCollisionByExclusion([]);
-    mapLayer = map.createLayer('Tile Layer 1');
-    mapLayer.resizeWorld();
-    
-    
-    game.physics.enable(player, Phaser.Physics.ARCADE);
-    game.physics.enable(p2, Phaser.Physics.ARCADE);
-    //this.player.collideWorldBounds = true;
-//    
+     
     
 };
 GamePlay.prototype.update = function() {
@@ -126,15 +138,23 @@ GamePlay.prototype.update = function() {
     }
 };
 GamePlay.prototype.updateShadowTexture = function(){
-    this.shadowTexture.context.fillStyle = 'rgb(100, 100, 100)';
+    this.shadowTexture.context.fillStyle = 'rgb(0, 0, 0)';
     this.shadowTexture.context.fillRect(0, 0, this.game.width, this.game.height);
     //console.log(this.shadowTexture);
 
     // Iterate through each of the lights and draw the glow
     this.lights.forEach(function(light) {
         // Randomly change the radius each frame
+       // console.log(light);
+        if(light.player === 1){
+            //var radius = this.P1_LIGHT_RADIUS + this.game.rnd.integerInRange(1,10);
+            this.LIGHT_RADIUS = this.P1_LIGHT_RADIUS;
+        }else(
+            //var radius = this.p2_LIGHT_RADIUS + this.game.rnd.integerInRange(1,10);
+            this.LIGHT_RADIUS = this.p2_LIGHT_RADIUS
+        )
+        
         var radius = this.LIGHT_RADIUS + this.game.rnd.integerInRange(1,10);
-
         // Draw circle of light with a soft edge
         var gradient =
             this.shadowTexture.context.createRadialGradient(
