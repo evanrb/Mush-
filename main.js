@@ -10,6 +10,7 @@ GamePlay.prototype.preload = function() {
     game.load.tilemap('map','Assets/level1.json', null, Phaser.Tilemap.TILED_JSON);
     game.load.spritesheet('RED', 'Assets/Red.png', 32, 47);
     game.load.spritesheet('BLUE', 'Assets/Blue.png',32, 64 );
+    game.load.spritesheet('together', 'Assets/together.png', 64, 64)
     game.load.spritesheet('hedgeSheet', 'Assets/hedge tiles 2.png', 32, 32);
     game.load.image('background', 'Assets/level1-background.png');
     game.load.spritesheet('glowfly', 'Assets/glowFly.png', 32, 32);
@@ -22,6 +23,7 @@ GamePlay.prototype.preload = function() {
     var transformed; 
     var fly;
     var markerP1;
+    var markerP2;
     var mapArray;
 //    var shadowTexture;
 //    var lightSprite;
@@ -36,6 +38,7 @@ GamePlay.prototype.create = function() {
    // Set stage background color
     this.game.stage.backgroundColor = 0x78453A;
     this.markerP1 = new Phaser.Point();
+    this.markerP2 = new Phaser.Point();
     
     back = game.add.sprite(0,0, 'background');
     console.log
@@ -146,8 +149,14 @@ GamePlay.prototype.update = function() {
     this.markerP1.y = this.math.snapToFloor(Math.ceil(player.y), 32) / 32;
     
     var i = this.mapLayer.index;
-    var x = this.markerP1.x;
-    var y = this.markerP1.y;
+    var x1 = this.markerP1.x;
+    var y1 = this.markerP1.y;
+    
+    this.markerP2.x = this.math.snapToFloor(Math.floor(p2.x), 32) / 32;
+    this.markerP2.y = this.math.snapToFloor(Math.ceil(p2.y), 32) / 32;
+    
+    var x2 = this.markerP2.x;
+    var y2 = this.markerP2.y;
     
     
    // game.physics.arcade.collide(player, flies);
@@ -161,38 +170,46 @@ GamePlay.prototype.update = function() {
     
         if(player.alive == true ){
             if(game.input.keyboard.justPressed(Phaser.Keyboard.UP)){
-                if(map.getTileAbove(i, x, y).collideUp == false){
+                if(map.getTileAbove(i, x1, y1).collideUp == false){
                     //console.log(map.getTileAbove(i, x, y));
                     player.y -= 32;
                 }
                 
             }
             if (game.input.keyboard.justPressed(Phaser.Keyboard.RIGHT)) {
-                if(map.getTileRight(i, x, y).collideUp == false){
+                if(map.getTileRight(i, x1, y1).collideUp == false){
                     player.x += 32;
                 }
             }
             if(game.input.keyboard.justPressed(Phaser.Keyboard.LEFT)){
-                if(map.getTileLeft(i, x, y).collideUp == false){
+                if(map.getTileLeft(i, x1, y1).collideUp == false){
                     player.x-= 32;
                 }
             }
             if(game.input.keyboard.justPressed(Phaser.Keyboard.DOWN)){
-                if(map.getTileBelow(i, x, y).collideUp == false){
+                if(map.getTileBelow(i, x1, y1).collideUp == false){
                     player.y+=32;
                 }
             }
             if(game.input.keyboard.justPressed(Phaser.Keyboard.W)){
-                p2.y -= 32;
+                if(map.getTileAbove(i, x2, y2).collideUp == false){
+                    p2.y -= 32;
+                }
             }
             if (game.input.keyboard.justPressed(Phaser.Keyboard.D)) {
-                p2.x += 32;
+                 if(map.getTileRight(i, x2, y2).collideUp == false){
+                    p2.x += 32;
+                 }
             }
             if(game.input.keyboard.justPressed(Phaser.Keyboard.A)){
-                p2.x-=32;
+                 if(map.getTileLeft(i, x2, y2).collideUp == false){
+                    p2.x-=32;
+                 }
             }
             if(game.input.keyboard.justPressed(Phaser.Keyboard.S)){
-                p2.y+=32;
+                 if(map.getTileBelow(i, x2, y2).collideUp == false){
+                    p2.y+=32;
+                 }
             }
         }else{
             if((game.input.keyboard.justPressed(Phaser.Keyboard.UP))&&(game.input.keyboard.isDown(Phaser.Keyboard.W))){
@@ -215,7 +232,20 @@ GamePlay.prototype.update = function() {
         
     
     if(game.physics.arcade.collide(player, p2) && transformed == false){//player.x == p2.x && player.y == p2.y && transformed == false){
-        p3 = game.add.sprite(player.x, player.y, 'puppy');
+        //p3 = game.add.sprite(player.x, player.y, '');
+        
+        p3 = new mushroom(game, 'together', 3, player.x, player.y);
+        p3.anchor.x = .5;
+        p3.anchor.y = .5;
+        game.add.existing(p3);
+        
+        game.physics.enable(p2, Phaser.Physics.ARCADE);
+    
+    
+        player.body.setSize(32, 32, 0, 15);
+        
+        this.p3_LIGHT_RADIUS = this.p2_LIGHT_RADIUS + this.P1_LIGHT_RADIUS;
+        
         this.lights.add(p3);
         
         transformed = true;
@@ -247,7 +277,10 @@ GamePlay.prototype.updateShadowTexture = function(){
         }else if(light.player === 2){
             //var radius = this.p2_LIGHT_RADIUS + this.game.rnd.integerInRange(1,10);
             this.LIGHT_RADIUS = this.p2_LIGHT_RADIUS;
-        }else{
+        }else if(light.player === 3){
+            this.LIGHT_RADIUS = this.p3_LIGHT_RADIUS;
+        }else if(light.key == "glowfly"){
+            console.log(light);
             this.LIGHT_RADIUS = 15;
         }
         
