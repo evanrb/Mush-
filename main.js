@@ -25,6 +25,7 @@ GamePlay.prototype.preload = function() {
     var markerP1;
     var markerP2;
     var mapArray;
+    var shadowY;
 //    var shadowTexture;
 //    var lightSprite;
 //    var LIGHT_RADIUS;
@@ -39,6 +40,7 @@ GamePlay.prototype.create = function() {
     this.game.stage.backgroundColor = 0x78453A;
     this.markerP1 = new Phaser.Point();
     this.markerP2 = new Phaser.Point();
+    this.shadowY = 0;
     
     back = game.add.sprite(0,0, 'background');
     console.log
@@ -121,7 +123,7 @@ GamePlay.prototype.create = function() {
     this.LIGHT_RADIUS = 0;
     
     // Create the shadow texture
-    this.shadowTexture = this.game.add.bitmapData(this.game.width, this.game.height);
+    this.shadowTexture = this.game.add.bitmapData(this.world.width, this.world.height);
 
     // Create an object that will use the bitmap as a texture
     var lightSprite = this.game.add.image(0, 0, this.shadowTexture);
@@ -137,6 +139,7 @@ GamePlay.prototype.create = function() {
     var playerLight = this.lights.add(player);
     this.lights.add(p2);
     this.flies.forEach(function(fly){
+        console.log(fly);
         this.lights.add(fly);
     }, this);
      
@@ -226,7 +229,7 @@ GamePlay.prototype.update = function() {
             }
             
         }
-    this.updateShadowTexture();
+    
     
     
         
@@ -234,6 +237,10 @@ GamePlay.prototype.update = function() {
     if(game.physics.arcade.collide(player, p2) && transformed == false){//player.x == p2.x && player.y == p2.y && transformed == false){
         //p3 = game.add.sprite(player.x, player.y, '');
         
+        //game.height = 1200;
+        this.game.camera.y += 410;
+        this.shadowY += 410;
+        //this.shadowTexture.context.fillRect(0, this.shadowY, this.world.width, 1600);
         p3 = new mushroom(game, 'together', 3, player.x, player.y);
         p3.anchor.x = .5;
         p3.anchor.y = .5;
@@ -252,6 +259,8 @@ GamePlay.prototype.update = function() {
         player.destroy();
         p2.destroy();
     }
+    
+    this.updateShadowTexture();
 };
 GamePlay.prototype.render = function(){
     //game.debug.bodyInfo(player, 32, 32);
@@ -264,7 +273,7 @@ GamePlay.prototype.render = function(){
 };
 GamePlay.prototype.updateShadowTexture = function(){
     this.shadowTexture.context.fillStyle = 'rgb(0, 0, 0)';
-    this.shadowTexture.context.fillRect(0, 0, this.game.width, this.game.height);
+    this.shadowTexture.context.fillRect(0, this.shadowY, this.world.width, this.world.height);
     //console.log(this.shadowTexture);
 
     // Iterate through each of the lights and draw the glow
