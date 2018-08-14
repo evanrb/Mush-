@@ -21,15 +21,22 @@ GamePlay.prototype.preload = function() {
     var p3;
     var transformed; 
     var fly;
+    var markerP1;
+    var mapArray;
 //    var shadowTexture;
 //    var lightSprite;
 //    var LIGHT_RADIUS;
 //    var lights;
 };
 GamePlay.prototype.create = function() {
-    
+    //var jason = $.getJSON("Assets/level1.json", function(json){
+      // console.log(jason); 
+    //});
+    //console.log(map.data);
    // Set stage background color
     this.game.stage.backgroundColor = 0x78453A;
+    this.markerP1 = new Phaser.Point();
+    
     back = game.add.sprite(0,0, 'background');
     console.log
     var flyLocations = [
@@ -88,11 +95,14 @@ GamePlay.prototype.create = function() {
   
     map = game.add.tilemap('map');
     map.addTilesetImage('hedges 2', 'hedgeSheet');
-    map.setCollisionByExclusion([]);
-    mapLayer = map.createLayer('Tile Layer 1');
-    mapLayer.resizeWorld();
     
-    game.physics.enable(map, Phaser.Physics.ARCADE);
+    this.mapLayer = map.createLayer('Tile Layer 1');
+    map.setCollisionBetween(1, 10000, true, this.mapLayer);
+    this.mapLayer.resizeWorld();
+    
+    console.log(this.mapLayer.data);
+    
+    //game.physics.enable(map, Phaser.Physics.ARCADE);
     game.physics.enable(player, Phaser.Physics.ARCADE);
     game.physics.enable(p2, Phaser.Physics.ARCADE);
     
@@ -131,7 +141,15 @@ GamePlay.prototype.create = function() {
 };
 GamePlay.prototype.update = function() {
     //get user input
-    //game.physics.arcade.collide(player, mapLayer);
+    //this.physics.arcade.collide(player, this.mapLayer);
+    this.markerP1.x = this.math.snapToFloor(Math.floor(player.x), 32) / 32;
+    this.markerP1.y = this.math.snapToFloor(Math.ceil(player.y), 32) / 32;
+    
+    var i = this.mapLayer.index;
+    var x = this.markerP1.x;
+    var y = this.markerP1.y;
+    
+    
    // game.physics.arcade.collide(player, flies);
     this.flies.forEach(function(fly){
         if(game.physics.arcade.collide(player, fly)){
@@ -143,16 +161,26 @@ GamePlay.prototype.update = function() {
     
         if(player.alive == true ){
             if(game.input.keyboard.justPressed(Phaser.Keyboard.UP)){
-                player.y -= 32;
+                if(map.getTileAbove(i, x, y).collideUp == false){
+                    //console.log(map.getTileAbove(i, x, y));
+                    player.y -= 32;
+                }
+                
             }
             if (game.input.keyboard.justPressed(Phaser.Keyboard.RIGHT)) {
-                player.x += 32;
+                if(map.getTileRight(i, x, y).collideUp == false){
+                    player.x += 32;
+                }
             }
             if(game.input.keyboard.justPressed(Phaser.Keyboard.LEFT)){
-                player.x-=32;
+                if(map.getTileLeft(i, x, y).collideUp == false){
+                    player.x-= 32;
+                }
             }
             if(game.input.keyboard.justPressed(Phaser.Keyboard.DOWN)){
-                player.y+=32;
+                if(map.getTileBelow(i, x, y).collideUp == false){
+                    player.y+=32;
+                }
             }
             if(game.input.keyboard.justPressed(Phaser.Keyboard.W)){
                 p2.y -= 32;
