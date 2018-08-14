@@ -1,6 +1,23 @@
 
 var game = new Phaser.Game(896, 480, Phaser.AUTO, 'game');//, '', { preload: preload, create: create, update: update });
 
+var MainMenu = function(game) {};
+MainMenu.prototype = {
+    preload: function() {
+        console.log('MainMenu: preload');
+    },
+    create: function() {
+        console.log('MainMenu: create');
+        game.stage.backgroundColor = "#000000";
+        game.add.text(52, 200, 'Press ENTER to change states.', { fontSize: '26px', fill: '#FFF', align: "center" });
+    },
+    update: function() {
+        if(game.input.keyboard.isDown(Phaser.Keyboard.ENTER)) {
+            game.state.start('GamePlay');
+        }
+    }
+}
+
 var GamePlay = function(game){
     
 };
@@ -14,6 +31,9 @@ GamePlay.prototype.preload = function() {
     game.load.spritesheet('hedgeSheet', 'Assets/hedge tiles 2.png', 32, 32);
     game.load.image('background', 'Assets/level1-background.png');
     game.load.spritesheet('glowfly', 'Assets/glowFly.png', 32, 32);
+    
+    game.load.audio('night1', ['Sound/in-his-own-way.ogg']);
+    game.load.audio('glowfly', ['Sound/glowfly_Chime_1.ogg']);
         
     var flies;
     var back;
@@ -24,8 +44,11 @@ GamePlay.prototype.preload = function() {
     var fly;
     var markerP1;
     var markerP2;
+    var markerP3;
     var mapArray;
     var shadowY;
+    var music;
+    var twinkle;
 //    var shadowTexture;
 //    var lightSprite;
 //    var LIGHT_RADIUS;
@@ -40,7 +63,12 @@ GamePlay.prototype.create = function() {
     this.game.stage.backgroundColor = 0x78453A;
     this.markerP1 = new Phaser.Point();
     this.markerP2 = new Phaser.Point();
+    this.markerP3 = new Phaser.Point();
     this.shadowY = 0;
+    music = game.add.audio('night1');
+    music.play();
+    
+    twinkle = game.add.audio('glowfly');
     
     back = game.add.sprite(0,0, 'background');
     console.log
@@ -135,6 +163,8 @@ GamePlay.prototype.create = function() {
     // Create the lights
     this.lights = this.game.add.group();
     
+    
+    this.transformed = false;
       
     var playerLight = this.lights.add(player);
     this.lights.add(p2);
@@ -148,6 +178,10 @@ GamePlay.prototype.create = function() {
 GamePlay.prototype.update = function() {
     //get user input
     //this.physics.arcade.collide(player, this.mapLayer);
+    if(transformed){
+        game.physics.arcade.collide(p3, this.mapLayer);
+    }
+    
     this.markerP1.x = this.math.snapToFloor(Math.floor(player.x), 32) / 32;
     this.markerP1.y = this.math.snapToFloor(Math.ceil(player.y), 32) / 32;
     
@@ -161,6 +195,15 @@ GamePlay.prototype.update = function() {
     var x2 = this.markerP2.x;
     var y2 = this.markerP2.y;
     
+    if(transformed){
+        this.markerP3.x = this.math.snapToFloor(Math.floor(p3.x), 32) / 32;
+        this.markerP3.y = this.math.snapToFloor(Math.ceil(p3.y), 32) / 32;
+    
+        var x3 = this.markerP3.x;
+        var y3 = this.markerP3.y;
+    }
+    
+    
     
    // game.physics.arcade.collide(player, flies);
     this.flies.forEach(function(fly){
@@ -168,7 +211,18 @@ GamePlay.prototype.update = function() {
             fly.exists = false;
             console.log(fly);
             this.P1_LIGHT_RADIUS += 5;
-        } 
+            twinkle.play();
+        } else if(game.physics.arcade.collide(p2, fly)){
+            fly.exists = false;
+            this.p2_LIGHT_RADIUS += 5;
+            twinkle.play();
+        } else if(this.transformed){
+            if(game.physics.arcade.collide(p3, fly)){
+                fly.exists = false;
+                this.p3_LIGHT_RADIUS +=10;
+                twinkle.play();
+            }
+        }
     }, this);
     
         if(player.alive == true ){
@@ -180,7 +234,7 @@ GamePlay.prototype.update = function() {
                 
             }
             if (game.input.keyboard.justPressed(Phaser.Keyboard.RIGHT)) {
-                if(map.getTileRight(i, x1, y1).collideUp == false){
+                if((map.getTileRight(i, x1, y1).collideUp == false) && player.x < 448){
                     player.x += 32;
                 }
             }
@@ -205,7 +259,7 @@ GamePlay.prototype.update = function() {
                  }
             }
             if(game.input.keyboard.justPressed(Phaser.Keyboard.A)){
-                 if(map.getTileLeft(i, x2, y2).collideUp == false){
+                 if((map.getTileLeft(i, x2, y2).collideUp == false) && p2.x > 448){
                     p2.x-=32;
                  }
             }
@@ -216,19 +270,42 @@ GamePlay.prototype.update = function() {
             }
         }else{
             if((game.input.keyboard.justPressed(Phaser.Keyboard.UP))&&(game.input.keyboard.isDown(Phaser.Keyboard.W))){
-                p3.y -= 32;
-            }
-            if ((game.input.keyboard.justPressed(Phaser.Keyboard.RIGHT))&&(game.input.keyboard.isDown(Phaser.Keyboard.D))) {
-                p3.x += 32;
-            }
-            if((game.input.keyboard.justPressed(Phaser.Keyboard.LEFT))&&(game.input.keyboard.isDown(Phaser.Keyboard.A))){
-                p3.x-=32;
-            }
-            if((game.input.keyboard.justPressed(Phaser.Keyboard.DOWN))&&(game.input.keyboard.isDown(Phaser.Keyboard.S))){
-                p3.y+=32;
+                if(map.getTileAbove(i, x3, y3).collideUp == false){
+                    p3.y -= 32;
+                    this.game.camera.y -=32;
+                }
+            }else if ((game.input.keyboard.justPressed(Phaser.Keyboard.RIGHT))&&(game.input.keyboard.isDown(Phaser.Keyboard.D))) {
+                if(map.getTileRight(i, x3, y3).collideUp == false){
+                    p3.x += 32;
+                    //this.game.camera.y +=32;
+                }
+            }else if((game.input.keyboard.justPressed(Phaser.Keyboard.LEFT))&&(game.input.keyboard.isDown(Phaser.Keyboard.A))){
+                if(map.getTileLeft(i, x3, y3).collideUp == false){
+                    p3.x-=32;
+                    //this.game.camera.y -=32;
+                }
+            }else if((game.input.keyboard.justPressed(Phaser.Keyboard.DOWN))&&(game.input.keyboard.isDown(Phaser.Keyboard.S))){
+                if(map.getTileBelow(i, x3, y3).collideUp == false){
+                    p3.y+=32;
+                    this.game.camera.y +=32;
+                }
+            }else if(
+                (game.input.keyboard.justPressed(Phaser.Keyboard.DOWN))&&(!game.input.keyboard.isDown(Phaser.Keyboard.S))||
+                (!game.input.keyboard.justPressed(Phaser.Keyboard.DOWN))&&(game.input.keyboard.isDown(Phaser.Keyboard.S))||
+                (!game.input.keyboard.justPressed(Phaser.Keyboard.UP))&&(game.input.keyboard.isDown(Phaser.Keyboard.W))||
+                (game.input.keyboard.justPressed(Phaser.Keyboard.UP))&&(!game.input.keyboard.isDown(Phaser.Keyboard.W))||
+                (!game.input.keyboard.justPressed(Phaser.Keyboard.RIGHT))&&(game.input.keyboard.isDown(Phaser.Keyboard.D))||
+                (game.input.keyboard.justPressed(Phaser.Keyboard.RIGHT))&&(!game.input.keyboard.isDown(Phaser.Keyboard.D))||
+                (game.input.keyboard.justPressed(Phaser.Keyboard.LEFT))&&(!game.input.keyboard.isDown(Phaser.Keyboard.A))||
+                (!game.input.keyboard.justPressed(Phaser.Keyboard.LEFT))&&(game.input.keyboard.isDown(Phaser.Keyboard.A))
+            ){
+                this.p3_LIGHT_RADIUS -= .06;
             }
             
         }
+    if(this.p3_LIGHT_RADIUS <= 0){
+        game.state.start('GameOver');
+    }
     
     
     
@@ -238,15 +315,20 @@ GamePlay.prototype.update = function() {
         //p3 = game.add.sprite(player.x, player.y, '');
         
         //game.height = 1200;
-        this.game.camera.y += 410;
+        //this.game.camera.y += 410;
         this.shadowY += 410;
         //this.shadowTexture.context.fillRect(0, this.shadowY, this.world.width, 1600);
-        p3 = new mushroom(game, 'together', 3, player.x, player.y);
+        p3 = new mushroom(game, 'together', 3, 448, 448);
         p3.anchor.x = .5;
         p3.anchor.y = .5;
         game.add.existing(p3);
         
-        game.physics.enable(p2, Phaser.Physics.ARCADE);
+        
+        
+        this.game.camera.y = p3.y - 220;
+        //this.game.camera = p3.x;
+        
+        game.physics.enable(p3, Phaser.Physics.ARCADE);
     
     
         player.body.setSize(32, 32, 0, 15);
@@ -260,16 +342,26 @@ GamePlay.prototype.update = function() {
         p2.destroy();
     }
     
+    if(transformed){
+        if(p3.y + 32 == 1600){
+            game.state.start('GameOver');
+        }
+    }
+    
+    
     this.updateShadowTexture();
 };
 GamePlay.prototype.render = function(){
     //game.debug.bodyInfo(player, 32, 32);
-    game.debug.body(player);
-    game.debug.body(p2);
-    game.debug.body(map);
+//    game.debug.body(player);
+//    game.debug.body(p2);
+//    game.debug.body(map);
     this.flies.forEach(function(fly){
         game.debug.body(fly);
     }, this);
+//    if(transformed){
+//        game.debug.body(p3);
+//    }
 };
 GamePlay.prototype.updateShadowTexture = function(){
     this.shadowTexture.context.fillStyle = 'rgb(0, 0, 0)';
@@ -312,4 +404,26 @@ GamePlay.prototype.updateShadowTexture = function(){
     this.shadowTexture.dirty = true;
     
 };
-game.state.add('game', GamePlay, true);
+
+var GameOver = function(game) {};
+GameOver.prototype = {
+    preload: function() {
+        console.log('GameOver: preload');
+    },
+    create: function() {
+        console.log('GameOver: create');
+        game.stage.backgroundColor = "#000";
+        game.add.text(80, 230, 'GAMEOVER', { fontSize: '60px', fill: '#FFF' });
+    },
+    update: function() {
+        if(game.input.keyboard.isDown(Phaser.Keyboard.ENTER)) {
+            game.state.start('MainMenu');
+        }
+    }
+}
+
+game.state.add('MainMenu', MainMenu);
+game.state.add('GamePlay', GamePlay);
+game.state.add('GameOver', GameOver);
+game.state.start('MainMenu');
+//game.state.add('game', GamePlay, true);
