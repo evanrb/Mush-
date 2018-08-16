@@ -2,6 +2,8 @@ function glowFly(game, key, xPos, yPos){
     
     Phaser.Sprite.call(this, game, xPos, yPos, key);
     
+    this.lightRadius = 10;
+    
     game.physics.enable(this, Phaser.Physics.ARCADE);
     this.anchor.x = .5;
     this.anchor.y = .5;

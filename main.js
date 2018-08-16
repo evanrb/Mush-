@@ -36,6 +36,7 @@ GamePlay.prototype.preload = function() {
     game.load.audio('glowfly', ['Sound/glowfly_Chime_1.ogg']);
         
     var flies;
+    var tween;
     var mushrooms;
     var back;
     var player;
@@ -50,10 +51,6 @@ GamePlay.prototype.preload = function() {
     var shadowY;
     var music;
     var twinkle;
-//    var shadowTexture;
-//    var lightSprite;
-//    var LIGHT_RADIUS;
-//    var lights;
 };
 GamePlay.prototype.create = function() {
     //var jason = $.getJSON("Assets/level1.json", function(json){
@@ -67,7 +64,8 @@ GamePlay.prototype.create = function() {
     this.markerP3 = new Phaser.Point();
     this.shadowY = 0;
     music = game.add.audio('night1');
-    music.play();
+    //music.play();
+    music.loopFull();
     
     twinkle = game.add.audio('glowfly');
     
@@ -95,65 +93,32 @@ GamePlay.prototype.create = function() {
 
     game.world.setBounds(0, 0, 896, 1600);
     this.flies = this.game.add.group();
-    
+    this.flies.enacleBody = true;
+    this.flies.physicsBodyType = Phaser.Physics.ARCADE;
+    q = 0;
     for(i = 0; i < flyLocations.length; i++){
         for(j = 1; j < flyLocations[i].length; j++){
-            //console.log(i, j);
+            console.log(q++);
             fly = new glowFly(game, 'glowfly', flyLocations[i][0], flyLocations[i][j]);
-            console.log("worked");
-//            fly.animations.add('move', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 7, true);
-//            game.physics.enable(fly, Phaser.Physics.ARCADE);
-//            fly.anchor.x = .5;
-//            fly.anchor.y = .5;
-            //fly.body.setSize(15, 15, 8, 8);
             this.flies.add(fly);
-            //fly.animations.play('move');
         }
     }
     
     this.mushrooms = this.game.add.group();
-    
-//add player
-   // game.physics.startSystem(Phaser.Physics.ARCADE);
-    //player = game.add.sprite(100, 300, 'puppy');
     player = new mushroom(game, 'RED', 1, 48, 46);
-//    player.anchor.x = .5;
-//    player.anchor.y = .5;
-    //game.add.existing(player);
-    
-    //p2 = game.add.sprite(550, 320, 'puppy');
     p2 = new mushroom(game, 'BLUE', 2, 848, 48);
-//    p2.anchor.x = .5;
-//    p2.anchor.y = .75;
-    //game.add.existing(p2);
-    
     this.mushrooms.add(player);
     this.mushrooms.add(p2);
+    this.tween = game.add.tween(player).to({}, 0, true);
     
     transformed = false;
     
     map = game.add.tilemap('map');
     map.addTilesetImage('hedges 2', 'hedgeSheet');
-    
     this.mapLayer = map.createLayer('Tile Layer 1');
     map.setCollisionBetween(1, 10000, true, this.mapLayer);
     this.mapLayer.resizeWorld();
-    
-    //console.log(this.mapLayer.data);
-    
-    //game.physics.enable(map, Phaser.Physics.ARCADE);
-//    game.physics.enable(player, Phaser.Physics.ARCADE);
-//    game.physics.enable(p2, Phaser.Physics.ARCADE);
-    
-    
-    player.body.setSize(32, 32, 0, 15);
-    p2.body.setSize(32, 32, 0, 32);
-    //this.player.collideWorldBounds = true;
-    
-    
-    // The radius of the circle of light
-    this.P1_LIGHT_RADIUS = 70;
-    this.p2_LIGHT_RADIUS = 70;
+
     this.LIGHT_RADIUS = 0;
     
     // Create the shadow texture
@@ -171,11 +136,11 @@ GamePlay.prototype.create = function() {
     
     
     this.transformed = false;
-      
+      i = 0;
     var playerLight = this.lights.add(player);
     this.lights.add(p2);
     this.flies.forEach(function(fly){
-        //console.log(fly);
+        console.log(i++);
         this.lights.add(fly);
     }, this);
      
@@ -188,7 +153,11 @@ GamePlay.prototype.update = function() {
         game.physics.arcade.collide(p3, this.mapLayer);
     }
     
-   game.physics.arcade.overlap(this.flies, this.players, this.collectFly, null, this);
+    
+    
+    game.physics.arcade.overlap(this.flies, this.players, this.collectFly, null, this);
+    game.physics.arcade.collide(player, this.mapLayer);
+    
     
     this.markerP1.x = this.math.snapToFloor(Math.floor(player.x), 32) / 32;
     this.markerP1.y = this.math.snapToFloor(Math.ceil(player.y), 32) / 32;
@@ -233,12 +202,16 @@ GamePlay.prototype.update = function() {
 //        }
 //    }, this);
     
+    //player.body.velocity.x = 0;
+    //player.body.velocity.y = 0;
+    
         if(player.alive == true ){
             if(game.input.keyboard.justPressed(Phaser.Keyboard.UP)){
-                if(map.getTileAbove(i, x1, y1).collideUp == false){
+                //if(map.getTileAbove(i, x1, y1).collideUp == false){
                     //console.log(map.getTileAbove(i, x, y));
-                    player.y -= 32;
-                }
+                    //player.y -= 32;
+                    player.body.velocity.y = -32;
+                //}
                 
             }
             if (game.input.keyboard.justPressed(Phaser.Keyboard.RIGHT)) {
@@ -252,9 +225,12 @@ GamePlay.prototype.update = function() {
                 }
             }
             if(game.input.keyboard.justPressed(Phaser.Keyboard.DOWN)){
-                if(map.getTileBelow(i, x1, y1).collideUp == false){
-                    player.y+=32;
-                }
+                //if(map.getTileBelow(i, x1, y1).collideUp == false){
+                //if(player.y % 46 == 0){
+                    game.add.tween(player).to({y: '+32'}, 2000, Phaser.Easing.Linear.None, true);
+                //}
+                   // player.y+=32;
+                //}
             }
             if(game.input.keyboard.justPressed(Phaser.Keyboard.W)){
                 if(map.getTileAbove(i, x2, y2).collideUp == false){
@@ -327,11 +303,6 @@ GamePlay.prototype.update = function() {
         this.shadowY += 410;
         //this.shadowTexture.context.fillRect(0, this.shadowY, this.world.width, 1600);
         p3 = new mushroom(game, 'together', 3, 448, 448);
-//        p3.anchor.x = .5;
-//        p3.anchor.y = .5;
-        //game.add.existing(p3);
-        
-        
         
         this.game.camera.y = p3.y - 220;
         //this.game.camera = p3.x;
@@ -387,12 +358,12 @@ GamePlay.prototype.updateShadowTexture = function(){
        // console.log(light);
         if(light.player === 1){
             //var radius = this.P1_LIGHT_RADIUS + this.game.rnd.integerInRange(1,10);
-            this.LIGHT_RADIUS = this.P1_LIGHT_RADIUS;
+            this.LIGHT_RADIUS = player.lightRadius;
         }else if(light.player === 2){
             //var radius = this.p2_LIGHT_RADIUS + this.game.rnd.integerInRange(1,10);
-            this.LIGHT_RADIUS = this.p2_LIGHT_RADIUS;
+            this.LIGHT_RADIUS = p2.lightRadius;
         }else if(light.player === 3){
-            this.LIGHT_RADIUS = this.p3_LIGHT_RADIUS;
+            this.LIGHT_RADIUS = p3.lightRadius;
         }else if(light.key == "glowfly"){
             //console.log(light);
             this.LIGHT_RADIUS = 15;
