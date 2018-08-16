@@ -15,3 +15,9 @@ function glowFly(game, key, xPos, yPos){
 glowFly.prototype = Object.create(Phaser.Sprite.prototype);
 glowFly.prototype.constructor = glowFly;
 
+glowFly.prototype.update = function() {
+    if(game.physics.arcade.collide(player, this)||game.physics.arcade.collide(p2, this)){
+            this.exists = false;
+    }
+}
+

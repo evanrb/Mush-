@@ -34,7 +34,8 @@ GamePlay.prototype.preload = function() {
     
     game.load.audio('night1', ['Sound/in-his-own-way.ogg']);
     game.load.audio('glowfly', ['Sound/glowfly_Chime_1.ogg']);
-        
+    
+    var FLIES;
     var flies;
     var tween;
     var mushrooms;
@@ -64,7 +65,6 @@ GamePlay.prototype.create = function() {
     this.markerP3 = new Phaser.Point();
     this.shadowY = 0;
     music = game.add.audio('night1');
-    //music.play();
     music.loopFull();
     
     twinkle = game.add.audio('glowfly');
@@ -90,23 +90,29 @@ GamePlay.prototype.create = function() {
         [784, 1136, 1552],
         [816, 112, 240, 752, 848]
     ];
+    
+    this.FLIES = [];
 
     game.world.setBounds(0, 0, 896, 1600);
     this.flies = this.game.add.group();
-    this.flies.enacleBody = true;
+    console.log(this.flies);
+    this.flies.enableBody = true;
     this.flies.physicsBodyType = Phaser.Physics.ARCADE;
     q = 0;
     for(i = 0; i < flyLocations.length; i++){
         for(j = 1; j < flyLocations[i].length; j++){
             console.log(q++);
             fly = new glowFly(game, 'glowfly', flyLocations[i][0], flyLocations[i][j]);
+            this.FLIES.push(fly);
             this.flies.add(fly);
+            console.log(this.flies);
         }
     }
-    
+    console.log(this.FLIES);
     this.mushrooms = this.game.add.group();
     player = new mushroom(game, 'RED', 1, 48, 46);
     p2 = new mushroom(game, 'BLUE', 2, 848, 48);
+    p3 = new mushroom(game, 'together', 3, -60, -60);
     this.mushrooms.add(player);
     this.mushrooms.add(p2);
     this.tween = game.add.tween(player).to({}, 0, true);
@@ -139,11 +145,14 @@ GamePlay.prototype.create = function() {
       i = 0;
     var playerLight = this.lights.add(player);
     this.lights.add(p2);
-    this.flies.forEach(function(fly){
-        console.log(i++);
-        this.lights.add(fly);
-    }, this);
-     
+//    this.flies.forEach(function(fly){
+//        console.log(i++);
+//        this.lights.add(fly);
+//    }, this);
+//    console.log(this.flies);
+//    for(i = 0; i < this.FLIES.length; i++){
+//        this.lights.add(this.FLIES[i]);
+//    }
     
 };
 GamePlay.prototype.update = function() {
@@ -179,32 +188,7 @@ GamePlay.prototype.update = function() {
         var x3 = this.markerP3.x;
         var y3 = this.markerP3.y;
     }
-    
-    
-    
-   // game.physics.arcade.collide(player, flies);
-//    this.flies.forEach(function(fly){
-//        if(game.physics.arcade.collide(player, fly)){
-//            fly.exists = false;
-//            //console.log(fly);
-//            .P1_LIGHT_RADIUS += 5;
-//            twinkle.play();
-//        } else if(game.physics.arcade.collide(p2, fly)){
-//            fly.exists = false;
-//            this.p2_LIGHT_RADIUS += 5;
-//            twinkle.play();
-//        } else if(this.transformed){
-//            if(game.physics.arcade.collide(p3, fly)){
-//                fly.exists = false;
-//                this.p3_LIGHT_RADIUS +=10;
-//                twinkle.play();
-//            }
-//        }
-//    }, this);
-    
-    //player.body.velocity.x = 0;
-    //player.body.velocity.y = 0;
-    
+  
         if(player.alive == true ){
             if(game.input.keyboard.justPressed(Phaser.Keyboard.UP)){
                 //if(map.getTileAbove(i, x1, y1).collideUp == false){
@@ -302,23 +286,17 @@ GamePlay.prototype.update = function() {
         //this.game.camera.y += 410;
         this.shadowY += 410;
         //this.shadowTexture.context.fillRect(0, this.shadowY, this.world.width, 1600);
-        p3 = new mushroom(game, 'together', 3, 448, 448);
-        
+        //p3 = new mushroom(game, 'together', 3, 448, 448);
+        p3.x = 448;
+        p3.y = 448;
         this.game.camera.y = p3.y - 220;
-        //this.game.camera = p3.x;
-        
-        game.physics.enable(p3, Phaser.Physics.ARCADE);
-    
-    
-        player.body.setSize(32, 32, 0, 15);
-        
-        this.p3_LIGHT_RADIUS = this.p2_LIGHT_RADIUS + this.P1_LIGHT_RADIUS;
-        
+
+        p3.lightRadius = p2.lightRadius+p1.lightRadius;
         this.lights.add(p3);
         
         transformed = true;
-        player.destroy();
-        p2.destroy();
+        player.x=-100;
+        p2.x = -200;
     }
     
     if(transformed){
@@ -338,6 +316,9 @@ GamePlay.prototype.render = function(){
     this.flies.forEach(function(fly){
         game.debug.body(fly);
     }, this);
+    for(i = 0; i < this.FLIES.length; i++){
+        game.debug.body(this.FLIES[i]);
+    }
 //    if(transformed){
 //        game.debug.body(p3);
 //    }

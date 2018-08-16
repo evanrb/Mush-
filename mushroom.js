@@ -14,6 +14,8 @@ function mushroom(game, key, playerNum, xPos, yPos){
         this.body.setSize(32, 32, 0, 15);
     }else if(this.player == 2){
         this.body.setSize(32, 32, 0, 32);
+    }else if(this.player == 3){
+        this.body.setSize(32, 32, 0, 15);
     }
     
 }
