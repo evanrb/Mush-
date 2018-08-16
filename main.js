@@ -150,9 +150,9 @@ GamePlay.prototype.create = function() {
 //        this.lights.add(fly);
 //    }, this);
 //    console.log(this.flies);
-//    for(i = 0; i < this.FLIES.length; i++){
-//        this.lights.add(this.FLIES[i]);
-//    }
+    for(i = 0; i < this.FLIES.length; i++){
+        this.lights.add(this.FLIES[i]);
+    }
     
 };
 GamePlay.prototype.update = function() {
@@ -162,9 +162,6 @@ GamePlay.prototype.update = function() {
         game.physics.arcade.collide(p3, this.mapLayer);
     }
     
-    
-    
-    game.physics.arcade.overlap(this.flies, this.players, this.collectFly, null, this);
     game.physics.arcade.collide(player, this.mapLayer);
     
     
@@ -271,14 +268,10 @@ GamePlay.prototype.update = function() {
             }
             
         }
-    if(this.p3_LIGHT_RADIUS <= 0){
+    if(p3.lightRadius <= 0){
         game.state.start('GameOver');
     }
-    
-    
-    
-        
-    
+ 
     if(game.physics.arcade.collide(player, p2) && transformed == false){//player.x == p2.x && player.y == p2.y && transformed == false){
         //p3 = game.add.sprite(player.x, player.y, '');
         
@@ -313,20 +306,12 @@ GamePlay.prototype.render = function(){
 //    game.debug.body(player);
 //    game.debug.body(p2);
 //    game.debug.body(map);
-    this.flies.forEach(function(fly){
-        game.debug.body(fly);
-    }, this);
-    for(i = 0; i < this.FLIES.length; i++){
-        game.debug.body(this.FLIES[i]);
-    }
+//    for(i = 0; i < this.FLIES.length; i++){
+//        game.debug.body(this.FLIES[i]);
+//    }
 //    if(transformed){
 //        game.debug.body(p3);
 //    }
-};
-GamePlay.prototype.collectFly = function(mush, glowF){
-    fly.exists = false;
-    mush.lightRadius += 5;
-    twinkle.play();
 };
 GamePlay.prototype.updateShadowTexture = function(){
     this.shadowTexture.context.fillStyle = 'rgb(0, 0, 0)';
@@ -337,32 +322,35 @@ GamePlay.prototype.updateShadowTexture = function(){
     this.lights.forEach(function(light) {
         // Randomly change the radius each frame
        // console.log(light);
-        if(light.player === 1){
+        if(light.exists){
+            if(light.player === 1){
             //var radius = this.P1_LIGHT_RADIUS + this.game.rnd.integerInRange(1,10);
-            this.LIGHT_RADIUS = player.lightRadius;
-        }else if(light.player === 2){
+                this.LIGHT_RADIUS = player.lightRadius;
+            }else if(light.player === 2){
             //var radius = this.p2_LIGHT_RADIUS + this.game.rnd.integerInRange(1,10);
-            this.LIGHT_RADIUS = p2.lightRadius;
-        }else if(light.player === 3){
-            this.LIGHT_RADIUS = p3.lightRadius;
-        }else if(light.key == "glowfly"){
+                this.LIGHT_RADIUS = p2.lightRadius;
+            }else if(light.player === 3){
+                this.LIGHT_RADIUS = p3.lightRadius;
+            }else if(light.key == "glowfly" && light.exists){
             //console.log(light);
-            this.LIGHT_RADIUS = 15;
+                this.LIGHT_RADIUS = 15;
+            }
+        
+            var radius = this.LIGHT_RADIUS + this.game.rnd.integerInRange(1,10);
+        // Draw circle of light with a soft edge
+            var gradient =
+                this.shadowTexture.context.createRadialGradient(
+                    light.x, light.y,this.LIGHT_RADIUS * 0.75,
+                    light.x, light.y, radius);
+            gradient.addColorStop(0, 'rgba(255, 255, 255, 1.0)');
+            gradient.addColorStop(1, 'rgba(255, 255, 255, 0.0)');
+
+            this.shadowTexture.context.beginPath();
+            this.shadowTexture.context.fillStyle = gradient;
+            this.shadowTexture.context.arc(light.x, light.y, radius, 0, Math.PI*2);
+            this.shadowTexture.context.fill();
         }
         
-        var radius = this.LIGHT_RADIUS + this.game.rnd.integerInRange(1,10);
-        // Draw circle of light with a soft edge
-        var gradient =
-            this.shadowTexture.context.createRadialGradient(
-                light.x, light.y,this.LIGHT_RADIUS * 0.75,
-                light.x, light.y, radius);
-        gradient.addColorStop(0, 'rgba(255, 255, 255, 1.0)');
-        gradient.addColorStop(1, 'rgba(255, 255, 255, 0.0)');
-
-        this.shadowTexture.context.beginPath();
-        this.shadowTexture.context.fillStyle = gradient;
-        this.shadowTexture.context.arc(light.x, light.y, radius, 0, Math.PI*2);
-        this.shadowTexture.context.fill();
     }, this);
 
     // This just tells the engine it should update the texture cache
