@@ -16,13 +16,13 @@ glowFly.prototype = Object.create(Phaser.Sprite.prototype);
 glowFly.prototype.constructor = glowFly;
 
 glowFly.prototype.update = function() {
-    var collide1 = game.physics.arcade.collide(player, this);
+    var collide1 = game.physics.arcade.collide(p1, this);
     var collide2 = game.physics.arcade.collide(p2, this);
     var collide3 = game.physics.arcade.collide(p3, this)
     if(collide1){
         this.exists = false;
         twinkle.play();
-        player.lightRadius += 10;
+        p1.lightRadius += 10;
     }else if(collide2){
         this.exists = false;
         twinkle.play();
