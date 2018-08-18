@@ -20,7 +20,7 @@ function mushroom(game, key, playerNum, xPos, yPos){
     this.anchor.y = .5;
     
     if(this.player == 1){
-        this.body.setSize(31, 31, 0, 15);
+        this.body.setSize(29, 29, 0, 15);
     }else if(this.player == 2){
         this.body.setSize(32, 32, 0, 32);
     }else if(this.player == 3){
@@ -43,6 +43,10 @@ function mushroom(game, key, playerNum, xPos, yPos){
     }
     console.log(Math.ceil(32));
     console.log(this.x, this.y);
+    this.distanceTraveledX = 0;
+    this.distanceTraveledY = 0;
+    this.startMovePosX = this.x;
+    this.startMovePosY = this.y;
 }
 
 mushroom.prototype = Object.create(Phaser.Sprite.prototype);
@@ -52,28 +56,36 @@ mushroom.prototype.update = function(){
     
     game.physics.arcade.collide(this, mapLayer);
     
+    this.distanceTraveledX = Math.floor(Math.abs(this.x - this.startMovePosX));
+    this.distanceTraveledY = Math.floor(Math.abs(this.y - this.startMovePosY));
+    
     if(this.alive == true){
         if(this.player < 3){
-            if(Math.ceil(this.y - 46) % 32 == 0 && this.body.velocity.y != 0){
-                this.body.velocity.y = 0
+            if(this.distanceTraveledX == 16 || this.distanceTraveledY == 16 ){
+                console.log(this.x);
+                this.x = Math.floor(this.x);
+                console.log(this.x);
+                this.body.velocity.y = 0;
+                this.body.velocity.x = 0;
+                this.startMovePosX = this.x;
+                this.startMovePosY = this.y;
             }
             if(game.input.keyboard.justPressed(this.upInput)){
-                if(Math.ceil(this.y - 14) % 32 == 0 && this.body.velocity.y == 0){
+                //if(this.distanceTraveledX == 0){//Math.ceil(this.y - 14) % 32 == 0 && this.body.velocity.y == 0){
                     this.body.velocity.y = -32;
-                }
+                //}
             }else if(game.input.keyboard.justPressed(this.rightInput)){
-                console.log(Math.ceil(this.x - 16), this.body.velocity.x);
-                
-                if(Math.ceil(this.x-16) % 32 == 0 && this.body.velocity.x == 0){
-                    this.body.velocity.x = 32;
-                }
+                //console.log(Math.ceil(this.x - 16), this.body.velocity.x);
+                //if(this.distanceTraveledX == 0){
+                    this.body.velocity.x = 53;
+                //}
             }else if(game.input.keyboard.justPressed(this.leftInput)){
                     this.body.velocity.x = -32;
             }else if(game.input.keyboard.justPressed(this.downInput)){
                     this.body.velocity.y = 32;
             }
         }else{
-            if((game.input.keyboard.justPressed(p1U))&&(game.input.keyboard.isDown(p2U))){
+            if((game.input.keyboard.justPressed(this.p1U))&&(game.input.keyboard.isDown(this.p2U))){
                 p3.y -= 32;
                 this.game.camera.y -=32;
             }else if ((game.input.keyboard.justPressed(p1R))&&(game.input.keyboard.isDown(p2R))) {

@@ -183,7 +183,9 @@ GamePlay.prototype.render = function(){
 //    }
 };
 GamePlay.prototype.updateShadowTexture = function(){
-    this.shadowTexture.context.fillStyle = 'rgb(0, 0, 0)';
+    //'rgb(100, 0, 0)'; save for fire level
+    // or 300, 100, 200
+    this.shadowTexture.context.fillStyle = 'rgb(20, 20, 50)';
     this.shadowTexture.context.fillRect(0, this.shadowY, this.world.width, this.world.height);
     //console.log(this.shadowTexture);
 
@@ -209,9 +211,11 @@ GamePlay.prototype.updateShadowTexture = function(){
         // Draw circle of light with a soft edge
             var gradient =
                 this.shadowTexture.context.createRadialGradient(
-                    light.x, light.y,this.LIGHT_RADIUS * 0.75,
+                    light.x, light.y,this.LIGHT_RADIUS * .05,
                     light.x, light.y, radius);
-            gradient.addColorStop(0, 'rgba(255, 255, 255, 1.0)');
+            //changing gradient color
+            
+            gradient.addColorStop(0, 'rgba(100, 255, 255, 1.0)');
             gradient.addColorStop(1, 'rgba(255, 255, 255, 0.0)');
 
             this.shadowTexture.context.beginPath();
