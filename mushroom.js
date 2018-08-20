@@ -107,10 +107,10 @@ mushroom.prototype.update = function(){
         
     }
     if(this.moving){
-        //console.log(this.x);
+        
         if(!this.loggedStartPos){
-            this.startMovePosX = this.x;
-            this.startMovePosY = this.y;
+            this.startMovePosX = Math.floor(this.x);
+            this.startMovePosY = Math.floor(this.y);
             this.loggedStartPos = true;
         }
         if(!this.negMovement){
@@ -125,14 +125,9 @@ mushroom.prototype.update = function(){
         }
         if(collided){
             console.log("I made it");
-            if(!this.negMovement){
-                console.log(this.x, this.startMovePosX);
-                var tweenAmountX = this.x - this.startMovePosX;
-                var tweenAmountY = this.y - this.startMovePosY;
-                console.log(tweenAmountX, tweenAmountY);
-                var tweenBack = game.add.tween(this).to( { x: -tweenAmountX, y: -tweenAmountY }, 2000, Phaser.Easing.Linear.None, true);
-                tweenBack.onComplete.add(doSomething, this);function doSomething () {this.endMotion;}
-            }
+            console.log(this.x, this.startMovePosX);
+            var tweenBack = game.add.tween(this).to( { x: this.startMovePosX, y: this.startMovePosY }, 150, Phaser.Easing.Linear.None, true);
+            tweenBack.onComplete.add(doSomething, this);function doSomething () {this.endMotion(); console.log("tween complete");}
         }
     }
 }
@@ -143,4 +138,5 @@ mushroom.prototype.endMotion = function(){
     this.y = Math.floor(this.y);
     this.loggedStartPos = false;
     this.moving = false;
+    console.log(this.x, this.y);
 }
