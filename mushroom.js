@@ -13,6 +13,7 @@ function mushroom(game, key, playerNum, xPos, yPos){
     
     this.player = playerNum;
     this.lightRadius = 70;
+    this.moving = false;
     
     game.physics.enable(this, Phaser.Physics.ARCADE);
     this.body.collideWorldBounds = true;
@@ -41,12 +42,12 @@ function mushroom(game, key, playerNum, xPos, yPos){
         this.alive = false;
         this.visible = false;
     }
-    console.log(Math.ceil(32));
-    console.log(this.x, this.y);
     this.distanceTraveledX = 0;
     this.distanceTraveledY = 0;
     this.startMovePosX = this.x;
     this.startMovePosY = this.y;
+    this.loggedStartPos = false;
+    this.negMovement = false;
 }
 
 mushroom.prototype = Object.create(Phaser.Sprite.prototype);
@@ -54,35 +55,30 @@ mushroom.prototype.constructor = mushroom;
 
 mushroom.prototype.update = function(){
     
-    game.physics.arcade.collide(this, mapLayer);
+    var collided = game.physics.arcade.collide(this, mapLayer);
     
     this.distanceTraveledX = Math.floor(Math.abs(this.x - this.startMovePosX));
     this.distanceTraveledY = Math.floor(Math.abs(this.y - this.startMovePosY));
     
-    if(this.alive == true){
+    
+    if(this.alive && !this.moving ){
         if(this.player < 3){
-            if(this.distanceTraveledX == 16 || this.distanceTraveledY == 16 ){
-                console.log(this.x);
-                this.x = Math.floor(this.x);
-                console.log(this.x);
-                this.body.velocity.y = 0;
-                this.body.velocity.x = 0;
-                this.startMovePosX = this.x;
-                this.startMovePosY = this.y;
-            }
             if(game.input.keyboard.justPressed(this.upInput)){
-                //if(this.distanceTraveledX == 0){//Math.ceil(this.y - 14) % 32 == 0 && this.body.velocity.y == 0){
-                    this.body.velocity.y = -32;
-                //}
+                this.body.velocity.y = -32;
+                this.moving = true;
+                this.negMovement = true;
             }else if(game.input.keyboard.justPressed(this.rightInput)){
-                //console.log(Math.ceil(this.x - 16), this.body.velocity.x);
-                //if(this.distanceTraveledX == 0){
-                    this.body.velocity.x = 53;
-                //}
+                this.body.velocity.x = 53;
+                this.moving = true;
+                this.negMovement = false;
             }else if(game.input.keyboard.justPressed(this.leftInput)){
-                    this.body.velocity.x = -32;
+                this.body.velocity.x = -32;
+                this.moving = true;
+                this.negMovement = true;
             }else if(game.input.keyboard.justPressed(this.downInput)){
-                    this.body.velocity.y = 32;
+                this.body.velocity.y = 32;
+                this.moving = true;
+                this.negMovement = false;
             }
         }else{
             if((game.input.keyboard.justPressed(this.p1U))&&(game.input.keyboard.isDown(this.p2U))){
@@ -110,4 +106,41 @@ mushroom.prototype.update = function(){
         }
         
     }
+    if(this.moving){
+        //console.log(this.x);
+        if(!this.loggedStartPos){
+            this.startMovePosX = this.x;
+            this.startMovePosY = this.y;
+            this.loggedStartPos = true;
+        }
+        if(!this.negMovement){
+            if(Math.floor(this.x) == this.startMovePosX + 32 || Math.floor(this.y) == this.startMovePosY + 32){
+                //console.log(this.x);
+                this.endMotion();
+            }
+        }else if(this.negMovement){
+            if(Math.floor(this.x) == this.startMovePosX - 32 || Math.floor(this.y) == this.startMovePosY - 32){
+                this.endMotion();
+            }
+        }
+        if(collided){
+            console.log("I made it");
+            if(!this.negMovement){
+                console.log(this.x, this.startMovePosX);
+                var tweenAmountX = this.x - this.startMovePosX;
+                var tweenAmountY = this.y - this.startMovePosY;
+                console.log(tweenAmountX, tweenAmountY);
+                var tweenBack = game.add.tween(this).to( { x: -tweenAmountX, y: -tweenAmountY }, 2000, Phaser.Easing.Linear.None, true);
+                tweenBack.onComplete.add(doSomething, this);function doSomething () {this.endMotion;}
+            }
+        }
+    }
+}
+mushroom.prototype.endMotion = function(){
+    this.body.velocity.y = 0;
+    this.body.velocity.x = 0;
+    this.x = Math.floor(this.x);
+    this.y = Math.floor(this.y);
+    this.loggedStartPos = false;
+    this.moving = false;
 }
