@@ -13,7 +13,6 @@ function mushroom(game, key, playerNum, xPos, yPos){
     
     this.player = playerNum;
     this.lightRadius = 70;
-    this.moving = false;
     
     game.physics.enable(this, Phaser.Physics.ARCADE);
     this.body.collideWorldBounds = true;
@@ -21,7 +20,7 @@ function mushroom(game, key, playerNum, xPos, yPos){
     this.anchor.y = .5;
     
     if(this.player == 1){
-        this.body.setSize(29, 29, 0, 15);
+        this.body.setSize(32, 32, 0, 15);
     }else if(this.player == 2){
         this.body.setSize(32, 32, 0, 32);
     }else if(this.player == 3){
@@ -42,8 +41,8 @@ function mushroom(game, key, playerNum, xPos, yPos){
         this.alive = false;
         this.visible = false;
     }
-    this.distanceTraveledX = 0;
-    this.distanceTraveledY = 0;
+    
+    this.moving = false;
     this.startMovePosX = this.x;
     this.startMovePosY = this.y;
     this.loggedStartPos = false;
@@ -56,10 +55,6 @@ mushroom.prototype.constructor = mushroom;
 mushroom.prototype.update = function(){
     
     var collided = game.physics.arcade.collide(this, mapLayer);
-    
-    this.distanceTraveledX = Math.floor(Math.abs(this.x - this.startMovePosX));
-    this.distanceTraveledY = Math.floor(Math.abs(this.y - this.startMovePosY));
-    
     
     if(this.alive && !this.moving ){
         if(this.player < 3){
@@ -107,19 +102,17 @@ mushroom.prototype.update = function(){
         
     }
     if(this.moving){
-        
         if(!this.loggedStartPos){
             this.startMovePosX = Math.floor(this.x);
             this.startMovePosY = Math.floor(this.y);
             this.loggedStartPos = true;
         }
         if(!this.negMovement){
-            if(Math.floor(this.x) == this.startMovePosX + 32 || Math.floor(this.y) == this.startMovePosY + 32){
-                //console.log(this.x);
+            if(Math.floor(this.x) == this.startMovePosX + 31 || Math.floor(this.y) == this.startMovePosY + 31){
                 this.endMotion();
             }
         }else if(this.negMovement){
-            if(Math.floor(this.x) == this.startMovePosX - 32 || Math.floor(this.y) == this.startMovePosY - 32){
+            if(Math.floor(this.x) == this.startMovePosX - 31 || Math.floor(this.y) == this.startMovePosY - 31){
                 this.endMotion();
             }
         }

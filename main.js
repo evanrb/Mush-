@@ -33,8 +33,11 @@ GamePlay.prototype.preload = function() {
     game.load.spritesheet('together', 'Assets/together.png', 64, 64)
     game.load.spritesheet('glowfly', 'Assets/glowFly.png', 32, 32);
     
+    
     //Load Maze Background
     game.load.image('background', 'Assets/level1-background.png');
+    
+    game.load.image('yellowLight', 'Assets/yellow.png');
     
     //Load Audio
     game.load.audio('night1', ['Sound/in-his-own-way.ogg']);
@@ -61,7 +64,7 @@ GamePlay.prototype.create = function() {
    // Set stage background color(required for shading)
     this.game.stage.backgroundColor = 0x78453A;
     game.world.setBounds(0, 0, 896, 1600);
-     back = game.add.sprite(0,0, 'background');
+    back = game.add.sprite(0,0, 'background');
     
     this.shadowY = 0;
     
@@ -100,7 +103,7 @@ GamePlay.prototype.create = function() {
     //loop through fly location array and create flies at each location and add those flies to the FLIES array
     for(i = 0; i < flyLocations.length; i++){
         for(j = 1; j < flyLocations[i].length; j++){
-            fly = new glowFly(game, 'glowfly', flyLocations[i][0], flyLocations[i][j]);
+            fly = new glowFly(game, 'glowfly', flyLocations[i][0], flyLocations[i][j], 'yellowLight');
             this.FLIES.push(fly);
         }
     }
@@ -114,9 +117,9 @@ GamePlay.prototype.create = function() {
     
     //a group that holds all the player characters
     this.mushrooms = this.game.add.group();
-    p1 = new mushroom(game, 'RED', 1, 48, 46);
+    p1 = new mushroom(game, 'RED', 1, 48, 48);
     p2 = new mushroom(game, 'BLUE', 2, 848, 48);
-    p3 = new mushroom(game, 'together', 3, -60, -60);
+    p3 = new mushroom(game, 'together', 3, -60, -2);
     console.log(p3);
     this.mushrooms.add(p1);
     this.mushrooms.add(p2);
