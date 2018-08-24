@@ -23,10 +23,7 @@ var GamePlay = function(game){
 };
 
 GamePlay.prototype.preload = function() {
-    //Load TileMap
-    game.load.tilemap('map','Assets/level1.json', null, Phaser.Tilemap.TILED_JSON);
-    game.load.spritesheet('hedgeSheet', 'Assets/hedge tiles 2.png', 32, 32);
-    
+ 
     //Load Character and GlowFly spritesheets
     game.load.spritesheet('RED', 'Assets/Red.png', 32, 47);
     game.load.spritesheet('BLUE', 'Assets/Blue.png',32, 64 );
@@ -160,13 +157,6 @@ GamePlay.prototype.create = function() {
             this.FLIES.push(fly);
         }
     }
-    //add map
-    map = game.add.tilemap('map');
-    map.addTilesetImage('hedges 2', 'hedgeSheet');
-    mapLayer = map.createLayer('Tile Layer 1');
-    map.setCollisionBetween(1, 10000, true, this.mapLayer);
-    mapLayer.resizeWorld();
-
     
     //a group that holds all the player characters
     this.mushrooms = this.game.add.group();
