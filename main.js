@@ -170,8 +170,8 @@ GamePlay.prototype.create = function() {
     
     //a group that holds all the player characters
     this.mushrooms = this.game.add.group();
-    p1 = new mushroom(game, 'RED', 1, 48, 48, level1);
-    p2 = new mushroom(game, 'BLUE', 2, 848, 48, level1);
+    p1 = new mushroom(game, 'RED', 1, 48, 42, level1);
+    p2 = new mushroom(game, 'BLUE', 2, 848, 32, level1);
     p3 = new mushroom(game, 'together', 3, -60, -2, level1);
     this.mushrooms.add(p1);
     this.mushrooms.add(p2);
@@ -216,14 +216,7 @@ GamePlay.prototype.update = function() {
         p3.moving = true;
         var moveCamera = game.add.tween(this.game.camera).to({ x: this.game.camera.x, y: p3.y - 220 }, 500, Phaser.Easing.Linear.None, true);
         moveCamera.onComplete.add(allowMovement, this); function allowMovement() { p3.moving = false; }  
-        //this.game.camera.y = p3.y - 220;
         p3.lightRadius = p2.lightRadius+p1.lightRadius;
-        //p1.alive = false;
-        //p2.alive = false;
-        //p1.visible = false;
-        //p2.visible = false;
-        //p1.x=-100;
-        //p2.x = -200;
         p1.destroy();
         p2.destroy();
         

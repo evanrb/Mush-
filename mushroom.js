@@ -56,6 +56,18 @@ function mushroom(game, key, playerNum, xPos, yPos, map){
     }
     
     this.moving = false;
+    
+    this.animations.add('idleLeft', [8], 7, true);
+    this.animations.add('idleRight', [12], 7, true);
+    this.animations.add('idleForward', [0], 7, true);
+    this.animations.add('idleBack', [4], 7, true);
+    this.animations.add('walkForward', [1, 3], 1, true);
+    this.animations.add('walkBack', [5, 7], 1, true);
+    this.animations.add('walkLeft', [9, 11], 2, true);
+    this.animations.add('walkRight', [13, 15], 2, true);
+    
+    // just a number if 0 it is facing forward, if 1 facing backward, if 2 facing right, if 3 facing left
+    this.direction = 0;
 }
 
 mushroom.prototype = Object.create(Phaser.Sprite.prototype);
@@ -65,6 +77,7 @@ mushroom.prototype.update = function () {
     if (this.alive && !this.moving) {
         if (this.player < 3){
             if (game.input.keyboard.justPressed(this.upInput)) {
+                this.direction = 1;
                 if (this.maze[this.mapArrayLocation[0] - 1][this.mapArrayLocation[1]] == 0) {
                     this.legalMove(this.x, this.y - 32, 150);
                     this.mapArrayLocation[0] -= 1;
@@ -72,6 +85,7 @@ mushroom.prototype.update = function () {
                     this.hitWall(this.x, this.y - 5, 150, this.x, this.y, 150);
                 }
             } else if (game.input.keyboard.justPressed(this.rightInput)) {
+                this.direction = 2;
                 if (this.maze[this.mapArrayLocation[0]][this.mapArrayLocation[1] + 1] == 0) {
                     this.legalMove(this.x + 32, this.y, 150);
                     this.mapArrayLocation[1] += 1;
@@ -79,6 +93,7 @@ mushroom.prototype.update = function () {
                     this.hitWall(this.x + 5, this.y, 150, this.x, this.y, 150);
                 }
             } else if (game.input.keyboard.justPressed(this.leftInput)) {
+                this.direction = 3;
                 if (this.maze[this.mapArrayLocation[0]][this.mapArrayLocation[1] - 1] == 0) {
                     this.legalMove(this.x - 32, this.y, 150);
                     this.mapArrayLocation[1] -= 1;
@@ -86,6 +101,7 @@ mushroom.prototype.update = function () {
                     this.hitWall(this.x - 5, this.y, 150, this.x, this.y, 150);
                 }
             } else if (game.input.keyboard.justPressed(this.downInput)) {
+                this.direction = 0;
                 if (this.maze[this.mapArrayLocation[0] + 1][this.mapArrayLocation[1]] == 0) {
                     this.legalMove(this.x, this.y + 32, 150);
                     this.mapArrayLocation[0] += 1;
@@ -119,11 +135,13 @@ mushroom.prototype.update = function () {
 }
 
 mushroom.prototype.legalMove = function(xPos, yPos, speed){
+    this.animateMovement();
     this.moving = true;
     var tween = game.add.tween(this).to({ x: xPos, y: yPos }, speed, Phaser.Easing.Linear.None, true);
     tween.onComplete.add(doSomething, this); function doSomething() { this.endMotion(); }              
 }
 mushroom.prototype.hitWall = function(xPos, yPos, speed, endXPos, endYPos, endSpeed){
+    this.animateMovement();
     this.moving = true;
     var tween = game.add.tween(this).to({ x: xPos, y: yPos }, speed, Phaser.Easing.Linear.None, true);
     tween.onComplete.add(doSomething, this); function doSomething() {
@@ -132,8 +150,31 @@ mushroom.prototype.hitWall = function(xPos, yPos, speed, endXPos, endYPos, endSp
     }
 }
 mushroom.prototype.endMotion = function(){
+    if(this.direction == 0){
+        this.animations.play('idleForward');
+    }else if(this.direction == 1){
+        this.animations.play('idleBack');
+    }else if(this.direction == 2){
+        this.animations.play('idleRight');
+    }else if(this.direction == 3){
+        this.animations.play('idleLeft');
+    }
     this.moving = false;
 }
-mushrool.prototype.die = function(){
+mushroom.prototype.animateMovement = function(){
+    if(this.direction == 0){
+        this.animations.play('walkForward');
+    }else if(this.direction == 1){
+        this.animations.play('walkBack');
+    }else if(this.direction == 2){
+        this.animations.play('walkRight');
+    }else if(this.direction == 3){
+        this.animations.play('walkLeft');
+    }
+}
+mushroom.prototype.getDirection = function(){
+    return this.direction;
+}
+mushroom.prototype.die = function(){
     this.destroy();
 }
