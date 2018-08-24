@@ -17,7 +17,7 @@ function mushroom(game, key, playerNum, xPos, yPos, map){
     this.lightRadius = 70;
     
     game.physics.enable(this, Phaser.Physics.ARCADE);
-    this.body.collideWorldBounds = true;
+    //this.body.collideWorldBounds = true;
     this.anchor.x = .5;
     this.anchor.y = .5;
     this.mapArrayLocation = [-1, -1];
@@ -26,7 +26,7 @@ function mushroom(game, key, playerNum, xPos, yPos, map){
         this.mapArrayLocation = [1, 1];
     }else if(this.player == 2){
         this.body.setSize(32, 32, 0, 32);
-        this.mapArrayLocation = [1, 27];
+        this.mapArrayLocation = [1, 26];
     }else if(this.player == 3){
         this.body.setSize(32, 32, 0, 15);
         this.mapArrayLocation = [14, 14];
@@ -43,6 +43,14 @@ function mushroom(game, key, playerNum, xPos, yPos, map){
         this.leftInput = p2L;
         this.downInput = p2D;
     }else{
+        this.upInput = p1U;
+        this.rightInput = p1R;
+        this.leftInput = p1L;
+        this.downInput = p1D;
+        this.upInput2 = p2U;
+        this.rightInput2 = p2R;
+        this.leftInput2 = p2L;
+        this.downInput2 = p2D;
         this.alive = false;
         this.visible = false;
     }
@@ -61,39 +69,39 @@ mushroom.prototype.update = function () {
                     this.legalMove(this.x, this.y - 32, 150);
                     this.mapArrayLocation[0] -= 1;
                 } else {
-                    this.hitWall(this.x, this.y - 5, 150, this.x, this.y + 5, 150);
+                    this.hitWall(this.x, this.y - 5, 150, this.x, this.y, 150);
                 }
             } else if (game.input.keyboard.justPressed(this.rightInput)) {
                 if (this.maze[this.mapArrayLocation[0]][this.mapArrayLocation[1] + 1] == 0) {
                     this.legalMove(this.x + 32, this.y, 150);
                     this.mapArrayLocation[1] += 1;
                 } else {
-                    this.hitWall(this.x + 5, this.y, 150, this.x - 5, this.y, 150);
+                    this.hitWall(this.x + 5, this.y, 150, this.x, this.y, 150);
                 }
             } else if (game.input.keyboard.justPressed(this.leftInput)) {
                 if (this.maze[this.mapArrayLocation[0]][this.mapArrayLocation[1] - 1] == 0) {
                     this.legalMove(this.x - 32, this.y, 150);
                     this.mapArrayLocation[1] -= 1;
                 } else {
-                    this.hitWall(this.x - 5, this.y, 150, this.x + 5, this.y, 150);
+                    this.hitWall(this.x - 5, this.y, 150, this.x, this.y, 150);
                 }
             } else if (game.input.keyboard.justPressed(this.downInput)) {
                 if (this.maze[this.mapArrayLocation[0] + 1][this.mapArrayLocation[1]] == 0) {
                     this.legalMove(this.x, this.y + 32, 150);
                     this.mapArrayLocation[0] += 1;
                 } else {
-                    this.hitWall(this.x, this.y + 5, 150, this.x, this.y - 5, 150);
+                    this.hitWall(this.x, this.y + 5, 150, this.x, this.y, 150);
                 }
             }
         }else {
-            if ((game.input.keyboard.justPressed(this.p1U)) && (game.input.keyboard.isDown(this.p2U))) {
+            if ((game.input.keyboard.justPressed(this.upInput)) && (game.input.keyboard.isDown(this.upInput2))) {
                 p3.y -= 32;
                 this.game.camera.y -= 32;
-            } else if ((game.input.keyboard.justPressed(p1R)) && (game.input.keyboard.isDown(p2R))) {
+            } else if ((game.input.keyboard.justPressed(this.rightInput)) && (game.input.keyboard.isDown(this.rightInput2))) {
                 p3.x += 32;
-            } else if ((game.input.keyboard.justPressed(p1L)) && (game.input.keyboard.isDown(p2L))) {
+            } else if ((game.input.keyboard.justPressed(this.leftInput)) && (game.input.keyboard.isDown(this.leftInput2))) {
                 p3.x -= 32;
-            } else if ((game.input.keyboard.justPressed(p1D)) && (game.input.keyboard.isDown(p2D))) {
+            } else if ((game.input.keyboard.justPressed(this.downInput)) && (game.input.keyboard.isDown(this.downInput2))) {
                 p3.y += 32;
                 this.game.camera.y += 32;
             } else if (
@@ -125,4 +133,7 @@ mushroom.prototype.hitWall = function(xPos, yPos, speed, endXPos, endYPos, endSp
 }
 mushroom.prototype.endMotion = function(){
     this.moving = false;
+}
+mushrool.prototype.die = function(){
+    this.destroy();
 }

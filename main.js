@@ -204,8 +204,6 @@ GamePlay.prototype.create = function() {
 };
 GamePlay.prototype.update = function() {
 
-    //game.add.tween(p1).to({y: '+32'}, 2000, Phaser.Easing.Linear.None, true);
-
     if(p3.lightRadius <= 0){
         game.state.start('GameOver');
     }
@@ -215,11 +213,20 @@ GamePlay.prototype.update = function() {
         p3.y = 448;
         p3.alive = true;
         p3.visible = true;
-        this.game.camera.y = p3.y - 220;
-
+        p3.moving = true;
+        var moveCamera = game.add.tween(this.game.camera).to({ x: this.game.camera.x, y: p3.y - 220 }, 500, Phaser.Easing.Linear.None, true);
+        moveCamera.onComplete.add(allowMovement, this); function allowMovement() { p3.moving = false; }  
+        //this.game.camera.y = p3.y - 220;
         p3.lightRadius = p2.lightRadius+p1.lightRadius;
-        p1.x=-100;
-        p2.x = -200;
+        //p1.alive = false;
+        //p2.alive = false;
+        //p1.visible = false;
+        //p2.visible = false;
+        //p1.x=-100;
+        //p2.x = -200;
+        p1.destroy();
+        p2.destroy();
+        
     }
     if(p3.y + 32 == 1600){
         game.state.start('GameOver');
