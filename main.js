@@ -2,37 +2,100 @@
 var game = new Phaser.Game(896, 480, Phaser.AUTO, 'game');//, '', { preload: preload, create: create, update: update });
 
 var MainMenu = function(game) {};
-MainMenu.prototype = {
-    preload: function() {
-        console.log('MainMenu: preload');
-    },
-    create: function() {
-        console.log('MainMenu: create');
-        game.stage.backgroundColor = "#000000";
-        game.add.text(52, 200, 'Press ENTER to change states.', { fontSize: '26px', fill: '#FFF', align: "center" });
-    },
-    update: function() {
-        if(game.input.keyboard.isDown(Phaser.Keyboard.ENTER)) {
-            game.state.start('GamePlay');
-        }
-    }
-}
-
-var GamePlay = function(game){
-    
+//MainMenu.prototype = {
+MainMenu.prototype.preload = function() {
+    console.log('MainMenu: preload');
+    game.load.spritesheet('startButton', 'Assets/start.png', 128, 92);
+    game.load.spritesheet('creditsButton', 'Assets/creditsButton.png', 128, 92 );
+    game.load.spritesheet('glowfly', 'Assets/glowFly.png', 32, 32);
+    game.load.image('mainMenuBackground', 'Assets/main.png');
+    game.load.image('mainMenuLogo', 'Assets/title draft.png');
+    var startButton;
+    var mouseFly;
+    var mouseOver;
 };
+MainMenu.prototype.create = function() {
+    console.log('MainMenu: create');
+    game.add.sprite(0, 0, 'mainMenuBackground');
+    
+    var logo = game.add.sprite(game.world.centerX, game.world.centerY-50, 'mainMenuLogo');
+    logo.anchor.x = .5;
+    logo.anchor.y = .5;
+    
+    this.mouseOverS = false;
+    this.mouseOverC = false;
+    this.startButton = game.add.sprite(game.world.centerX, game.world.centerY + 46, 'startButton');
+    this.startButton.anchor.x = .5;
+    this.startButton.anchor.x = .5;
+    this.startButton.animations.add('mouseOver', [0,1,2,3,4,5], 20, false);
+    this.startButton.animations.add('mouseRemoved', [5, 4, 3, 2, 1, 0], 20, false);
+    this.startButton.inputEnabled = true;
+    this.startButton.events.onInputDown.add(this.startGame, this);
+    
+    this.creditsButton = game.add.sprite(game.world.centerX, this.startButton.y + 92, 'creditsButton');
+    this.creditsButton.anchor.x = .5;
+    this.creditsButton.anchor.x = .5;
+    this.creditsButton.animations.add('mouseOverC', [0,1,2,3,4], 20, false);
+    this.creditsButton.animations.add('mouseRemovedC', [4, 3, 2, 1, 0], 20, false);
+    this.creditsButton.inputEnabled = true;
+    this.creditsButton.events.onInputDown.add(this.startGame, this);
+    
+    
+    
+    
+    this.mouseFly = game.add.sprite(0, 0, 'glowfly');
+    this.mouseFly.anchor.x = .5;
+    this.mouseFly.anchor.y = .5;
+    this.mouseFly.alpha = 1;
+    game.canvas.addEventListener('mousedown', this.clickSomething);
+    game.input.addMoveCallback(this.move, this);
+    //game.add.text(52, 200, 'Press ENTER to change states.', { fontSize: '26px', fill: '#FFF', align: "center" });
+};
+MainMenu.prototype.update = function() {
+    if (this.startButton.input.pointerOver() && this.mouseOverS == false){
+        this.startButton.animations.play('mouseOver');
+        this.mouseOverS = true;
+    }else if(!this.startButton.input.pointerOver() && this.mouseOverS == true){
+        this.startButton.animations.play('mouseRemoved');
+        this.mouseOverS = false;
+    }
+    if (this.creditsButton.input.pointerOver() && this.mouseOverC == false){
+        this.creditsButton.animations.play('mouseOverC');
+        this.mouseOverC = true;
+    }else if(!this.creditsButton.input.pointerOver() && this.mouseOverC == true){
+        this.creditsButton.animations.play('mouseRemovedC');
+        this.mouseOverC = false;
+    }
+};
+MainMenu.prototype.move = function(pointer, x, y, click){
+    if(!click){
+        this.mouseFly.x = game.input.mousePointer.x;
+        this.mouseFly.y = game.input.mousePointer.y;
+    }
+};
+MainMenu.prototype.startGame = function(){
+    //game.input.mouse.requestPointerLock();
+    this.game.world.removeAll();
+    game.state.start('GamePlay');
+};
+
+var GamePlay = function(game){};
 
 GamePlay.prototype.preload = function() {
  
     //Load Character and GlowFly spritesheets
     game.load.spritesheet('RED', 'Assets/Red.png', 32, 47);
     game.load.spritesheet('BLUE', 'Assets/Blue.png',32, 64 );
-    game.load.spritesheet('together', 'Assets/together.png', 64, 64)
+    game.load.spritesheet('together', 'Assets/joined.png', 64, 64)
     game.load.spritesheet('glowfly', 'Assets/glowFly.png', 32, 32);
     
     
     //Load Maze Background
     game.load.image('background', 'Assets/level1-background.png');
+    
+    game.load.image('pauseBackground', 'Assets/pauseBackground.png');
+    game.load.spritesheet('quitButton', 'Assets/quit.png', 128, 92);
+    game.load.spritesheet('restartButton', 'Assets/restart.png', 128, 92);
     
     game.load.image('yellowLight', 'Assets/yellow.png');
     
@@ -55,6 +118,7 @@ GamePlay.prototype.preload = function() {
     var shadowY;
     var music;
     var twinkle;
+    var isPaused;
 };
 GamePlay.prototype.create = function() {
     
@@ -62,6 +126,12 @@ GamePlay.prototype.create = function() {
     this.game.stage.backgroundColor = 0x78453A;
     game.world.setBounds(0, 0, 896, 1600);
     back = game.add.sprite(0,0, 'background');
+    
+    
+    
+    
+    
+    
     
     this.shadowY = 0;
     
@@ -71,7 +141,7 @@ GamePlay.prototype.create = function() {
     
     twinkle = game.add.audio('glowfly');
     
-   
+    this.isPaused = false;
     
     //array of fly locations. Each array represents a column of the map with (x, y) fly locations, x being the first element of the array and y being the other array elements
     var flyLocations = [
@@ -190,10 +260,15 @@ GamePlay.prototype.create = function() {
     for(i = 0; i < this.FLIES.length; i++){
         this.lights.add(this.FLIES[i]);
     }
-    
 };
 GamePlay.prototype.update = function() {
-
+    if(game.input.keyboard.justPressed(Phaser.Keyboard.P)){
+        if(this.isPaused){
+            this.resumeGame();
+        }else{
+           this.pause(); 
+        }
+    }
     if(p3.lightRadius <= 0){
         game.state.start('GameOver');
     }
@@ -214,11 +289,16 @@ GamePlay.prototype.update = function() {
     if(p3.y + 32 == 1600){
         game.state.start('GameOver');
     }
-    this.updateShadowTexture();
+    
+    
+    if(this.isPaused){
+        this.pauseScreenUpdate();
+    }else{this.updateShadowTexture();}
+    
 };
 GamePlay.prototype.render = function(){
-    game.debug.body(p1);
-    game.debug.body(p2);
+    //game.debug.body(p1);
+    //game.debug.body(p2);
 //    game.debug.body(map);
 //    for(i = 0; i < this.FLIES.length; i++){
 //        game.debug.body(this.FLIES[i]);
@@ -275,7 +355,64 @@ GamePlay.prototype.updateShadowTexture = function(){
     this.shadowTexture.dirty = true;
     
 };
-
+GamePlay.prototype.pause = function(){
+    p1.moving = true;
+    p2.moving = true;
+    p3.moving = true;
+    this.isPaused = true;
+    this.pauseBackground = game.add.sprite(game.camera.x, game.camera.y, 'pauseBackground');
+    this.quitButton = game.add.sprite(game.camera.x + 448, game.camera.y + 286, 'quitButton');
+    this.quitButton.anchor.x = .5;
+    this.quitButton.anchor.y = .5;
+    this.restartButton = game.add.sprite(game.camera.x + 448, game.camera.y + 194, 'restartButton');
+    this.restartButton.anchor.x = .5;
+    this.restartButton.anchor.y = .5;
+    this.quitButton.animations.add('mouseOverQ', [0,1], 20, false);
+    this.quitButton.animations.add('mouseRemQ', [1, 0], 20, false);
+    this.restartButton.animations.add('mouseOverR', [0,1], 20, false);
+    this.restartButton.animations.add('mouseRemR', [1, 0], 20, false);
+    this.restartButton.inputEnabled = true;
+    this.restartButton.events.onInputDown.add(this.restartGame, this);
+    this.quitButton.inputEnabled = true;
+    this.quitButton.events.onInputDown.add(this.quitGame, this);
+    this.mouseOverQ = false;
+    this.mouseOverR = false;
+};
+GamePlay.prototype.pauseScreenUpdate = function(){
+    if (this.quitButton.input.pointerOver() && this.mouseOverQ == false){
+        this.quitButton.animations.play('mouseOverQ');
+        this.mouseOverQ = true;
+    }else if(!this.quitButton.input.pointerOver() && this.mouseOverQ == true){
+        this.quitButton.animations.play('mouseRemQ');
+        this.mouseOverQ = false;
+    }
+    if (this.restartButton.input.pointerOver() && this.mouseOverR == false){
+        this.restartButton.animations.play('mouseOverR');
+        this.mouseOverR = true;
+    }else if(!this.restartButton.input.pointerOver() && this.mouseOverR == true){
+        this.restartButton.animations.play('mouseRemR');
+        this.mouseOverR = false;
+    }
+};
+GamePlay.prototype.resumeGame = function(){
+    p1.moving = false;
+    p2.moving = false;
+    p3.moving = false;
+    this.isPaused = false;
+    this.pauseBackground.destroy();
+    this.restartButton.destroy();
+    this.quitButton.destroy();
+};
+GamePlay.prototype.quitGame = function(){
+    music.pause();
+    this.game.world.removeAll();
+    game.state.start('MainMenu');  
+};
+GamePlay.prototype.restartGame = function(){
+    music.pause();
+    this.game.world.removeAll();
+    game.state.start('GamePlay');
+};
 var GameOver = function(game) {};
 GameOver.prototype = {
     preload: function() {
