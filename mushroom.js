@@ -29,7 +29,7 @@ function mushroom(game, key, playerNum, xPos, yPos, map){
         this.mapArrayLocation = [1, 26];
     }else if(this.player == 3){
         this.body.setSize(32, 32, 0, 15);
-        this.mapArrayLocation = [15, 13];
+        this.mapArrayLocation = [14, 13];
         //this.mapArrayLocation2 = [14, 15];
         this.frameCount = 0;
     }
@@ -132,18 +132,18 @@ mushroom.prototype.update = function () {
                             this.legalMove(this.x + 32, this.y, 150);
                             this.mapArrayLocation[1] += 1;
                         }else{
-                            this.hitWall(this.x + 5, this.y, 150, this.x, this.y, 150);
+                            this.hitWall(this.x + 20, this.y, 150, this.x, this.y, 150);
                         }
                     }
                 }
                 if (game.input.keyboard.justPressed(this.leftInput) || game.input.keyboard.justPressed(this.leftInput2)){
                     if(this.helper.keyIn(1)){
                         this.direction = 3;
-                        if(this.maze[this.mapArrayLocation[0]][this.mapArrayLocation[1] - 2] == 0){
+                        if(this.maze[this.mapArrayLocation[0]][this.mapArrayLocation[1] - 1] == 0){
                             this.legalMove(this.x - 32, this.y, 150);
                             this.mapArrayLocation[1] -= 1;
                         }else{
-                            this.hitWall(this.x - 5, this.y, 150, this.x, this.y, 150);
+                            this.hitWall(this.x - 15, this.y, 150, this.x, this.y, 150);
                         }
                     }
                 }
