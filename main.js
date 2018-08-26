@@ -274,12 +274,14 @@ GamePlay.prototype.create = function() {
     this.screenText.anchor.set(.5);
 };
 GamePlay.prototype.update = function() {
-    if(this.time != 0){
-        this.preTime = this.timer.duration * .001;
-        this.time = this.preTime.toFixed(2);
-        this.textTime = this.time.toString();
-        this.screenText.text = this.textTime;
-    }else{this.screenText.destroy();}
+    if(this.timer != null){
+        if(this.time != 0){
+            this.preTime = this.timer.duration * .001;
+            this.time = this.preTime.toFixed(2);
+            this.textTime = this.time.toString();
+            this.screenText.text = this.textTime;
+        }else{this.screenText.destroy();}
+    }
     if(game.input.keyboard.justPressed(Phaser.Keyboard.P)){
         if(this.isPaused){
             this.resumeGame();
@@ -291,12 +293,16 @@ GamePlay.prototype.update = function() {
         game.state.start('GameOver');
     }
     if(game.physics.arcade.collide(p1, p2)){
+        if(this.timer != null){
+            this.timer.destroy();
+            this.screenText.destroy();
+        }
         p3.x = 448;
         p3.y = 448;
         p3.alive = true;
         p3.visible = true;
         p3.moving = true;
-        var moveCamera = game.add.tween(this.game.camera).to({ x: this.game.camera.x, y: p3.y - 220 }, 500, Phaser.Easing.Linear.None, true);
+        var moveCamera = game.add.tween(this.game.camera).to({ x: this.game.camera.x, y: p3.y - 220 }, 1000, Phaser.Easing.Linear.None, true);
         moveCamera.onComplete.add(allowMovement, this); function allowMovement() { p3.moving = false; }  
         p3.lightRadius = p2.lightRadius+p1.lightRadius;
         p1.destroy();
@@ -373,6 +379,9 @@ GamePlay.prototype.updateShadowTexture = function(){
     
 };
 GamePlay.prototype.pause = function(){
+    if(this.timer != null){
+        this.timer.pause();
+    }
     p1.moving = true;
     p2.moving = true;
     p3.moving = true;
@@ -412,6 +421,9 @@ GamePlay.prototype.pauseScreenUpdate = function(){
     }
 };
 GamePlay.prototype.resumeGame = function(){
+    if(this.timer != null){
+        this.timer.resume();
+    }
     p1.moving = false;
     p2.moving = false;
     p3.moving = false;
