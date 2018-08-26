@@ -28,8 +28,8 @@ function mushroom(game, key, playerNum, xPos, yPos, map){
         this.body.setSize(32, 32, 0, 32);
         this.mapArrayLocation = [1, 26];
     }else if(this.player == 3){
-        this.body.setSize(32, 32, 0, 15);
-        this.mapArrayLocation = [14, 13];
+        this.body.setSize(64, 32, 0, 15);
+        this.mapArrayLocation = [13, 13];
         //this.mapArrayLocation2 = [14, 15];
         this.frameCount = 0;
     }

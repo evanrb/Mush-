@@ -126,7 +126,9 @@ GamePlay.prototype.create = function() {
     game.world.setBounds(0, 0, 896, 1600);
     back = game.add.sprite(0,0, 'background');
     
-   
+    this.p1Arrived = false;
+    this.p2Arrived = false;
+    this.notConnected = true;
     
     //Add and loop background music
     music = game.add.audio('night1');
@@ -289,6 +291,39 @@ GamePlay.prototype.update = function() {
            this.pause(); 
         }
     }
+    
+    if(p1.mapArrayLocation[0] == 13 && p1.mapArrayLocation[1] == 13 && !p1.moving){
+        p1.moving = true;
+        this.p1Arrived = true;
+    }
+    if(p2.mapArrayLocation[0] == 13 && p2.mapArrayLocation[1] == 14 && !p2.moving){
+        p2.moving = true;
+        this.p2Arrived = true;
+    }
+    if(this.p1Arrived && this.p2Arrived && this.notConnected){
+        if(this.timer != null){
+            this.timer.destroy();
+            this.screenText.destroy();
+        }
+        this.notConnected = false;
+        p1.direction = 3;
+        p1.animateMovement();
+        var tween = game.add.tween(p1).to({ x: p1.x - 20, y: p1.y }, 5000, Phaser.Easing.Linear.None, true);
+        tween.onComplete.add(moveBack, p1); function moveBack() {
+            p1.direction = 2;
+            p1.animateMovement();
+            var tweenBack = game.add.tween(p1).to({ x: p1.x + 30, y: p1.y }, 50, Phaser.Easing.Linear.None, true);
+        }
+        p2.direction = 3;
+        p2.animateMovement();
+        var tween2 = game.add.tween(p2).to({ x: p2.x + 20, y: p2.y }, 5000, Phaser.Easing.Linear.None, true);
+        tween2.onComplete.add(moveBack2, p2); function moveBack2() {
+            p2.direction = 2;
+            p2.animateMovement();
+            var tweenBack2 = game.add.tween(p2).to({ x: p2.x - 30, y: p2.y }, 50, Phaser.Easing.Linear.None, true);
+        }
+    }
+    
     if(p3.lightRadius <= 0){
         game.state.start('GameOver');
     }
@@ -298,7 +333,7 @@ GamePlay.prototype.update = function() {
             this.screenText.destroy();
         }
         p3.x = 448;
-        p3.y = 448;
+        p3.y = 416;
         p3.alive = true;
         p3.visible = true;
         p3.moving = true;
