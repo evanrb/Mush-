@@ -25,18 +25,21 @@ glowFly.prototype.update = function() {
     var collide2 = game.physics.arcade.collide(p2, this);
     var collide3 = game.physics.arcade.collide(p3, this)
     if(collide1){
-        this.exists = false;
         twinkle.play();
-        this.lightEmmitter.start(true, 250, null, 50);
+        this.gone();
         p1.lightRadius += 10;
     }else if(collide2){
-        this.exists = false;
+        this.gone();
         twinkle.play();
         p2.lightRadius += 10;
     }else if(collide3){
-        this.exists = false;
+        this.gone();
         twinkle.play();
         p3.lightRadius += 10;
     }
+}
+glowFly.prototype.gone = function(){
+    this.exists = false;
+    this.lightEmmitter.start(true, 250, null, 50);
 }
 

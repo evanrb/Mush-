@@ -127,12 +127,6 @@ GamePlay.prototype.create = function() {
     game.world.setBounds(0, 0, 896, 1600);
     back = game.add.sprite(0,0, 'background');
     
-    
-    
-    
-    
-    
-    
     this.shadowY = 0;
     
     //Add and loop background music
@@ -260,6 +254,19 @@ GamePlay.prototype.create = function() {
     for(i = 0; i < this.FLIES.length; i++){
         this.lights.add(this.FLIES[i]);
     }
+    
+    var timer = game.time.create();
+    timer.add(25000, function(){
+        console.log("destroy flies");
+        for(i = 0; i < this.FLIES.length; i ++){
+            if(this.FLIES[i].y < 480){
+                if(this.FLIES[i].exists){
+                    this.FLIES[i].gone();
+                }
+            }
+        }
+    }, this);
+    timer.start();
 };
 GamePlay.prototype.update = function() {
     if(game.input.keyboard.justPressed(Phaser.Keyboard.P)){
