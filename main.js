@@ -115,7 +115,6 @@ GamePlay.prototype.preload = function() {
     var markerP2;
     var markerP3;
     var mapArray;
-    var shadowY;
     var music;
     var twinkle;
     var isPaused;
@@ -127,13 +126,14 @@ GamePlay.prototype.create = function() {
     game.world.setBounds(0, 0, 896, 1600);
     back = game.add.sprite(0,0, 'background');
     
-    this.shadowY = 0;
+   
     
     //Add and loop background music
     music = game.add.audio('night1');
     music.loopFull();
     
     twinkle = game.add.audio('glowfly');
+    twinkle.allowMultiple = true;
     
     this.isPaused = false;
     
@@ -255,9 +255,8 @@ GamePlay.prototype.create = function() {
         this.lights.add(this.FLIES[i]);
     }
     
-    var timer = game.time.create();
-    timer.add(25000, function(){
-        console.log("destroy flies");
+    this.timer = game.time.create();
+    this.timer.add(25000, function(){
         for(i = 0; i < this.FLIES.length; i ++){
             if(this.FLIES[i].y < 480){
                 if(this.FLIES[i].exists){
@@ -266,9 +265,21 @@ GamePlay.prototype.create = function() {
             }
         }
     }, this);
-    timer.start();
+    this.timer.start();
+    
+    this.preTime = this.timer.duration * .001;
+    this.time = this.preTime.toFixed(2);
+    this.textTime = this.time.toString();
+    this.screenText = game.add.text(448, 240, this.textTime, { font: "65px Arial", fill: "#ff0044", align: "center" });
+    this.screenText.anchor.set(.5);
 };
 GamePlay.prototype.update = function() {
+    if(this.time != 0){
+        this.preTime = this.timer.duration * .001;
+        this.time = this.preTime.toFixed(2);
+        this.textTime = this.time.toString();
+        this.screenText.text = this.textTime;
+    }else{this.screenText.destroy();}
     if(game.input.keyboard.justPressed(Phaser.Keyboard.P)){
         if(this.isPaused){
             this.resumeGame();
@@ -280,7 +291,6 @@ GamePlay.prototype.update = function() {
         game.state.start('GameOver');
     }
     if(game.physics.arcade.collide(p1, p2)){
-        this.shadowY += 410;
         p3.x = 448;
         p3.y = 448;
         p3.alive = true;
@@ -318,7 +328,7 @@ GamePlay.prototype.updateShadowTexture = function(){
     //'rgb(100, 0, 0)'; save for fire level
     // or 300, 100, 200
     this.shadowTexture.context.fillStyle = 'rgb(20, 20, 50)';
-    this.shadowTexture.context.fillRect(0, this.shadowY, this.world.width, this.world.height);
+    this.shadowTexture.context.fillRect(0, 0, this.world.width, this.world.height);
     //console.log(this.shadowTexture);
 
     // Iterate through each of the lights and draw the glow
