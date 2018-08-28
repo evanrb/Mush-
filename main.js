@@ -14,6 +14,15 @@ MainMenu.prototype.preload = function() {
     game.load.spritesheet('mainMenuLogo3', 'Assets/t3.png', 896, 480);
     game.load.spritesheet('mainMenuLogo4', 'Assets/t4.png', 896, 480);
     game.load.spritesheet('mainMenuLogo5', 'Assets/t5.png', 896, 480);
+    game.load.spritesheet('mainMenuLogo6', 'Assets/t6.png', 896, 480);
+    game.load.spritesheet('mainMenuLogo7', 'Assets/t7.png', 896, 480);
+    game.load.spritesheet('mainMenuLogo8', 'Assets/t8.png', 896, 480);
+    game.load.spritesheet('mainMenuLogo9', 'Assets/t9.png', 896, 480);
+    game.load.spritesheet('mainMenuLogo10', 'Assets/t10.png', 896, 480);
+    
+    //Load Audio
+    game.load.audio('menuMusic', ['Sound/mainMenuMusic.mp3']);
+    
     var startButton;
     var mouseFly;
     var mouseOver;
@@ -23,6 +32,10 @@ MainMenu.prototype.create = function() {
     var back = game.add.sprite(0, 0, 'mainMenuBackground');
     back.animations.add('liveBackground', [0, 1, 2, 3, 4, 5, 6, 7], 7, true);
     back.animations.play('liveBackground');
+    
+    //Add and loop background music
+    music = game.add.audio('menuMusic');
+    music.loopFull();
     
     this.logo = game.add.sprite(0, 0, 'mainMenuLogo1');
     
@@ -47,7 +60,6 @@ MainMenu.prototype.create = function() {
     this.frameChecker = 0;
     this.titleFrameNum = 0;
     this.titleSheet = 1;
-    this.total = 0;
     
     this.mouseFly = game.add.sprite(0, 0, 'glowfly');
     this.mouseFly.anchor.x = .5;
@@ -77,26 +89,35 @@ MainMenu.prototype.update = function() {
     if(this.frameChecker % 6 == 0){
         this.logo.destroy();
         if(this.titleSheet == 1){
-            this.logo = game.add.sprite(0, 0, 'mainMenuLogo1');
+            this.logo = game.add.sprite(0, -60, 'mainMenuLogo1');
         }else if(this.titleSheet == 2){
-            this.logo = game.add.sprite(0, 0, 'mainMenuLogo2');
+            this.logo = game.add.sprite(0, -60, 'mainMenuLogo2');
         }else if(this.titleSheet == 3){
-            this.logo = game.add.sprite(0, 0, 'mainMenuLogo3');
+            this.logo = game.add.sprite(0, -60, 'mainMenuLogo3');
         }else if(this.titleSheet == 4){
-            this.logo = game.add.sprite(0, 0, 'mainMenuLogo4');
+            this.logo = game.add.sprite(0, -60, 'mainMenuLogo4');
+        }else if(this.titleSheet == 5){
+            this.logo = game.add.sprite(0, -60, 'mainMenuLogo5');
+        }else if(this.titleSheet == 6){
+            this.logo = game.add.sprite(0, -60, 'mainMenuLogo6');
+        }else if(this.titleSheet == 7){
+            this.logo = game.add.sprite(0, -60, 'mainMenuLogo7');
+        }else if(this.titleSheet == 8){
+            this.logo = game.add.sprite(0, -60, 'mainMenuLogo8');
+        }else if(this.titleSheet == 9){
+            this.logo = game.add.sprite(0, -60, 'mainMenuLogo9');
+        }else if(this.titleSheet == 10){
+            this.logo = game.add.sprite(0, -60, 'mainMenuLogo10');
         }
         this.logo.frame = this.titleFrameNum;
         this.titleFrameNum += 1;
-        if(this.titleFrameNum == 25){
+        if(this.titleFrameNum == 10){
             this.titleFrameNum = 0;
             this.titleSheet += 1;
-            if(this.titleSheet == 5){
+            if(this.titleSheet == 11){
                 this.titleSheet = 1;
-                console.log("hi");
             }
         }
-        this.total += 1;
-        console.log(this.total);
     }
     this.frameChecker += 1;
 };
@@ -109,6 +130,7 @@ MainMenu.prototype.move = function(pointer, x, y, click){
 MainMenu.prototype.startGame = function(){
     //game.input.mouse.requestPointerLock();
     this.game.world.removeAll();
+    music.pause();
     game.state.start('GamePlay');
 };
 MainMenu.prototype.animationStopped = function(anim){
@@ -147,7 +169,6 @@ GamePlay.prototype.preload = function() {
     game.load.spritesheet('together', 'Assets/joined.png', 64, 64)
     game.load.spritesheet('glowfly', 'Assets/glowFly.png', 32, 32);
     
-    
     //Load Maze Background
     game.load.image('background', 'Assets/level1-background.png');
     
@@ -160,6 +181,9 @@ GamePlay.prototype.preload = function() {
     //Load Audio
     game.load.audio('night1', ['Sound/in-his-own-way.ogg']);
     game.load.audio('glowfly', ['Sound/glowfly_Chime_1.ogg']);
+    
+    game.load.audio('seperate', ['Sound/level1Seperate.mp3']);
+    game.load.audio('join', ['Sound/level1Join.mp3']);
     
     var FLIES;
     var mushrooms;
@@ -191,6 +215,9 @@ GamePlay.prototype.create = function() {
     //Add and loop background music
     music = game.add.audio('night1');
     music.loopFull();
+    
+    sepSound = game.add.audio('seperate');
+    joinSound = game.add.audio('join');
     
     twinkle = game.add.audio('glowfly');
     twinkle.allowMultiple = true;
@@ -364,9 +391,14 @@ GamePlay.prototype.update = function() {
             this.screenText.destroy();
         }
         this.notConnected = false;
+        sepSound.play();
+        
+        var moveCamera = game.add.tween(this.game.camera).to({ x: this.game.camera.x, y: 208 }, 2000, Phaser.Easing.Linear.None, true);
+        moveCamera.onComplete.add(allowMovement, this); function allowMovement() { p3.moving = false; game.camera.follow(p3);}  
+        
         p1.direction = 3;
         p1.animateMovement();
-        var tween = game.add.tween(p1).to({ x: p1.x - 20, y: p1.y }, 5000, Phaser.Easing.Linear.None, true);
+        var tween = game.add.tween(p1).to({ x: p1.x - 20, y: p1.y }, 1000, Phaser.Easing.Linear.None, true);
         tween.onComplete.add(moveBack, p1); function moveBack() {
             p1.direction = 2;
             p1.animateMovement();
@@ -374,7 +406,7 @@ GamePlay.prototype.update = function() {
         }
         p2.direction = 3;
         p2.animateMovement();
-        var tween2 = game.add.tween(p2).to({ x: p2.x + 20, y: p2.y }, 5000, Phaser.Easing.Linear.None, true);
+        var tween2 = game.add.tween(p2).to({ x: p2.x + 20, y: p2.y }, 1000, Phaser.Easing.Linear.None, true);
         tween2.onComplete.add(moveBack2, p2); function moveBack2() {
             p2.direction = 2;
             p2.animateMovement();
@@ -390,17 +422,16 @@ GamePlay.prototype.update = function() {
             this.timer.destroy();
             this.screenText.destroy();
         }
+        joinSound.play();
         p3.x = 448;
         p3.y = 416;
         p3.alive = true;
         p3.visible = true;
         p3.moving = true;
-        var moveCamera = game.add.tween(this.game.camera).to({ x: this.game.camera.x, y: p3.y - 220 }, 1000, Phaser.Easing.Linear.None, true);
-        moveCamera.onComplete.add(allowMovement, this); function allowMovement() { p3.moving = false; }  
         p3.lightRadius = p2.lightRadius+p1.lightRadius;
         p1.destroy();
         p2.destroy();
-        game.camera.follow(p3);
+        
     }
     if(p3.y + 32 == 1600){
         game.state.start('GameOver');
