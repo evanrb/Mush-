@@ -9,7 +9,11 @@ MainMenu.prototype.preload = function() {
     game.load.spritesheet('creditsButton', 'Assets/creditsButton.png', 128, 92 );
     game.load.spritesheet('glowfly', 'Assets/glowFly.png', 32, 32);
     game.load.spritesheet('mainMenuBackground', 'Assets/mainMenu.png', 896, 480);
-    game.load.spritesheet('mainMenuLogo', 'Assets/title.png', 896, 480);
+    game.load.spritesheet('mainMenuLogo1', 'Assets/t1.png', 896, 480);
+    game.load.spritesheet('mainMenuLogo2', 'Assets/t2.png', 896, 480);
+    game.load.spritesheet('mainMenuLogo3', 'Assets/t3.png', 896, 480);
+    game.load.spritesheet('mainMenuLogo4', 'Assets/t4.png', 896, 480);
+    game.load.spritesheet('mainMenuLogo5', 'Assets/t5.png', 896, 480);
     var startButton;
     var mouseFly;
     var mouseOver;
@@ -20,9 +24,7 @@ MainMenu.prototype.create = function() {
     back.animations.add('liveBackground', [0, 1, 2, 3, 4, 5, 6, 7], 7, true);
     back.animations.play('liveBackground');
     
-    var logo = game.add.sprite(0, 0, 'mainMenuLogo');
-    logo.animations.add('liveTitle1', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 10, true);
-    logo.animations.play('liveTitle');
+    this.logo = game.add.sprite(0, 0, 'mainMenuLogo1');
     
     this.mouseOverS = false;
     this.mouseOverC = false;
@@ -42,8 +44,10 @@ MainMenu.prototype.create = function() {
     this.creditsButton.inputEnabled = true;
     this.creditsButton.events.onInputDown.add(this.startGame, this);
     
-    
-    
+    this.frameChecker = 0;
+    this.titleFrameNum = 0;
+    this.titleSheet = 1;
+    this.total = 0;
     
     this.mouseFly = game.add.sprite(0, 0, 'glowfly');
     this.mouseFly.anchor.x = .5;
@@ -68,6 +72,33 @@ MainMenu.prototype.update = function() {
         this.creditsButton.animations.play('mouseRemovedC');
         this.mouseOverC = false;
     }
+    
+    //home made animation loop for title since spritesheet was too large
+    if(this.frameChecker % 6 == 0){
+        this.logo.destroy();
+        if(this.titleSheet == 1){
+            this.logo = game.add.sprite(0, 0, 'mainMenuLogo1');
+        }else if(this.titleSheet == 2){
+            this.logo = game.add.sprite(0, 0, 'mainMenuLogo2');
+        }else if(this.titleSheet == 3){
+            this.logo = game.add.sprite(0, 0, 'mainMenuLogo3');
+        }else if(this.titleSheet == 4){
+            this.logo = game.add.sprite(0, 0, 'mainMenuLogo4');
+        }
+        this.logo.frame = this.titleFrameNum;
+        this.titleFrameNum += 1;
+        if(this.titleFrameNum == 25){
+            this.titleFrameNum = 0;
+            this.titleSheet += 1;
+            if(this.titleSheet == 5){
+                this.titleSheet = 1;
+                console.log("hi");
+            }
+        }
+        this.total += 1;
+        console.log(this.total);
+    }
+    this.frameChecker += 1;
 };
 MainMenu.prototype.move = function(pointer, x, y, click){
     if(!click){
@@ -79,6 +110,32 @@ MainMenu.prototype.startGame = function(){
     //game.input.mouse.requestPointerLock();
     this.game.world.removeAll();
     game.state.start('GamePlay');
+};
+MainMenu.prototype.animationStopped = function(anim){
+    this.logo.destroy();
+    var nextAnim = 0;
+    var speed = 10;
+    if(anim == 1){
+        this.logo = game.add.sprite(0, 0, 'mainMenuLogo1');
+        nextAnim = 2;
+    }else if(anim == 2){
+        this.logo = game.add.sprite(0, 0, 'mainMenuLogo2');
+        nextAnim = 3;
+    }else if(anim == 3){
+        this.logo = game.add.sprite(0, 0, 'mainMenuLogo3');
+        nextAnim = 4;
+    }else if(anim == 4){
+        this.logo = game.add.sprite(0, 0, 'mainMenuLogo4');
+        nextAnim = 5;
+    }else if(anim == 5){
+        this.logo = game.add.sprite(0, 0, 'mainMenuLogo5');
+        nextAnim = 1;
+        speed = 1;
+    }
+    this.logo = game.add.sprite(0, 0, 'mainMenuLogo1');
+    var liveLogo = this.logo.animations.add('liveTitle');
+    this.logo.animations.play('liveTitle', speed , false);
+    liveLogo.onComplete.add(this.animationStopped(nextAnim), this);
 };
 
 var GamePlay = function(game){};
@@ -227,9 +284,9 @@ GamePlay.prototype.create = function() {
     
     //a group that holds all the player characters
     this.mushrooms = this.game.add.group();
-    p1 = new mushroom(game, 'RED', 1, 48, 42, level1);
-    p2 = new mushroom(game, 'BLUE', 2, 848, 32, level1);
-    p3 = new mushroom(game, 'together', 3, -60, -2, level1);
+    p1 = new mushroom(game, 'RED', 1, 48, 42, level1, 1, 1);
+    p2 = new mushroom(game, 'BLUE', 2, 848, 32, level1, 1, 26);
+    p3 = new mushroom(game, 'together', 3, -60, -2, level1, 13, 13);
     this.mushrooms.add(p1);
     this.mushrooms.add(p2);
     this.mushrooms.add(p3)

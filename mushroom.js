@@ -1,4 +1,4 @@
-function mushroom(game, key, playerNum, xPos, yPos, map){
+function mushroom(game, key, playerNum, xPos, yPos, map, mapLocation1, mapLocation2){
     
     Phaser.Sprite.call(this, game, xPos, yPos, key);
     
@@ -23,16 +23,14 @@ function mushroom(game, key, playerNum, xPos, yPos, map){
     this.mapArrayLocation = [-1, -1];
     if(this.player == 1){
         this.body.setSize(32, 32, 0, 15);
-        this.mapArrayLocation = [1, 1];
     }else if(this.player == 2){
         this.body.setSize(32, 32, 0, 32);
-        this.mapArrayLocation = [1, 26];
     }else if(this.player == 3){
         this.body.setSize(64, 32, 0, 15);
-        this.mapArrayLocation = [13, 13];
-        //this.mapArrayLocation2 = [14, 15];
         this.frameCount = 0;
     }
+    
+    this.mapArrayLocation = [mapLocation1, mapLocation2];
     
     if(this.player == 1){
         this.upInput = p1U;
