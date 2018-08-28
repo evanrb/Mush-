@@ -8,19 +8,21 @@ MainMenu.prototype.preload = function() {
     game.load.spritesheet('startButton', 'Assets/start.png', 128, 92);
     game.load.spritesheet('creditsButton', 'Assets/creditsButton.png', 128, 92 );
     game.load.spritesheet('glowfly', 'Assets/glowFly.png', 32, 32);
-    game.load.image('mainMenuBackground', 'Assets/main.png');
-    game.load.image('mainMenuLogo', 'Assets/title draft.png');
+    game.load.spritesheet('mainMenuBackground', 'Assets/mainMenu.png', 896, 480);
+    game.load.spritesheet('mainMenuLogo', 'Assets/title.png', 896, 480);
     var startButton;
     var mouseFly;
     var mouseOver;
 };
 MainMenu.prototype.create = function() {
     console.log('MainMenu: create');
-    game.add.sprite(0, 0, 'mainMenuBackground');
+    var back = game.add.sprite(0, 0, 'mainMenuBackground');
+    back.animations.add('liveBackground', [0, 1, 2, 3, 4, 5, 6, 7], 7, true);
+    back.animations.play('liveBackground');
     
-    var logo = game.add.sprite(game.world.centerX, game.world.centerY-50, 'mainMenuLogo');
-    logo.anchor.x = .5;
-    logo.anchor.y = .5;
+    var logo = game.add.sprite(0, 0, 'mainMenuLogo');
+    logo.animations.add('liveTitle1', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 10, true);
+    logo.animations.play('liveTitle');
     
     this.mouseOverS = false;
     this.mouseOverC = false;
@@ -80,7 +82,6 @@ MainMenu.prototype.startGame = function(){
 };
 
 var GamePlay = function(game){};
-
 GamePlay.prototype.preload = function() {
  
     //Load Character and GlowFly spritesheets
@@ -342,7 +343,7 @@ GamePlay.prototype.update = function() {
         p3.lightRadius = p2.lightRadius+p1.lightRadius;
         p1.destroy();
         p2.destroy();
-        
+        game.camera.follow(p3);
     }
     if(p3.y + 32 == 1600){
         game.state.start('GameOver');
@@ -477,6 +478,255 @@ GamePlay.prototype.restartGame = function(){
     this.game.world.removeAll();
     game.state.start('GamePlay');
 };
+
+
+var GamePlayLevel2 = function(game){};
+GamePlayLevel2.prototype.preload = function() {
+ 
+    //Load Character and GlowFly spritesheets
+    game.load.spritesheet('together', 'Assets/joined.png', 64, 64)
+  
+    //Load Maze Background
+    game.load.image('background', 'Assets/level1-background.png');
+    
+    game.load.image('pauseBackground', 'Assets/pauseBackground.png');
+    game.load.spritesheet('quitButton', 'Assets/quit.png', 128, 92);
+    game.load.spritesheet('restartButton', 'Assets/restart.png', 128, 92);
+    
+    //Load Audio
+    game.load.audio('night1', ['Sound/in-his-own-way.ogg']);
+   
+    var mushrooms;
+    var back;
+    var p3;
+    var markerP3;
+    var mapArray;
+    var music;
+    var isPaused;
+};
+GamePlayLevel2.prototype.create = function() {
+    
+   // Set stage background color(required for shading)
+    this.game.stage.backgroundColor = 0x78453A;
+    game.world.setBounds(0, 0, 896, 1600);
+    back = game.add.sprite(0,0, 'background');
+    
+    //Add and loop background music
+    music = game.add.audio('night1');
+    music.loopFull();
+    
+    this.isPaused = false;
+    
+    var level1 = [
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1],
+        [1, 1, 1, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1],
+        [1, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1],
+        [1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1],
+        [1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1],
+        [1, 1, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1],
+        [1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1],
+        [1, 0, 1, 1, 1, 1, 0, 1, 0, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1],
+        [1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1],
+        [1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1],
+        [1, 0, 0, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1],
+        [1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1],
+        [1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1],
+        [1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1],
+        [1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1],
+        [1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1],
+        [1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1],
+        [1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1],
+        [1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1],
+        [1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+    ];
+    
+    
+    //a group that holds all the player characters
+    this.mushrooms = this.game.add.group();
+    p3 = new mushroom(game, 'together', 3, -60, -2, level1);
+    p3.alive = true;
+    p3.visible = true;
+    p3.lightRadius = p2.lightRadius+p1.lightRadius;
+    game.camera.follow(p3);
+    this.mushrooms.add(p3)   
+    
+    this.LIGHT_RADIUS = 0;
+    
+    // Create the shadow texture
+    this.shadowTexture = this.game.add.bitmapData(this.world.width, this.world.height);
+
+    // Create an object that will use the bitmap as a texture
+    var lightSprite = this.game.add.image(0, 0, this.shadowTexture);
+
+    // Set the blend mode to MULTIPLY. This will darken the colors of
+    // everything below this sprite.
+    lightSprite.blendMode = Phaser.blendModes.MULTIPLY;
+
+    // Create the lights group
+    this.lights = this.game.add.group();
+    this.lights.add(p3);
+    
+};
+GamePlayLevel2.prototype.update = function() {
+   
+    if(game.input.keyboard.justPressed(Phaser.Keyboard.P)){
+        if(this.isPaused){
+            this.resumeGame();
+        }else{
+           this.pause(); 
+        }
+    }
+    
+    if(p3.y + 32 == 1600){
+        game.state.start('GameOver');
+    }
+    
+    
+    if(this.isPaused){
+        this.pauseScreenUpdate();
+    }else{this.updateShadowTexture();}
+    
+};
+GamePlayLevel2.prototype.render = function(){
+    //game.debug.body(p1);
+    //game.debug.body(p2);
+//    game.debug.body(map);
+//    for(i = 0; i < this.FLIES.length; i++){
+//        game.debug.body(this.FLIES[i]);
+//    }
+//    if(transformed){
+//        game.debug.body(p3);
+//    }
+};
+GamePlayLevel2.prototype.updateShadowTexture = function(){
+    //'rgb(100, 0, 0)'; save for fire level
+    // or 300, 100, 200
+    this.shadowTexture.context.fillStyle = 'rgb(20, 20, 50)';
+    this.shadowTexture.context.fillRect(0, 0, this.world.width, this.world.height);
+    //console.log(this.shadowTexture);
+
+    // Iterate through each of the lights and draw the glow
+    this.lights.forEach(function(light) {
+        // Randomly change the radius each frame
+       // console.log(light);
+        if(light.exists){
+           if(light.player === 3){
+                this.LIGHT_RADIUS = p3.lightRadius;
+            }else if(light.key == "glowfly" && light.exists){
+            //console.log(light);
+                this.LIGHT_RADIUS = 15;
+            }
+        
+            var radius = this.LIGHT_RADIUS + this.game.rnd.integerInRange(1,10);
+        // Draw circle of light with a soft edge
+            var gradient =
+                this.shadowTexture.context.createRadialGradient(
+                    light.x, light.y,this.LIGHT_RADIUS * .05,
+                    light.x, light.y, radius);
+            //changing gradient color
+            
+            gradient.addColorStop(0, 'rgba(100, 255, 255, 1.0)');
+            gradient.addColorStop(1, 'rgba(255, 255, 255, 0.0)');
+
+            this.shadowTexture.context.beginPath();
+            this.shadowTexture.context.fillStyle = gradient;
+            this.shadowTexture.context.arc(light.x, light.y, radius, 0, Math.PI*2);
+            this.shadowTexture.context.fill();
+        }
+        
+    }, this);
+
+    // This just tells the engine it should update the texture cache
+    this.shadowTexture.dirty = true;
+    
+};
+GamePlayLevel2.prototype.pause = function(){
+    p3.moving = true;
+    this.isPaused = true;
+    this.pauseBackground = game.add.sprite(game.camera.x, game.camera.y, 'pauseBackground');
+    this.quitButton = game.add.sprite(game.camera.x + 448, game.camera.y + 286, 'quitButton');
+    this.quitButton.anchor.x = .5;
+    this.quitButton.anchor.y = .5;
+    this.restartButton = game.add.sprite(game.camera.x + 448, game.camera.y + 194, 'restartButton');
+    this.restartButton.anchor.x = .5;
+    this.restartButton.anchor.y = .5;
+    this.quitButton.animations.add('mouseOverQ', [0,1], 20, false);
+    this.quitButton.animations.add('mouseRemQ', [1, 0], 20, false);
+    this.restartButton.animations.add('mouseOverR', [0,1], 20, false);
+    this.restartButton.animations.add('mouseRemR', [1, 0], 20, false);
+    this.restartButton.inputEnabled = true;
+    this.restartButton.events.onInputDown.add(this.restartGame, this);
+    this.quitButton.inputEnabled = true;
+    this.quitButton.events.onInputDown.add(this.quitGame, this);
+    this.mouseOverQ = false;
+    this.mouseOverR = false;
+};
+GamePlayLevel2.prototype.pauseScreenUpdate = function(){
+    if (this.quitButton.input.pointerOver() && this.mouseOverQ == false){
+        this.quitButton.animations.play('mouseOverQ');
+        this.mouseOverQ = true;
+    }else if(!this.quitButton.input.pointerOver() && this.mouseOverQ == true){
+        this.quitButton.animations.play('mouseRemQ');
+        this.mouseOverQ = false;
+    }
+    if (this.restartButton.input.pointerOver() && this.mouseOverR == false){
+        this.restartButton.animations.play('mouseOverR');
+        this.mouseOverR = true;
+    }else if(!this.restartButton.input.pointerOver() && this.mouseOverR == true){
+        this.restartButton.animations.play('mouseRemR');
+        this.mouseOverR = false;
+    }
+};
+GamePlayLevel2.prototype.resumeGame = function(){
+    p3.moving = false;
+    this.isPaused = false;
+    this.pauseBackground.destroy();
+    this.restartButton.destroy();
+    this.quitButton.destroy();
+};
+GamePlayLevel2.prototype.quitGame = function(){
+    music.pause();
+    this.game.world.removeAll();
+    game.state.start('MainMenu');  
+};
+GamePlayLevel2.prototype.restartGame = function(){
+    music.pause();
+    this.game.world.removeAll();
+    game.state.start('GamePlay');
+};
+
+
+
 var GameOver = function(game) {};
 GameOver.prototype = {
     preload: function() {
