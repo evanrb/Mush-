@@ -698,11 +698,19 @@ GamePlayLevel2.prototype.create = function() {
 
     // Create the lights group
     this.lights = this.game.add.group();
-    this.lights.add(p3);
     this.lights.add(invisLight);
+    this.lights.add(p3);
     
-   this.frameCount = 0;
+    
+    this.gradientVal = 255;
+    this.gradientGB = '255';
+    this.gradientValR = 100;
+    this.gradientR = '100';
+    this.gradientCountInstance = 0;
+    
+    this.frameCount = 0;
     this.frameCountInstance = 0;
+    this.lightHere = 0;
 };
 GamePlayLevel2.prototype.update = function() {
    
@@ -718,17 +726,36 @@ GamePlayLevel2.prototype.update = function() {
         game.state.start('GameOver');
     }
     
+    if(this.gradientVal > 25 && this.frameCount - this.gradientCountInstance == 5 && this.gradientGB != this.gradientR){
+        this.gradientVal -= 5;
+        this.gradientGB = this.gradientVal.toString();
+        this.gradientCountInstance = this.frameCount;
+        if(this.gradientR > 0){
+            this.gradientValR -= 5;
+            this.gradientGB = this.gradientValR.toString();
+        }
+    }else if(this.gradientVal == 25){
+        //this.lightHere = 0;
+        this.gradientR = '100';
+        this.gradientVal = 255;
+        this.gradientGB = this.gradientVal.toString();
+        invisLight.exists = false;
+    }
     
     if(this.isPaused){
         this.pauseScreenUpdate();
     }else{this.updateShadowTexture();}
     
     if(this.frameCount % 300 == 0){
+        //this.lightHere = 1;
         invisLight.exists = true;
+        //this.gradientVal = 105;
+        this.gradientCountInstance = this.frameCount;
+        //this.gradient = this.gradientVal.toString();
         this.frameCountInstance = this.frameCount;
     }
     if(this.frameCount - this.frameCountInstance == 30){
-        invisLight.exists = false;
+        //invisLight.exists = false;
     }
     
     this.frameCount += 1;
@@ -770,10 +797,11 @@ GamePlayLevel2.prototype.updateShadowTexture = function(){
                     light.x, light.y, radius);
             //changing gradient color
             if(light.key == "invisLight" && light.exists){
-                gradient.addColorStop(1, 'rgba(100, 255, 255, 1.0)');
+                gradient.addColorStop(1, 'rgba('+ this.gradientR + ',' + this.gradientGB + ',' + this.gradientGB + ', 1.0)');
             }else{
                 gradient.addColorStop(0, 'rgba(100, 255, 255, 1.0)');
             }
+            //gradient.addColorStop(this.lightHere, 'rgba('+ this.gradient + ', 255, 255, 1.0)');
             gradient.addColorStop(1, 'rgba(255, 255, 255, 0.0)');
 
             this.shadowTexture.context.beginPath();
