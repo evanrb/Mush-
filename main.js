@@ -587,7 +587,8 @@ GamePlayLevel2.prototype.preload = function() {
     //Load Audio
     game.load.audio('night2', ['Sound/2nd-Night.wav']);
     game.load.audio('thunderBuild', ['Sound/buildThunder.mp3']);
-    game.load.audio('softStrike', ['Sound/strike.mp3']);
+    game.load.audio('softStrike', ['Sound/softerStrike.mp3']);
+    game.load.audio('rainSound', ['Sound/rain.mp3']);
     
     var mushrooms;
     var back;
@@ -607,15 +608,19 @@ GamePlayLevel2.prototype.create = function() {
     //Add and loop background music
     music = game.add.audio('night2');
     music.loopFull();
-    music.volume = 0;
+    music.volume = 1;
+    
+    rainSound = game.add.audio('rainSound');
+    rainSound.loopFull();
+    rainSound.volume = .65;
     
     thunderBuild = game.add.audio('thunderBuild');
     thunderBuild.loopFull();
     thunderBuild.volume = .8;
     
-    this.strikeSound = game.add.audio('softStrike');
-    this.strikeSound.allowMultiple = true;
-    this.strikeSound.volume = 1;
+    strikeSound = game.add.audio('softStrike');
+    strikeSound.allowMultiple = true;
+    strikeSound.volume = 1;
     
     this.isPaused = false;
     
@@ -712,7 +717,7 @@ GamePlayLevel2.prototype.create = function() {
     this.lights.add(invisLight);
     this.lights.add(p3);
     invisLight.exists = false;
-    this.frameCount = 0;
+    this.frameCount = 1;
     this.frameCountInstance = 0;
     
      // Create a bitmap for the lightning bolt texture
@@ -732,6 +737,8 @@ GamePlayLevel2.prototype.create = function() {
     this.lightFrameInstance = 0;
     this.lightAlpha = 1;
     this.lightAlphaString = this.lightAlpha.toString();
+    strikeSoundPlayed = false;
+    this.lightningTime = Math.floor((Math.random() * 500) + 300);
 };
 GamePlayLevel2.prototype.update = function() {
    
@@ -755,10 +762,16 @@ GamePlayLevel2.prototype.update = function() {
     if(invisLight.exists = true && this.frameCount - this.lightFrameInstance < 350){
         this.lightAlpha -= .01;
         this.lightAlphaString = this.lightAlpha.toString();
+        console.log(this.lightAlpha);
+        if(this.lightAlpha < 0 && !strikeSoundPlayed){
+            strikeSound.play();
+            strikeSoundPlayed = true;
+        }
         //this.lightFrameInstance = this.frameCount;
     }
     
-    if(this.frameCount % 300 == 0){
+    if(this.frameCount % this.lightningTime == 0){
+        this.lightningTime = Math.floor((Math.random() * 500) + 300);
         this.lightning.x = this.game.camera.x + (Math.random() * 896);
         this.zap();
         invisLight.exists = true;
@@ -766,14 +779,19 @@ GamePlayLevel2.prototype.update = function() {
         this.lightAlphaString = this.lightAlpha.toString();
         this.lightFrameInstance = this.frameCount;
         this.frameCountInstance = this.frameCount;
+        strikeSoundPlayed = false;
     }
-    if(this.frameCount - this.frameCountInstance == 480){
+    /*if(this.frameCount - this.frameCountInstance == 480){
         invisLight.exists = false;
+        console.log("made it");
         this.strikeSound.play();
-    }
+    }*/
     
     
     this.frameCount += 1;
+    if(this.frameCount == 800){
+        this.frameCount = 1;
+    }
 };
 GamePlayLevel2.prototype.render = function(){
     //game.debug.body(p1);
