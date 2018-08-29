@@ -20,6 +20,8 @@ MainMenu.prototype.preload = function() {
     game.load.spritesheet('mainMenuLogo9', 'Assets/t9.png', 896, 480);
     game.load.spritesheet('mainMenuLogo10', 'Assets/t10.png', 896, 480);
     
+    game.load.image('creditsText', 'Assets/credits.png');
+    
     //Load Audio
     game.load.audio('menuMusic', ['Sound/mainMenuMusic.mp3']);
     
@@ -55,11 +57,13 @@ MainMenu.prototype.create = function() {
     this.creditsButton.animations.add('mouseOverC', [0,1,2,3,4], 20, false);
     this.creditsButton.animations.add('mouseRemovedC', [4, 3, 2, 1, 0], 20, false);
     this.creditsButton.inputEnabled = true;
-    this.creditsButton.events.onInputDown.add(this.startGame, this);
+    this.creditsButton.events.onInputDown.add(this.credits, this);
     
     this.frameChecker = 0;
     this.titleFrameNum = 0;
     this.titleSheet = 1;
+    
+    this.creditsOn = false;
     
     this.mouseFly = game.add.sprite(0, 0, 'glowfly');
     this.mouseFly.anchor.x = .5;
@@ -68,8 +72,27 @@ MainMenu.prototype.create = function() {
     game.canvas.addEventListener('mousedown', this.clickSomething);
     game.input.addMoveCallback(this.move, this);
     //game.add.text(52, 200, 'Press ENTER to change states.', { fontSize: '26px', fill: '#FFF', align: "center" });
+    
+    
+    this.creditsBack = game.add.sprite(0, 0, 'mainMenuBackground');
+    this.creditsBack.animations.add('liveBackground', [0, 1, 2, 3, 4, 5, 6, 7], 7, true);
+    this.creditsBack.animations.play('liveBackground');
+    this.creditsText = game.add.sprite(0, 0, 'creditsText');
+    this.creditsBack.visible = false;
+    this.creditsText.visible = false;
+    this.clickedDiffFrame = false;
+    
+    this.creditsBack.inputEnabled = false;
+    this.creditsBack.events.onInputDown.add(this.turnCreditsOff, this);
+    this.creditsOff = false;
 };
 MainMenu.prototype.update = function() {
+    /*if(this.creditsOn == true && game.input.activePointer.leftButton.isDown){
+        this.creditsOn = false;
+        this.creditsBack.destroy();
+        this.creditsText.destroy();
+    }*/
+    
     if (this.startButton.input.pointerOver() && this.mouseOverS == false){
         this.startButton.animations.play('mouseOver');
         this.mouseOverS = true;
@@ -84,6 +107,8 @@ MainMenu.prototype.update = function() {
         this.creditsButton.animations.play('mouseRemovedC');
         this.mouseOverC = false;
     }
+    
+    
     
     //home made animation loop for title since spritesheet was too large
     if(this.frameChecker % 6 == 0){
@@ -119,6 +144,19 @@ MainMenu.prototype.update = function() {
             }
         }
     }
+    
+    if(this.creditsOn == true){
+        this.logo.visible = false;
+        if(this.creditsOff){
+            this.creditsOn = false;
+            this.creditsBack.visible = false;
+            this.creditsText.visible = false;
+            this.logo.visible = true;
+            this.clickedDiffFrame = false;
+            this.creditsOff = false;
+        }
+        this.clickedDiffFrame = true;
+    }
     this.frameChecker += 1;
 };
 MainMenu.prototype.move = function(pointer, x, y, click){
@@ -129,10 +167,12 @@ MainMenu.prototype.move = function(pointer, x, y, click){
 };
 MainMenu.prototype.startGame = function(){
     //game.input.mouse.requestPointerLock();
-    this.game.world.removeAll();
-    music.pause();
-    //game.state.start('GamePlay');
-    game.state.start('GamePlayLevel2', 100);
+    if(!this.creditsOn){
+        this.game.world.removeAll();
+        music.pause();
+        //game.state.start('GamePlay');
+        game.state.start('GamePlayLevel2', 100);
+    }
 };
 MainMenu.prototype.animationStopped = function(anim){
     this.logo.destroy();
@@ -159,6 +199,17 @@ MainMenu.prototype.animationStopped = function(anim){
     var liveLogo = this.logo.animations.add('liveTitle');
     this.logo.animations.play('liveTitle', speed , false);
     liveLogo.onComplete.add(this.animationStopped(nextAnim), this);
+};
+MainMenu.prototype.credits = function(){
+    this.creditsOn = true;
+    this.creditsBack.inputEnabled = true;
+    this.creditsBack.visible = true;
+    this.creditsText.visible = true;
+    game.input.mouse.capture = true;
+};
+MainMenu.prototype.turnCreditsOff = function(){
+    this.creditsOff = true;
+    this.creditsBack.inputEnabled = false;
 };
 
 var GamePlay = function(game){};
@@ -781,12 +832,6 @@ GamePlayLevel2.prototype.update = function() {
         this.frameCountInstance = this.frameCount;
         strikeSoundPlayed = false;
     }
-    /*if(this.frameCount - this.frameCountInstance == 480){
-        invisLight.exists = false;
-        console.log("made it");
-        this.strikeSound.play();
-    }*/
-    
     
     this.frameCount += 1;
     if(this.frameCount == 800){
