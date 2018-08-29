@@ -585,8 +585,10 @@ GamePlayLevel2.prototype.preload = function() {
     game.load.spritesheet('restartButton', 'Assets/restart.png', 128, 92);
     
     //Load Audio
-    game.load.audio('night1', ['Sound/in-his-own-way.ogg']);
-   
+    game.load.audio('night2', ['Sound/2nd-Night.wav']);
+    game.load.audio('thunderBuild', ['Sound/buildThunder.mp3']);
+    game.load.audio('softStrike', ['Sound/strike.mp3']);
+    
     var mushrooms;
     var back;
     var p3;
@@ -603,8 +605,17 @@ GamePlayLevel2.prototype.create = function() {
     back = game.add.sprite(0,0, 'background');
     
     //Add and loop background music
-    music = game.add.audio('night1');
+    music = game.add.audio('night2');
     music.loopFull();
+    music.volume = 0;
+    
+    thunderBuild = game.add.audio('thunderBuild');
+    thunderBuild.loopFull();
+    thunderBuild.volume = .8;
+    
+    this.strikeSound = game.add.audio('softStrike');
+    this.strikeSound.allowMultiple = true;
+    this.strikeSound.volume = 1;
     
     this.isPaused = false;
     
@@ -758,6 +769,7 @@ GamePlayLevel2.prototype.update = function() {
     }
     if(this.frameCount - this.frameCountInstance == 480){
         invisLight.exists = false;
+        this.strikeSound.play();
     }
     
     
