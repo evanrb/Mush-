@@ -121,6 +121,8 @@ mushroom.prototype.update = function () {
                         }else{
                             this.hitWall(this.x, this.y - 5, 150, this.x, this.y, 150);
                         }
+                    }else if(this.helper.total() > 1){
+                        this.lightRadius -= 5;
                     }
                     if(this.helper.total() == 1){
                         this.pressInstanceFrame = this.frameCount;
@@ -137,6 +139,8 @@ mushroom.prototype.update = function () {
                         }else{
                             this.hitWall(this.x, this.y - 5, 150, this.x, this.y, 150);
                         }
+                    }else if(this.helper.total() > 1){
+                        this.lightRadius -= 5;
                     }
                     if(this.helper.total() == 1){
                         this.pressInstanceFrame = this.frameCount;
@@ -153,6 +157,8 @@ mushroom.prototype.update = function () {
                         }else{
                             this.hitWall(this.x + 20, this.y, 150, this.x, this.y, 150);
                         }
+                    }else if(this.helper.total() > 1){
+                        this.lightRadius -= 5;
                     }
                     if(this.helper.total() == 1){
                         this.pressInstanceFrame = this.frameCount;
@@ -169,6 +175,8 @@ mushroom.prototype.update = function () {
                         }else{
                             this.hitWall(this.x + 20, this.y, 150, this.x, this.y, 150);
                         }
+                    }else if(this.helper.total() > 1){
+                        this.lightRadius -= 5;
                     }
                     if(this.helper.total() == 1){
                         this.pressInstanceFrame = this.frameCount;
@@ -185,6 +193,8 @@ mushroom.prototype.update = function () {
                         }else{
                             this.hitWall(this.x - 15, this.y, 150, this.x, this.y, 150);
                         }
+                    }else if(this.helper.total() > 1){
+                        this.lightRadius -= 5;
                     }
                     if(this.helper.total() == 1){
                         this.pressInstanceFrame = this.frameCount;
@@ -201,6 +211,8 @@ mushroom.prototype.update = function () {
                         }else{
                             this.hitWall(this.x - 15, this.y, 150, this.x, this.y, 150);
                         }
+                    }else if(this.helper.total() > 1){
+                        this.lightRadius -= 5;
                     }
                     if(this.helper.total() == 1){
                         this.pressInstanceFrame = this.frameCount;
@@ -217,6 +229,8 @@ mushroom.prototype.update = function () {
                         }else{
                             this.hitWall(this.x, this.y + 5, 150, this.x, this.y, 150);
                         }
+                    }else if(this.helper.total() > 1){
+                        this.lightRadius -= 5;
                     }
                     if(this.helper.total() == 1){
                         this.pressInstanceFrame = this.frameCount;
@@ -233,6 +247,8 @@ mushroom.prototype.update = function () {
                         }else{
                             this.hitWall(this.x, this.y + 5, 150, this.x, this.y, 150);
                         }
+                    }else if(this.helper.total() > 1){
+                        this.lightRadius -= 5;
                     }
                     if(this.helper.total() == 1){
                         this.pressInstanceFrame = this.frameCount;
