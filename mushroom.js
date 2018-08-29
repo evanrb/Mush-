@@ -112,7 +112,7 @@ mushroom.prototype.update = function () {
                 }
             }
         }else {
-                if (game.input.keyboard.justPressed(this.upInput)){
+                if (game.input.keyboard.justPressed(this.upInput) && this.helper.canTakeU1){
                     if(this.helper.keyIn(0)){
                         this.direction = 1;
                         if(this.maze[this.mapArrayLocation[0] - 1][this.mapArrayLocation[1]] == 0 && this.maze[this.mapArrayLocation[0] - 1][this.mapArrayLocation[1] + 1] == 0){
@@ -128,7 +128,7 @@ mushroom.prototype.update = function () {
                         this.helper.clearVals();
                     }
                 }
-            if (game.input.keyboard.justPressed(this.upInput2)){
+            if (game.input.keyboard.justPressed(this.upInput2) && this.helper.canTakeU2){
                     if(this.helper.keyIn(0.2)){
                         this.direction = 1;
                         if(this.maze[this.mapArrayLocation[0] - 1][this.mapArrayLocation[1]] == 0 && this.maze[this.mapArrayLocation[0] - 1][this.mapArrayLocation[1] + 1] == 0){
@@ -144,7 +144,7 @@ mushroom.prototype.update = function () {
                         this.helper.clearVals();
                     }
                 }
-                if (game.input.keyboard.justPressed(this.rightInput)){
+                if (game.input.keyboard.justPressed(this.rightInput) && this.helper.canTakeR1){
                     if(this.helper.keyIn(2)){
                         this.direction = 2;
                         if(this.maze[this.mapArrayLocation[0]][this.mapArrayLocation[1] + 2] == 0){
@@ -160,7 +160,7 @@ mushroom.prototype.update = function () {
                         this.helper.clearVals();
                     }
                 }
-            if (game.input.keyboard.justPressed(this.rightInput2)){
+            if (game.input.keyboard.justPressed(this.rightInput2) && this.helper.canTakeR2){
                     if(this.helper.keyIn(2.2)){
                         this.direction = 2;
                         if(this.maze[this.mapArrayLocation[0]][this.mapArrayLocation[1] + 2] == 0){
@@ -176,7 +176,7 @@ mushroom.prototype.update = function () {
                         this.helper.clearVals();
                     }
                 }
-            if (game.input.keyboard.justPressed(this.leftInput)){
+            if (game.input.keyboard.justPressed(this.leftInput) && this.helper.canTakeL1){
                     if(this.helper.keyIn(1)){
                         this.direction = 3;
                         if(this.maze[this.mapArrayLocation[0]][this.mapArrayLocation[1] - 1] == 0){
@@ -192,7 +192,7 @@ mushroom.prototype.update = function () {
                         this.helper.clearVals();
                     }
                 }
-            if (game.input.keyboard.justPressed(this.leftInput2)){
+            if (game.input.keyboard.justPressed(this.leftInput2) && this.helper.canTakeL2){
                     if(this.helper.keyIn(1.2)){
                         this.direction = 3;
                         if(this.maze[this.mapArrayLocation[0]][this.mapArrayLocation[1] - 1] == 0){
@@ -208,7 +208,7 @@ mushroom.prototype.update = function () {
                         this.helper.clearVals();
                     }
                 }
-            if (game.input.keyboard.justPressed(this.downInput)){
+            if (game.input.keyboard.justPressed(this.downInput) && this.helper.canTakeD1){
                     if(this.helper.keyIn(3)){
                         this.direction = 0;
                         if(this.maze[this.mapArrayLocation[0] + 1][this.mapArrayLocation[1]] == 0 && this.maze[this.mapArrayLocation[0] + 1][this.mapArrayLocation[1] + 1] == 0){
@@ -224,7 +224,7 @@ mushroom.prototype.update = function () {
                         this.helper.clearVals();
                     }
                 }
-            if (game.input.keyboard.justPressed(this.downInput2)){
+            if (game.input.keyboard.justPressed(this.downInput2) && this.helper.canTakeD2){
                     if(this.helper.keyIn(3.2)){
                         this.direction = 0;
                         if(this.maze[this.mapArrayLocation[0] + 1][this.mapArrayLocation[1]] == 0 && this.maze[this.mapArrayLocation[0] + 1][this.mapArrayLocation[1] + 1] == 0){

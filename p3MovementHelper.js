@@ -62,19 +62,7 @@ class p3MovementHelper{
     };
     
     total(){
-        var total = 0;
-        if(this.up != 2){
-            total += this.up;
-        }
-        if(this.left != 2){
-            total += this.left;
-        }
-        if(this.right != 2){
-            total += this.right;
-        }
-        if(this.down != 2){
-            total += this.down;
-        }
+        var total = this.up + this.left + this.right + this.down;
         return total;
     };
 

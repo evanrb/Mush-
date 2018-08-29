@@ -813,7 +813,6 @@ GamePlayLevel2.prototype.update = function() {
     if(invisLight.exists = true && this.frameCount - this.lightFrameInstance < 350){
         this.lightAlpha -= .01;
         this.lightAlphaString = this.lightAlpha.toString();
-        console.log(this.lightAlpha);
         if(this.lightAlpha < 0 && !strikeSoundPlayed){
             strikeSound.play();
             strikeSoundPlayed = true;
