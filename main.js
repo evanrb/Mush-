@@ -682,7 +682,7 @@ GamePlayLevel2.prototype.create = function() {
     emitter.area = area;
     
     invisLight = game.add.sprite(game.world.centerX, game.world.centerY, 'invisLight');
-    invisLight.exists = false;
+    
     
     this.LIGHT_RADIUS = 0;
     
@@ -700,12 +700,31 @@ GamePlayLevel2.prototype.create = function() {
     this.lights = this.game.add.group();
     this.lights.add(invisLight);
     this.lights.add(p3);
-    
+    invisLight.exists = false;
     this.frameCount = 0;
     this.frameCountInstance = 0;
+    
+     // Create a bitmap for the lightning bolt texture
+    this.lightningBitmap = this.game.add.bitmapData(896, 480);
+
+    // Create a sprite to hold the lightning bolt texture
+    this.lightning = this.game.add.image(0 , 0, this.lightningBitmap);
+
+    // Set the anchor point of the sprite to center of the top edge
+    // This allows us to position the lightning by simply specifiying the
+    // x and y coordinate of where we want the lightning to appear from.
+    this.lightning.anchor.setTo(0.5, 0);
+
+    // Trigger lightning on mouse clicks and taps
+    //this.game.input.onTap.add(this.zap, this);
+    
+    this.lightFrameInstance = 0;
+    this.lightAlpha = 1;
+    this.lightAlphaString = this.lightAlpha.toString();
 };
 GamePlayLevel2.prototype.update = function() {
    
+    
     if(game.input.keyboard.justPressed(Phaser.Keyboard.P)){
         if(this.isPaused){
             this.resumeGame();
@@ -722,13 +741,25 @@ GamePlayLevel2.prototype.update = function() {
         this.pauseScreenUpdate();
     }else{this.updateShadowTexture();}
     
+    if(invisLight.exists = true && this.frameCount - this.lightFrameInstance < 350){
+        this.lightAlpha -= .01;
+        this.lightAlphaString = this.lightAlpha.toString();
+        //this.lightFrameInstance = this.frameCount;
+    }
+    
     if(this.frameCount % 300 == 0){
+        this.lightning.x = this.game.camera.x + (Math.random() * 896);
+        this.zap();
         invisLight.exists = true;
+        this.lightAlpha = 1;
+        this.lightAlphaString = this.lightAlpha.toString();
+        this.lightFrameInstance = this.frameCount;
         this.frameCountInstance = this.frameCount;
     }
-    if(this.frameCount - this.frameCountInstance == 30){
+    if(this.frameCount - this.frameCountInstance == 480){
         invisLight.exists = false;
     }
+    
     
     this.frameCount += 1;
 };
@@ -742,6 +773,95 @@ GamePlayLevel2.prototype.render = function(){
 //    if(transformed){
 //        game.debug.body(p3);
 //    }
+};
+// Create a lightning bolt
+GamePlayLevel2.prototype.zap = function() {
+    console.log("in zap");
+    // Create the lightning texture
+    this.createLightningTexture(this.lightningBitmap.width/2, 0, 200, 3, false);
+
+    // Make the lightning sprite visible
+    this.lightning.alpha = 1;
+
+    // Fade out the lightning sprite using a tween on the alpha property
+    // Check out the "Easing function" examples for more info.
+    this.game.add.tween(this.lightning)
+        .to({ alpha: 0.5 }, 100, Phaser.Easing.Bounce.Out)
+        .to({ alpha: 1.0 }, 100, Phaser.Easing.Bounce.Out)
+        .to({ alpha: 0.5 }, 100, Phaser.Easing.Bounce.Out)
+        .to({ alpha: 1.0 }, 100, Phaser.Easing.Bounce.Out)
+        .to({ alpha: 0 }, 250, Phaser.Easing.Cubic.In)
+        .start();
+};
+// This function creates a texture that looks like a lightning bolt
+GamePlayLevel2.prototype.createLightningTexture = function(x, y, segments, boltWidth, branch) {
+    // Get the canvas drawing context for the lightningBitmap
+    var ctx = this.lightningBitmap.context;
+    var width = this.lightningBitmap.width;
+    var height = this.lightningBitmap.height;
+
+    // Our lightning will be made up of several line segments starting at
+    // the center of the top edge of the bitmap and ending at the bottom edge
+    // of the bitmap.
+
+    // Clear the canvas
+    if (!branch) ctx.clearRect(0, 0, width, height);
+
+    // Draw each of the segments
+    for(var i = 0; i < segments; i++) {
+        // Set the lightning color and bolt width
+        ctx.strokeStyle = 'rgb(255, 255, 255)';
+        ctx.lineWidth = boltWidth;
+
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+
+        // Calculate an x offset from the end of the last line segment and
+        // keep it within the bounds of the bitmap
+        if (branch) {
+            // For a branch
+            x += this.game.rnd.integerInRange(-10, 10);
+        } else {
+            // For the main bolt
+            x += this.game.rnd.integerInRange(-30, 30);
+        }
+        if (x <= 10) x = 10;
+        if (x >= width-10) x = width-10;
+
+        // Calculate a y offset from the end of the last line segment.
+        // When we've reached the ground or there are no more segments left,
+        // set the y position to the height of the bitmap. For branches, we
+        // don't care if they reach the ground so don't set the last coordinate
+        // to the ground if it's hanging in the air.
+        if (branch) {
+            // For a branch
+            y += this.game.rnd.integerInRange(10, 20);
+        } else {
+            // For the main bolt
+            y += this.game.rnd.integerInRange(20, height/segments);
+        }
+        if ((!branch && i == segments - 1) || y > height) {
+            y = height;
+        }
+
+        // Draw the line segment
+        ctx.lineTo(x, y);
+        ctx.stroke();
+
+        // Quit when we've reached the ground
+        if (y >= height) break;
+
+        // Draw a branch 20% of the time off the main bolt only
+        if (!branch) {
+            if (Phaser.Utils.chanceRoll(20)) {
+                // Draws another, thinner, bolt starting from this position
+                this.createLightningTexture(x, y, 10, 1, true);
+            }
+        }
+    }
+
+    // This just tells the engine it should update the texture cache
+    this.lightningBitmap.dirty = true;
 };
 GamePlayLevel2.prototype.updateShadowTexture = function(){
     //'rgb(100, 0, 0)'; save for fire level
@@ -769,7 +889,7 @@ GamePlayLevel2.prototype.updateShadowTexture = function(){
                     light.x, light.y, radius);
             //changing gradient color
             if(light.key == "invisLight" && light.exists){
-                gradient.addColorStop(1, 'rgba(100, 255, 255, 1.0)');
+                gradient.addColorStop(1, 'rgba(100, 255, 255,' + this.lightAlphaString + ')');
             }else{
                 gradient.addColorStop(0, 'rgba(100, 255, 255, 1.0)');
             }
