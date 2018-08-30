@@ -180,8 +180,9 @@ MainMenu.prototype.startGame = function(){
         intro.destroy();
         this.game.world.removeAll();
         music.pause();
-        game.state.start('GamePlay');
+        //game.state.start('GamePlay');
         //game.state.start('GamePlayLevel2', 100);
+        game.state.start('GamePlayLevel3');
     }
 };
 
@@ -189,10 +190,12 @@ MainMenu.prototype.startVideo = function() {
     
     if(!this.creditsOn){
         this.videoOn = true;
-        intro.play(false);
-        intro.addToWorld(0, 0, 0, 0, 1, 1);
-        intro.onComplete.add(this.startGame, this);
+        //intro.play(false);
+        //intro.addToWorld(0, 0, 0, 0, 1, 1);
+        //intro.onComplete.add(this.startGame, this);
+        this.startGame();
     }
+    
 };
 
 MainMenu.prototype.animationStopped = function(anim){
@@ -1155,8 +1158,7 @@ GamePlayLevel2.prototype.restartGame = function(){
     game.state.start('GamePlay');
 };
 
-<<<<<<< HEAD
-=======
+
 var GamePlayLevel3 = function(game){};
 GamePlayLevel3.prototype.preload = function() {
  
@@ -1456,10 +1458,6 @@ GamePlayLevel3.prototype.restartGame = function(){
     game.state.start('GamePlay');
 };
 
-
->>>>>>> d3919cd... Fixed joined player positions
-
-
 var GameOver = function(game) {};
 GameOver.prototype = {
     preload: function() {
@@ -1480,6 +1478,7 @@ GameOver.prototype = {
 game.state.add('MainMenu', MainMenu);
 game.state.add('GamePlay', GamePlay);
 game.state.add('GamePlayLevel2', GamePlayLevel2);
+game.state.add('GamePlayLevel3', GamePlayLevel3);
 game.state.add('GameOver', GameOver);
 game.state.start('MainMenu');
 //game.state.add('game', GamePlay, true);
