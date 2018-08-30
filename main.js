@@ -22,6 +22,8 @@ MainMenu.prototype.preload = function() {
     
     game.load.image('creditsText', 'Assets/credits.png');
     
+    game.load.video('introVideo', ['Video/introVid.mp4']);
+    
     //Load Audio
     game.load.audio('menuMusic', ['Sound/mainMenuMusic.mp3']);
     
@@ -39,6 +41,8 @@ MainMenu.prototype.create = function() {
     music = game.add.audio('menuMusic');
     music.loopFull();
     
+    intro = game.add.video('introVideo');
+    
     this.logo = game.add.sprite(0, 0, 'mainMenuLogo1');
     
     this.mouseOverS = false;
@@ -49,7 +53,7 @@ MainMenu.prototype.create = function() {
     this.startButton.animations.add('mouseOver', [0,1,2,3,4,5], 20, false);
     this.startButton.animations.add('mouseRemoved', [5, 4, 3, 2, 1, 0], 20, false);
     this.startButton.inputEnabled = true;
-    this.startButton.events.onInputDown.add(this.startGame, this);
+    this.startButton.events.onInputDown.add(this.startVideo, this);
     
     this.creditsButton = game.add.sprite(game.world.centerX, this.startButton.y + 92, 'creditsButton');
     this.creditsButton.anchor.x = .5;
@@ -85,6 +89,7 @@ MainMenu.prototype.create = function() {
     this.creditsBack.inputEnabled = false;
     this.creditsBack.events.onInputDown.add(this.turnCreditsOff, this);
     this.creditsOff = false;
+    this.videoOn = false;
 };
 MainMenu.prototype.update = function() {
     /*if(this.creditsOn == true && game.input.activePointer.leftButton.isDown){
@@ -157,6 +162,10 @@ MainMenu.prototype.update = function() {
         }
         this.clickedDiffFrame = true;
     }
+    
+    if(this.videoOn){
+        this.logo.visible = false;
+    }
     this.frameChecker += 1;
 };
 MainMenu.prototype.move = function(pointer, x, y, click){
@@ -168,12 +177,24 @@ MainMenu.prototype.move = function(pointer, x, y, click){
 MainMenu.prototype.startGame = function(){
     //game.input.mouse.requestPointerLock();
     if(!this.creditsOn){
+        intro.destroy();
         this.game.world.removeAll();
         music.pause();
-        //game.state.start('GamePlay');
-        game.state.start('GamePlayLevel2', 100);
+        game.state.start('GamePlay');
+        //game.state.start('GamePlayLevel2', 100);
     }
 };
+
+MainMenu.prototype.startVideo = function() {
+    
+    if(!this.creditsOn){
+        this.videoOn = true;
+        intro.play(false);
+        intro.addToWorld(0, 0, 0, 0, 1, 1);
+        intro.onComplete.add(this.startGame, this);
+    }
+};
+
 MainMenu.prototype.animationStopped = function(anim){
     this.logo.destroy();
     var nextAnim = 0;
@@ -220,6 +241,15 @@ GamePlay.prototype.preload = function() {
     game.load.spritesheet('BLUE', 'Assets/Blue.png',32, 64 );
     game.load.spritesheet('together', 'Assets/joined.png', 64, 64)
     game.load.spritesheet('glowfly', 'Assets/glowFly.png', 32, 32);
+    
+    game.load.spritesheet('tutorial1', 'Assets/tutorial1.png', 896, 97);
+    game.load.spritesheet('tutorial2', 'Assets/tutorial2.png', 896, 97);
+    game.load.spritesheet('tutorial3', 'Assets/tutorial3.png', 896, 97);
+    game.load.spritesheet('tutorial4', 'Assets/tutorial4.png', 896, 97);
+    game.load.spritesheet('tutorial5', 'Assets/tutorial5.png', 896, 97);
+    game.load.spritesheet('tutorial6', 'Assets/tutorial6.png', 896, 97);
+    game.load.spritesheet('tutorial7', 'Assets/tutorial7.png', 896, 97);
+    game.load.image('tutorial8', 'Assets/tutorial8.png');
     
     //Load Maze Background
     game.load.image('background', 'Assets/level1-background.png');
@@ -415,8 +445,24 @@ GamePlay.prototype.create = function() {
     this.textTime = this.time.toString();
     this.screenText = game.add.text(448, 240, this.textTime, { font: "65px Arial", fill: "#ff0044", align: "center" });
     this.screenText.anchor.set(.5);
+    
+    tutorial1 = game.add.sprite(0, 0, 'tutorial1');
+    tutorial1.animations.add('tut1Anim', [0, 1, 2, 3], 4, true);
+    tutorial1.animations.play('tut1Anim');
+    //tutorial2 = game.add.sprite(0, 0, 'tutorial2');
+    //tutorial1.animations.add('tut1Anim', [0, 1, 2, 3], 6, true);
+    //tutorial1 = game.add.sprite(0, 0, 'tutorial1');
+    //tutorial1.animations.add('tut1Anim', [0, 1, 2, 3], 6, true);
+    this.tutorialNumber = 1;
+    back.inputEnabled = true;
+    game.input.mouse.capture = true;
+    back.events.onInputDown.add(this.changeTutorial, this);
+    p1.moving = true;
+    p2.moving = true;
+    this.timer.pause();
 };
 GamePlay.prototype.update = function() {
+    
     if(this.timer != null){
         if(this.time != 0){
             this.preTime = this.timer.duration * .001;
@@ -512,6 +558,50 @@ GamePlay.prototype.render = function(){
 //    if(transformed){
 //        game.debug.body(p3);
 //    }
+};
+GamePlay.prototype.changeTutorial = function(){
+    this.tutorialNumber += 1;
+    if(this.tutorialNumber == 2){
+        tutorial1.destroy();
+        tutorial2 = game.add.sprite(0, 0, 'tutorial2');
+        tutorial2.animations.add('tut2Anim', [0, 1, 2, 3], 4, true);
+        tutorial2.animations.play('tut2Anim');
+    }else if(this.tutorialNumber == 3){
+        tutorial2.destroy();
+        tutorial3 = game.add.sprite(0, 0, 'tutorial3');
+        tutorial3.animations.add('tut3Anim', [0, 1], 2, true);
+        tutorial3.animations.play('tut3Anim');
+    }else if(this.tutorialNumber == 4){
+        tutorial3.destroy();
+        tutorial4 = game.add.sprite(0, 0, 'tutorial4');
+        tutorial4.animations.add('tut4Anim', [0, 1, 2], 4, true);
+        tutorial4.animations.play('tut4Anim');
+    }else if(this.tutorialNumber == 5){
+        tutorial4.destroy();
+        tutorial5 = game.add.sprite(0, 0, 'tutorial5');
+        tutorial5.animations.add('tut5Anim', [0, 1, 2, 3], 4, true);
+        tutorial5.animations.play('tut5Anim');
+    }else if(this.tutorialNumber == 6){
+        tutorial5.destroy();
+        tutorial6 = game.add.sprite(0, 0, 'tutorial6');
+        tutorial6.animations.add('tut6Anim', [0, 1, 2], 4, true);
+        tutorial6.animations.play('tut6Anim');
+    }else if(this.tutorialNumber == 7){
+        tutorial6.destroy();
+        tutorial7 = game.add.sprite(0, 0, 'tutorial7');
+        tutorial7.animations.add('tut7Anim', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], 6, true);
+        tutorial7.animations.play('tut7Anim');
+    }else if(this.tutorialNumber == 8){
+        tutorial7.destroy();
+        tutorial8 = game.add.image(0, 0, 'tutorial8');
+    }else if(this.tutorialNumber == 9){
+        tutorial8.destroy();
+        p1.moving = false;
+        p2.moving = false;
+        this.timer.resume();
+        back.inputEnabled = false;
+        //game.input.mouse.capture = false;
+    }
 };
 GamePlay.prototype.updateShadowTexture = function(){
     //'rgb(100, 0, 0)'; save for fire level
