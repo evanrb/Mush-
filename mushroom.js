@@ -56,6 +56,7 @@ function mushroom(game, key, playerNum, xPos, yPos, map, mapLocation1, mapLocati
         this.helper = new p3MovementHelper();
         this.pressInstanceFrame = 0;
         this.movementPenalty = 10;
+        this.hasLight = true;
     }
     
     this.moving = false;
@@ -263,7 +264,6 @@ mushroom.prototype.update = function () {
                 this.helper.clearVals();
             }
             this.frameCount += 1;
-            console.log(this.mapArrayLocation);
         }
     }
 }

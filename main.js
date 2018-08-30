@@ -170,8 +170,8 @@ MainMenu.prototype.startGame = function(){
     if(!this.creditsOn){
         this.game.world.removeAll();
         music.pause();
-        game.state.start('GamePlay');
-        //game.state.start('GamePlayLevel2', 100);
+        //game.state.start('GamePlay');
+        game.state.start('GamePlayLevel2', 100);
     }
 };
 MainMenu.prototype.animationStopped = function(anim){
@@ -813,6 +813,20 @@ GamePlayLevel2.prototype.update = function() {
         game.state.start('GameOver');
     }
     
+    if(p3.lightRadius <= 15 && p3.hasLight){
+        console.log('here');
+        p3.hasLight = false;
+        this.lights.forEach(function(light) {
+        // Randomly change the radius each frame
+       // console.log(light);
+            if(light.exists){
+               if(light.player === 3){
+                    this.exists = false;
+                }
+            }
+        });
+    }
+    
     if(this.isPaused){
         this.pauseScreenUpdate();
     }else{this.updateShadowTexture();}
@@ -955,31 +969,37 @@ GamePlayLevel2.prototype.updateShadowTexture = function(){
     this.lights.forEach(function(light) {
         // Randomly change the radius each frame
        // console.log(light);
+        var makeLight = true;
+        
         if(light.exists){
            if(light.player === 3){
                 this.LIGHT_RADIUS = p3.lightRadius;
+               if(!p3.hasLight){
+                   makeLight = false;
+               }
             }else if(light.key == "invisLight" && light.exists){
                 this.LIGHT_RADIUS = 15000;
             }
-        
-            var radius = this.LIGHT_RADIUS + this.game.rnd.integerInRange(1,10);
-        // Draw circle of light with a soft edge
-            var gradient =
-                this.shadowTexture.context.createRadialGradient(
-                    light.x, light.y,this.LIGHT_RADIUS * .05,
-                    light.x, light.y, radius);
-            //changing gradient color
-            if(light.key == "invisLight" && light.exists){
-                gradient.addColorStop(1, 'rgba(100, 255, 255,' + this.lightAlphaString + ')');
-            }else{
-                gradient.addColorStop(0, 'rgba(100, 255, 255, 1.0)');
-            }
-            gradient.addColorStop(1, 'rgba(255, 255, 255, 0.0)');
+            if(makeLight){
+                var radius = this.LIGHT_RADIUS + this.game.rnd.integerInRange(1,10);
+            // Draw circle of light with a soft edge
+                var gradient =
+                    this.shadowTexture.context.createRadialGradient(
+                        light.x, light.y,this.LIGHT_RADIUS * .05,
+                        light.x, light.y, radius);
+                //changing gradient color
+                if(light.key == "invisLight" && light.exists){
+                    gradient.addColorStop(1, 'rgba(100, 255, 255,' + this.lightAlphaString + ')');
+                }else{
+                    gradient.addColorStop(0, 'rgba(100, 255, 255, 1.0)');
+                }
+                gradient.addColorStop(1, 'rgba(255, 255, 255, 0.0)');
 
-            this.shadowTexture.context.beginPath();
-            this.shadowTexture.context.fillStyle = gradient;
-            this.shadowTexture.context.arc(light.x, light.y, radius, 0, Math.PI*2);
-            this.shadowTexture.context.fill();
+                this.shadowTexture.context.beginPath();
+                this.shadowTexture.context.fillStyle = gradient;
+                this.shadowTexture.context.arc(light.x, light.y, radius, 0, Math.PI*2);
+                this.shadowTexture.context.fill();
+            }
         }
         
     }, this);
