@@ -55,9 +55,11 @@ function mushroom(game, key, playerNum, xPos, yPos, map, mapLocation1, mapLocati
         this.visible = false;
         this.helper = new p3MovementHelper();
         this.pressInstanceFrame = 0;
+        this.movementPenalty = 10;
     }
     
     this.moving = false;
+    
     
     this.animations.add('idleLeft', [8], 7, true);
     this.animations.add('idleRight', [12], 7, true);
@@ -122,7 +124,7 @@ mushroom.prototype.update = function () {
                             this.hitWall(this.x, this.y - 5, 150, this.x, this.y, 150);
                         }
                     }else if(this.helper.total() > 1){
-                        this.lightRadius -= 5;
+                        this.lightRadius -= this.movementPenalty;
                     }
                     if(this.helper.total() == 1){
                         this.pressInstanceFrame = this.frameCount;
@@ -140,7 +142,7 @@ mushroom.prototype.update = function () {
                             this.hitWall(this.x, this.y - 5, 150, this.x, this.y, 150);
                         }
                     }else if(this.helper.total() > 1){
-                        this.lightRadius -= 5;
+                        this.lightRadius -= this.movementPenalty;
                     }
                     if(this.helper.total() == 1){
                         this.pressInstanceFrame = this.frameCount;
@@ -158,7 +160,7 @@ mushroom.prototype.update = function () {
                             this.hitWall(this.x + 20, this.y, 150, this.x, this.y, 150);
                         }
                     }else if(this.helper.total() > 1){
-                        this.lightRadius -= 5;
+                        this.lightRadius -= this.movementPenalty;
                     }
                     if(this.helper.total() == 1){
                         this.pressInstanceFrame = this.frameCount;
@@ -176,7 +178,7 @@ mushroom.prototype.update = function () {
                             this.hitWall(this.x + 20, this.y, 150, this.x, this.y, 150);
                         }
                     }else if(this.helper.total() > 1){
-                        this.lightRadius -= 5;
+                        this.lightRadius -= this.movementPenalty;
                     }
                     if(this.helper.total() == 1){
                         this.pressInstanceFrame = this.frameCount;
@@ -194,7 +196,7 @@ mushroom.prototype.update = function () {
                             this.hitWall(this.x - 15, this.y, 150, this.x, this.y, 150);
                         }
                     }else if(this.helper.total() > 1){
-                        this.lightRadius -= 5;
+                        this.lightRadius -= this.movementPenalty;
                     }
                     if(this.helper.total() == 1){
                         this.pressInstanceFrame = this.frameCount;
@@ -212,7 +214,7 @@ mushroom.prototype.update = function () {
                             this.hitWall(this.x - 15, this.y, 150, this.x, this.y, 150);
                         }
                     }else if(this.helper.total() > 1){
-                        this.lightRadius -= 5;
+                        this.lightRadius -= this.movementPenalty;
                     }
                     if(this.helper.total() == 1){
                         this.pressInstanceFrame = this.frameCount;
@@ -230,7 +232,7 @@ mushroom.prototype.update = function () {
                             this.hitWall(this.x, this.y + 5, 150, this.x, this.y, 150);
                         }
                     }else if(this.helper.total() > 1){
-                        this.lightRadius -= 5;
+                        this.lightRadius -= this.movementPenalty;
                     }
                     if(this.helper.total() == 1){
                         this.pressInstanceFrame = this.frameCount;
@@ -248,7 +250,7 @@ mushroom.prototype.update = function () {
                             this.hitWall(this.x, this.y + 5, 150, this.x, this.y, 150);
                         }
                     }else if(this.helper.total() > 1){
-                        this.lightRadius -= 5;
+                        this.lightRadius -= this.movementPenalty;
                     }
                     if(this.helper.total() == 1){
                         this.pressInstanceFrame = this.frameCount;
@@ -257,7 +259,7 @@ mushroom.prototype.update = function () {
                     }
                 }
             if(this.frameCount - this.pressInstanceFrame == 30){
-                this.lightRadius -= .06;
+                this.lightRadius -= this.movementPenalty;
                 this.helper.clearVals();
             }
             this.frameCount += 1;

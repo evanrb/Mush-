@@ -170,8 +170,8 @@ MainMenu.prototype.startGame = function(){
     if(!this.creditsOn){
         this.game.world.removeAll();
         music.pause();
-        //game.state.start('GamePlay');
-        game.state.start('GamePlayLevel2', 100);
+        game.state.start('GamePlay');
+        //game.state.start('GamePlayLevel2', 100);
     }
 };
 MainMenu.prototype.animationStopped = function(anim){
@@ -237,6 +237,8 @@ GamePlay.prototype.preload = function() {
     game.load.audio('seperate', ['Sound/level1Seperate.mp3']);
     game.load.audio('join', ['Sound/level1Join.mp3']);
     
+    game.load.audio('night1-2', ['Sound/1st-Night.ogg']);
+    
     var FLIES;
     var mushrooms;
     var back;
@@ -270,6 +272,8 @@ GamePlay.prototype.create = function() {
     
     sepSound = game.add.audio('seperate');
     joinSound = game.add.audio('join');
+    
+    music2 = game.add.audio('night1-2');
     
     twinkle = game.add.audio('glowfly');
     twinkle.allowMultiple = true;
@@ -442,11 +446,12 @@ GamePlay.prototype.update = function() {
             this.timer.destroy();
             this.screenText.destroy();
         }
+        music.pause();
         this.notConnected = false;
         sepSound.play();
         
         var moveCamera = game.add.tween(this.game.camera).to({ x: this.game.camera.x, y: 208 }, 2000, Phaser.Easing.Linear.None, true);
-        moveCamera.onComplete.add(allowMovement, this); function allowMovement() { p3.moving = false; game.camera.follow(p3);}  
+        moveCamera.onComplete.add(allowMovement, this); function allowMovement() { p3.moving = false; game.camera.follow(p3); music2.loopFull();}  
         
         p1.direction = 3;
         p1.animateMovement();
@@ -486,6 +491,8 @@ GamePlay.prototype.update = function() {
         
     }
     if(p3.y + 32 == 1600){
+        music.pause();
+        music2.pause();
         game.state.start('GamePlayLevel2', p3.lightRadius);
     }
     
@@ -1027,6 +1034,8 @@ GamePlayLevel2.prototype.resumeGame = function(){
 };
 GamePlayLevel2.prototype.quitGame = function(){
     music.pause();
+    rainSound.pause();
+    thunderBuild.pause();
     this.game.world.removeAll();
     game.state.start('MainMenu');  
 };
