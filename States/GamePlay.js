@@ -8,6 +8,7 @@ GamePlay.prototype.create = function() {
     game.world.setBounds(0, 0, 896, 1600);
     back = game.add.sprite(0,0, 'backgroundl1');
     
+    //booleans for player arrival area
     this.p1Arrived = false;
     this.p2Arrived = false;
     this.notConnected = true;
@@ -16,13 +17,14 @@ GamePlay.prototype.create = function() {
     music = game.add.audio('night1');
     music.loopFull();
     
+    //other sounds
     sepSound = game.add.audio('seperate');
     joinSound = game.add.audio('join');
-    
-    music2 = game.add.audio('night1-2');
-    
     twinkle = game.add.audio('glowfly');
     twinkle.allowMultiple = true;
+    
+    //second part music
+    music2 = game.add.audio('night1-2');
     
     this.isPaused = false;
     
@@ -48,6 +50,7 @@ GamePlay.prototype.create = function() {
         [816, 112, 240, 752, 848]
     ];
     
+    //map array 
     var level1 = [
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
         [1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1],
@@ -120,8 +123,6 @@ GamePlay.prototype.create = function() {
     this.mushrooms.add(p2);
     this.mushrooms.add(p3)
     
-    
-    
     this.LIGHT_RADIUS = 0;
     
     // Create the shadow texture
@@ -136,7 +137,6 @@ GamePlay.prototype.create = function() {
 
     // Create the lights group
     this.lights = this.game.add.group();
-    
     this.lights.add(p1);
     this.lights.add(p2);
     this.lights.add(p3);
@@ -144,6 +144,7 @@ GamePlay.prototype.create = function() {
         this.lights.add(this.FLIES[i]);
     }
     
+    //timer for first area
     this.timer = game.time.create();
     this.timer.add(25000, function(){
         for(i = 0; i < this.FLIES.length; i ++){
@@ -162,23 +163,24 @@ GamePlay.prototype.create = function() {
     this.screenText = game.add.text(448, 240, this.textTime, { font: "65px Arial", fill: "#ff0044", align: "center" });
     this.screenText.anchor.set(.5);
     
+    //set up tutorial start
     tutorial1 = game.add.sprite(0, 0, 'tutorial1');
     tutorial1.animations.add('tut1Anim', [0, 1, 2, 3], 4, true);
     tutorial1.animations.play('tut1Anim');
-    //tutorial2 = game.add.sprite(0, 0, 'tutorial2');
-    //tutorial1.animations.add('tut1Anim', [0, 1, 2, 3], 6, true);
-    //tutorial1 = game.add.sprite(0, 0, 'tutorial1');
-    //tutorial1.animations.add('tut1Anim', [0, 1, 2, 3], 6, true);
     this.tutorialNumber = 1;
+    //change tutorial on mouse press
     back.inputEnabled = true;
     game.input.mouse.capture = true;
     back.events.onInputDown.add(this.changeTutorial, this);
+    //pause game while tutorial plays
     p1.moving = true;
     p2.moving = true;
     this.timer.pause();
 };
+
 GamePlay.prototype.update = function() {
     
+    //update or destroy timer
     if(this.timer != null){
         if(this.time != 0){
             this.preTime = this.timer.duration * .001;
@@ -187,6 +189,8 @@ GamePlay.prototype.update = function() {
             this.screenText.text = this.textTime;
         }else{this.screenText.destroy();}
     }
+    
+    //pause game 
     if(game.input.keyboard.justPressed(Phaser.Keyboard.P)){
         if(this.isPaused){
             this.resumeGame();
@@ -195,6 +199,7 @@ GamePlay.prototype.update = function() {
         }
     }
     
+    //check when players arrive at meeting area
     if(p1.mapArrayLocation[0] == 13 && p1.mapArrayLocation[1] == 13 && !p1.moving){
         p1.moving = true;
         this.p1Arrived = true;
@@ -203,6 +208,7 @@ GamePlay.prototype.update = function() {
         p2.moving = true;
         this.p2Arrived = true;
     }
+    //once they arrive combine them
     if(this.p1Arrived && this.p2Arrived && this.notConnected){
         if(this.timer != null){
             this.timer.destroy();
@@ -233,9 +239,12 @@ GamePlay.prototype.update = function() {
         }
     }
     
+    //if player light is less then 0 they lose
     if(p3.lightRadius <= 0){
         game.state.start('GameOver');
     }
+    
+    //on collision combine players
     if(game.physics.arcade.collide(p1, p2)){
         if(this.timer != null){
             this.timer.destroy();
@@ -253,18 +262,21 @@ GamePlay.prototype.update = function() {
         p2.destroy();
         
     }
+    
+    // once player sprite reaches the bottom then win the level
     if(p3.y + 32 == 1600){
         music.pause();
         music2.pause();
-        game.state.start('GamePlayLevel2', p3.lightRadius);
+        game.state.start('GamePlayLevel2');
     }
     
-    
+    //update pause screen when it is activated
     if(this.isPaused){
         this.pauseScreenUpdate();
     }else{this.updateShadowTexture();}
     
 };
+//debug code
 GamePlay.prototype.render = function(){
     //game.debug.body(p1);
     //game.debug.body(p2);
@@ -276,6 +288,7 @@ GamePlay.prototype.render = function(){
 //        game.debug.body(p3);
 //    }
 };
+//switch tuorial animation sheet when mouse is clicked/ resume game when tutorials end
 GamePlay.prototype.changeTutorial = function(){
     this.tutorialNumber += 1;
     if(this.tutorialNumber == 2){
@@ -320,6 +333,8 @@ GamePlay.prototype.changeTutorial = function(){
         //game.input.mouse.capture = false;
     }
 };
+
+//update the shadow lighting CODE ADAPTED FROM: https://gamemechanicexplorer.com/#lighting-3
 GamePlay.prototype.updateShadowTexture = function(){
     //'rgb(100, 0, 0)'; save for fire level
     // or 300, 100, 200
@@ -368,6 +383,8 @@ GamePlay.prototype.updateShadowTexture = function(){
     this.shadowTexture.dirty = true;
     
 };
+
+//pause the game
 GamePlay.prototype.pause = function(){
     if(this.timer != null){
         this.timer.pause();
@@ -394,6 +411,8 @@ GamePlay.prototype.pause = function(){
     this.mouseOverQ = false;
     this.mouseOverR = false;
 };
+
+//update the pause screen for button mouse interaction
 GamePlay.prototype.pauseScreenUpdate = function(){
     if (this.quitButton.input.pointerOver() && this.mouseOverQ == false){
         this.quitButton.animations.play('mouseOverQ');
@@ -410,6 +429,8 @@ GamePlay.prototype.pauseScreenUpdate = function(){
         this.mouseOverR = false;
     }
 };
+
+//resume the game
 GamePlay.prototype.resumeGame = function(){
     if(this.timer != null){
         this.timer.resume();
@@ -422,11 +443,15 @@ GamePlay.prototype.resumeGame = function(){
     this.restartButton.destroy();
     this.quitButton.destroy();
 };
+
+//quit game
 GamePlay.prototype.quitGame = function(){
     music.pause();
     this.game.world.removeAll();
     game.state.start('MainMenu');  
 };
+
+//restart the level
 GamePlay.prototype.restartGame = function(){
     music.pause();
     this.game.world.removeAll();
