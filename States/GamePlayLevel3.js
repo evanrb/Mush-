@@ -203,6 +203,8 @@ GamePlayLevel3.prototype.update = function() {
         //this.topFire.fixedToCamera = true;
     }
     
+    if(p2.mapArrayLocation )
+    
     
     if(game.input.keyboard.justPressed(Phaser.Keyboard.P)){
         if(this.isPaused){
