@@ -2,6 +2,7 @@ function mushroom(game, key, playerNum, xPos, yPos, map, mapLocation1, mapLocati
     
     Phaser.Sprite.call(this, game, xPos, yPos, key);
     
+    //add the level array for mushrooms refenece
     this.maze = map;
     
     var p1R = Phaser.Keyboard.D;
@@ -13,7 +14,9 @@ function mushroom(game, key, playerNum, xPos, yPos, map, mapLocation1, mapLocati
     var p2U = Phaser.Keyboard.UP;
     var p2D = Phaser.Keyboard.DOWN;
     
+    //player num to keep track of player
     this.player = playerNum;
+    
     this.lightRadius = 70;
     
     game.physics.enable(this, Phaser.Physics.ARCADE);
@@ -30,8 +33,10 @@ function mushroom(game, key, playerNum, xPos, yPos, map, mapLocation1, mapLocati
         this.frameCount = 0;
     }
     
+    //set the mushrooms array location to keep track of maze collision
     this.mapArrayLocation = [mapLocation1, mapLocation2];
     
+    //set up variables that are player specific
     if(this.player == 1){
         this.upInput = p1U;
         this.rightInput = p1R;
@@ -60,13 +65,16 @@ function mushroom(game, key, playerNum, xPos, yPos, map, mapLocation1, mapLocati
         this.inputWorked = false;
     }
     
+    //moving is basically a pause boolean
     this.moving = false;
     
+    //booleans to check if obstacles are grabbed in level 3
     this.grabbingObstacle1 = false;
     this.grabbingObstacle2 = false;
     this.grabbingObstacle3 = false;
     this.grabbingObstacle4 = false;
     
+    //animation declarations
     this.animations.add('idleLeft', [8], 7, true);
     this.animations.add('idleRight', [12], 7, true);
     this.animations.add('idleForward', [0], 7, true);
@@ -76,7 +84,7 @@ function mushroom(game, key, playerNum, xPos, yPos, map, mapLocation1, mapLocati
     this.animations.add('walkLeft', [9, 11], 5, true);
     this.animations.add('walkRight', [13, 15], 5, true);
     
-    // just a number if 0 it is facing forward, if 1 facing backward, if 2 facing right, if 3 facing left
+    //if 0 it is facing forward, if 1 facing backward, if 2 facing right, if 3 facing left
     this.direction = 0;
 }
 
@@ -86,12 +94,16 @@ mushroom.prototype.constructor = mushroom;
 mushroom.prototype.update = function () {
     if (this.alive && !this.moving) {
         if (this.player < 3){
+            //restrict player motion when objects are grabbed
             if (game.input.keyboard.justPressed(this.upInput) && !this.grabbingObstacle2 && !this.grabbingObstacle1 && !this.grabbingObstacle4) {
                 this.direction = 1;
+                //check if the maze has a valid movement location in the necessary direction
                 if (this.maze[this.mapArrayLocation[0] - 1][this.mapArrayLocation[1]] == 0) {
                     this.legalMove(this.x, this.y - 32, 150);
+                    //update the players maze array location appropriately
                     this.mapArrayLocation[0] -= 1;
                 }else{
+                    //player pressed input toward an invalid location
                     this.hitWall(this.x, this.y - 5, 150, this.x, this.y, 150);
                 }
             } else if (game.input.keyboard.justPressed(this.rightInput) && !this.grabbingObstacle3 && !this.grabbingObstacle2 && !this.grabbingObstacle4) {
@@ -135,26 +147,32 @@ mushroom.prototype.update = function () {
                 }
             }
         }else {
+            //set the light radius to the global variable
             this.lightRadius = p3Radius;
-                if (game.input.keyboard.justPressed(this.upInput) && this.helper.canTakeU1){
-                    if(this.helper.keyIn(0)){
-                        this.inputWorked = true;
-                        this.direction = 1;
-                        if(this.maze[this.mapArrayLocation[0] - 1][this.mapArrayLocation[1]] == 0 && this.maze[this.mapArrayLocation[0] - 1][this.mapArrayLocation[1] + 1] == 0){
-                            this.legalMove(this.x, this.y - 32, 150);
-                            this.mapArrayLocation[0] -= 1;
-                        }else{
-                            this.hitWall(this.x, this.y - 5, 150, this.x, this.y, 150);
-                        }
-                    }else if(this.helper.total() > 1){
-                        p3Radius -= this.movementPenalty;
+            //use movement helper to check if up input has already been pressed
+            if (game.input.keyboard.justPressed(this.upInput) && this.helper.canTakeU1){
+                //check movement helper if both up inputs are pressed
+                if(this.helper.keyIn(0)){
+                    this.inputWorked = true;
+                    this.direction = 1;
+                    if(this.maze[this.mapArrayLocation[0] - 1][this.mapArrayLocation[1]] == 0 && this.maze[this.mapArrayLocation[0] - 1][this.mapArrayLocation[1] + 1] == 0){
+                        this.legalMove(this.x, this.y - 32, 150);
+                        this.mapArrayLocation[0] -= 1;
+                    }else{
+                        this.hitWall(this.x, this.y - 5, 150, this.x, this.y, 150);
                     }
-                    if(this.helper.total() == 1){
-                        this.pressInstanceFrame = this.frameCount;
-                    }else if(this.helper.total() > 1){
-                        this.helper.clearVals();
-                    }
+                //check if more than 1 input has been pressed and the two correct inputs have not been pressed
+                }else if(this.helper.total() > 1){
+                    p3Radius -= this.movementPenalty;
                 }
+                //begin a frame counter if a single input is pressed
+                if(this.helper.total() == 1){
+                    this.pressInstanceFrame = this.frameCount;
+                //if more than 1 input has been pressed than reset movement helper values
+                }else if(this.helper.total() > 1){
+                    this.helper.clearVals();
+                }
+            }
             if (game.input.keyboard.justPressed(this.upInput2) && this.helper.canTakeU2){
                     if(this.helper.keyIn(0.2)){
                         this.inputWorked = true;
@@ -288,6 +306,7 @@ mushroom.prototype.update = function () {
                         this.helper.clearVals();
                     }
                 }
+            //if an input has been pressed and a half second goes by without pressing another than incur movement penalty 
             if(this.frameCount - this.pressInstanceFrame == 30 && !this.inputWorked){
                 this.inputWorked = false;
                 p3Radius -= this.movementPenalty;
@@ -298,12 +317,14 @@ mushroom.prototype.update = function () {
     }
 }
 
+//move the player when there is a valid move input
 mushroom.prototype.legalMove = function(xPos, yPos, speed){
     this.animateMovement();
     this.moving = true;
     var tween = game.add.tween(this).to({ x: xPos, y: yPos }, speed, Phaser.Easing.Linear.None, true);
     tween.onComplete.add(doSomething, this); function doSomething() { this.endMotion(); }              
 }
+//crash player into a wall on invalid movement input
 mushroom.prototype.hitWall = function(xPos, yPos, speed, endXPos, endYPos, endSpeed){
     this.animateMovement();
     this.moving = true;
@@ -313,6 +334,7 @@ mushroom.prototype.hitWall = function(xPos, yPos, speed, endXPos, endYPos, endSp
         tweenBack.onComplete.add(moveBack, this); function moveBack() { this.endMotion(); }
     }
 }
+//set the idle direction of player
 mushroom.prototype.endMotion = function(){
     if(this.direction == 0){
         this.animations.play('idleForward');
@@ -325,6 +347,7 @@ mushroom.prototype.endMotion = function(){
     }
     this.moving = false;
 }
+//animate player motion
 mushroom.prototype.animateMovement = function(){
     if(this.direction == 0){
         this.animations.play('walkForward');
