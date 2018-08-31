@@ -1,9 +1,8 @@
 
-
 var GamePlayLevel3 = function(game){};
 GamePlayLevel3.prototype.preload = function() {
  
-    //Load Character and GlowFly spritesheets
+    //Load Character
     game.load.spritesheet('RED', 'Assets/Red.png', 32, 47);
     game.load.spritesheet('BLUE', 'Assets/Blue.png',32, 64 );
     game.load.spritesheet('together', 'Assets/joined.png', 64, 64)
@@ -13,11 +12,21 @@ GamePlayLevel3.prototype.preload = function() {
     game.load.image('backgroundOverlay', 'Assets/level3Overlay.png');
     
     game.load.spritesheet('fireTop', 'Assets/fire.png', 896, 160);
-    game.load.spritesheet('fireMid', 'Assets/fireBarrier.png', 1024, 960);
+    game.load.spritesheet('fireMid', 'Assets/fireBarrier.png', 385, 768);
     
     game.load.image('pauseBackground', 'Assets/pauseBackground.png');
     game.load.spritesheet('quitButton', 'Assets/quit.png', 128, 92);
     game.load.spritesheet('restartButton', 'Assets/restart.png', 128, 92);
+    
+    game.load.image('obstacle1', 'Assets/obstacle1.png');
+    game.load.image('obstacle2', 'Assets/obstacle2.png');
+    game.load.image('obstacle3', 'Assets/obstacle3.png');
+    game.load.image('obstacle4', 'Assets/obstacle4.png');
+    
+    game.load.image('ash1', 'Assets/ash1.png');
+    game.load.image('ash2', 'Assets/ash2.png');
+    game.load.image('ember1', 'Assets/ember1.png');
+    game.load.image('ember2', 'Assets/ember2.png');
     
     //Load Audio
     game.load.audio('night3', ['Sound/3rd-Night.wav']);
@@ -41,14 +50,15 @@ GamePlayLevel3.prototype.create = function() {
     
    // Set stage background color(required for shading)
     this.game.stage.backgroundColor = 0x78453A;
-    game.world.setBounds(0, 0, 960, 1024);
+    game.world.setBounds(0, 0, 960, 1184);
     back = game.add.sprite(0,0, 'background');
     
     //Add and loop background music
     music = game.add.audio('night3');
-    music.loopFull();
+    
     
     music2 = game.add.audio('night4');
+    music2.loopFull();
     
     seperateSound = game.add.audio('seperate');
 
@@ -93,7 +103,7 @@ GamePlayLevel3.prototype.create = function() {
     this.mushrooms = this.game.add.group();
     p1 = new mushroom(game, 'RED', 1, -60, 42, level3, 11, 14);
     p2 = new mushroom(game, 'BLUE', 2, -70, 32, level3, 11, 16);
-    p3 = new mushroom(game, 'together', 3, 480, 64, level3, 2, 14);
+    p3 = new mushroom(game, 'together', 3, 480, 224, level3, 2, 14);
     this.mushrooms.add(p1);
     this.mushrooms.add(p2);
     this.mushrooms.add(p3)
@@ -101,12 +111,21 @@ GamePlayLevel3.prototype.create = function() {
     p3.alive = true;
     p3.visible = true;
     
+    obstacle1 = game.add.sprite(352, 608, 'obstacle1');
+    obstacle2 = game.add.sprite(416, 672, 'obstacle2');
+    obstacle3 = game.add.sprite(608, 864, 'obstacle3');
+    obstacle4 = game.add.sprite(704, 1120, 'obstacle4');
+    
+    midFire = game.add.sprite(416, 416, 'fireMid');
+    midFire.animations.add('moveMidFlames', [0, 1, 2, 3], 12, true);
+    midFire.animations.play('moveMidFlames');
+    
     //topFire = game.add.sprite(this.game.camera.x,this.game.camera.y, 'fireTop');
     //topFire.animations.add('moveTopFlames');
     //topFire.animations.play('moveTopFlames', 7, true);
-    //topFire.fixedToCamera = true;
     
-    //overlay = game.add.sprite(0,0, 'backgroundOverlay');
+    
+    overlay = game.add.sprite(0,0, 'backgroundOverlay');
     
     this.LIGHT_RADIUS = 0;
     
@@ -130,10 +149,26 @@ GamePlayLevel3.prototype.create = function() {
     p1.moving = true;
     p2.moving = true;
     
-    var moveCamera = game.add.tween(this.game.camera).to({ y: this.game.world.height - this.game.camera.height}, 50000, Phaser.Easing.Linear.None, true);
+    var moveCamera = game.add.tween(this.game.camera).to({ y: this.game.world.height - this.game.camera.height}, 20000, Phaser.Easing.Linear.None, true);
     moveCamera.onComplete.add(allowMovement, this); function allowMovement() {   }  
+    
+    this.shadingAlpha = .5;
+    this.shadingAlphaText = this.shadingAlpha.toString();
+    
+    this.frameCount = 0;
+    
+    emitter = game.add.emitter(game.world.centerX, 0, 500);
+    emitter.makeParticles(['ash1', 'ash2', 'ember1', 'ember2']);
+    emitter.start(false, 2000, 1, 0);
+    emitter.setRotation(0, 0);
+    emitter.setXSpeed(-200,0 );
+    emitter.setYSpeed(100, 200);
+    let area = new Phaser.Rectangle(game.world.centerX, 0, game.world.width, 1);
+    emitter.area = area;
 };
 GamePlayLevel3.prototype.update = function() {
+    
+    emitter.y = game.camera.y;
     
     if(game.input.keyboard.justPressed(Phaser.Keyboard.P)){
         if(this.isPaused){
@@ -146,36 +181,45 @@ GamePlayLevel3.prototype.update = function() {
     if(p3.mapArrayLocation[0] == 10 && p3.mapArrayLocation[1] == 14 && !p3.moving){
         p3.moving = true;
         
-        music.pause();
+        //music.pause();
         seperateSound.play();
-        music2.loopFull();
+        //music2.loopFull();
         
         p1.lightRadius = p3.lightRadius/2;
         p2.lightRadius = p3.lightRadius/2;
         
         p3.destroy();
         p1.x = 464;
-        p1.y = 320;
+        p1.y = 480;
         p1.direction = 0;
         p1.legalMove(p1.x, p1.y + 32, 150);
         
         p2.x = 528;
-        p2.y = 320;
+        p2.y = 480;
         p2.direction = 0;
         p2.legalMove(p2.x, p2.y + 32, 150);
-        
-        
-        
-        
     }
     
     if(p3.lightRadius <= 0){
         game.state.start('GameOver');
     }
     
+    if(this.frameCount % 10 == 0){
+        if(this.shadingAlpha == .9){
+            this.shadingAlpha += .1
+        }else{
+            this.shadingAlpha -= .1;
+        }
+        this.shadingAlphaText = this.shadingAlpha.toString();
+    }
+    
     if(this.isPaused){
         this.pauseScreenUpdate();
     }else{this.updateShadowTexture();}
+    
+    
+    
+    this.frameCount += 1;
     
 };
 GamePlayLevel3.prototype.render = function(){
@@ -192,7 +236,7 @@ GamePlayLevel3.prototype.render = function(){
 GamePlayLevel3.prototype.updateShadowTexture = function(){
     //'rgb(100, 0, 0)'; save for fire level
     // or 300, 100, 200
-    this.shadowTexture.context.fillStyle = 'rgb(20, 20, 50)';
+    this.shadowTexture.context.fillStyle = 'rgb(300, 100, 200)';
     this.shadowTexture.context.fillRect(0, 0, this.world.width, this.world.height);
     //console.log(this.shadowTexture);
 
