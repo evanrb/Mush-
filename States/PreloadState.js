@@ -1,6 +1,8 @@
 var PreloadState = function(game) {};
 
 PreloadState.prototype.preload = function(){
+    
+    //set up loading graphics
     game.add.sprite(game.world.width - 190 , game.world.height - 55, 'loading');
     loadShrooms = game.add.sprite(game.world.centerX, game.world.centerY, 'mushroomLoad');
     loadShrooms.anchor.x = .5;
@@ -117,6 +119,7 @@ PreloadState.prototype.preload = function(){
     game.load.image('gameOver', 'Assets/gameOver.png');
 };
 
+//switch to main menu
 PreloadState.prototype.create = function(){
     this.state.start('MainMenu');
 };

@@ -3,6 +3,8 @@ var MainMenu = function(game) {};
 
 MainMenu.prototype.create = function() {
     console.log('MainMenu: create');
+    
+    //add background
     var back = game.add.sprite(0, 0, 'mainMenuBackground');
     back.animations.add('liveBackground', [0, 1, 2, 3, 4, 5, 6, 7], 7, true);
     back.animations.play('liveBackground');
@@ -11,12 +13,14 @@ MainMenu.prototype.create = function() {
     music = game.add.audio('menuMusic');
     music.loopFull();
     
+    //add intro video
     intro = game.add.video('introVideo');
     
+    //add first logo sprite
     this.logo = game.add.sprite(0, 0, 'mainMenuLogo1');
     
+    //set up buttons
     this.mouseOverS = false;
-    this.mouseOverC = false;
     this.startButton = game.add.sprite(game.world.centerX, game.world.centerY + 46, 'startButton');
     this.startButton.anchor.x = .5;
     this.startButton.anchor.x = .5;
@@ -25,6 +29,7 @@ MainMenu.prototype.create = function() {
     this.startButton.inputEnabled = true;
     this.startButton.events.onInputDown.add(this.startVideo, this);
     
+    this.mouseOverC = false;
     this.creditsButton = game.add.sprite(game.world.centerX, this.startButton.y + 92, 'creditsButton');
     this.creditsButton.anchor.x = .5;
     this.creditsButton.anchor.x = .5;
@@ -33,21 +38,22 @@ MainMenu.prototype.create = function() {
     this.creditsButton.inputEnabled = true;
     this.creditsButton.events.onInputDown.add(this.credits, this);
     
+    //variables to keep track of custum animation loop for logo sprite since it exceeded phaser's spritesheet constraints
     this.frameChecker = 0;
     this.titleFrameNum = 0;
     this.titleSheet = 1;
     
     this.creditsOn = false;
     
+    //set up glowfly mouse pointer
     this.mouseFly = game.add.sprite(0, 0, 'glowfly');
     this.mouseFly.anchor.x = .5;
     this.mouseFly.anchor.y = .5;
     this.mouseFly.alpha = 1;
     game.canvas.addEventListener('mousedown', this.clickSomething);
     game.input.addMoveCallback(this.move, this);
-    //game.add.text(52, 200, 'Press ENTER to change states.', { fontSize: '26px', fill: '#FFF', align: "center" });
-    
-    
+   
+    //add credits page
     this.creditsBack = game.add.sprite(0, 0, 'mainMenuBackground');
     this.creditsBack.animations.add('liveBackground', [0, 1, 2, 3, 4, 5, 6, 7], 7, true);
     this.creditsBack.animations.play('liveBackground');
@@ -62,12 +68,8 @@ MainMenu.prototype.create = function() {
     this.videoOn = false;
 };
 MainMenu.prototype.update = function() {
-    /*if(this.creditsOn == true && game.input.activePointer.leftButton.isDown){
-        this.creditsOn = false;
-        this.creditsBack.destroy();
-        this.creditsText.destroy();
-    }*/
     
+    //animate buttons with mouse movement
     if (this.startButton.input.pointerOver() && this.mouseOverS == false){
         this.startButton.animations.play('mouseOver');
         this.mouseOverS = true;
@@ -82,8 +84,6 @@ MainMenu.prototype.update = function() {
         this.creditsButton.animations.play('mouseRemovedC');
         this.mouseOverC = false;
     }
-    
-    
     
     //home made animation loop for title since spritesheet was too large
     if(this.frameChecker % 6 == 0){
@@ -120,6 +120,7 @@ MainMenu.prototype.update = function() {
         }
     }
     
+    //dissables lofo and buttons while credits page is open
     if(this.creditsOn == true){
         this.logo.visible = false;
         if(this.creditsOff){
@@ -133,17 +134,22 @@ MainMenu.prototype.update = function() {
         this.clickedDiffFrame = true;
     }
     
+    //disables logo while video is playing
     if(this.videoOn){
         this.logo.visible = false;
     }
     this.frameChecker += 1;
 };
+
+//keep track of mouse movement
 MainMenu.prototype.move = function(pointer, x, y, click){
     if(!click){
         this.mouseFly.x = game.input.mousePointer.x;
         this.mouseFly.y = game.input.mousePointer.y;
     }
 };
+
+//start the game after video
 MainMenu.prototype.startGame = function(){
     //game.input.mouse.requestPointerLock();
     if(!this.creditsOn){
@@ -156,6 +162,7 @@ MainMenu.prototype.startGame = function(){
     }
 };
 
+//start the video after start button pressed
 MainMenu.prototype.startVideo = function() {
     
     if(!this.creditsOn){
@@ -167,6 +174,8 @@ MainMenu.prototype.startVideo = function() {
     }
     
 };
+
+//turn the credits on
 MainMenu.prototype.credits = function(){
     this.creditsOn = true;
     this.creditsBack.inputEnabled = true;
@@ -174,6 +183,8 @@ MainMenu.prototype.credits = function(){
     this.creditsText.visible = true;
     game.input.mouse.capture = true;
 };
+
+//turn the credits off
 MainMenu.prototype.turnCreditsOff = function(){
     this.creditsOff = true;
     this.creditsBack.inputEnabled = false;
