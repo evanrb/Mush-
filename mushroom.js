@@ -71,10 +71,10 @@ function mushroom(game, key, playerNum, xPos, yPos, map, mapLocation1, mapLocati
     this.animations.add('idleRight', [12], 7, true);
     this.animations.add('idleForward', [0], 7, true);
     this.animations.add('idleBack', [4], 7, true);
-    this.animations.add('walkForward', [1, 3], 1, true);
-    this.animations.add('walkBack', [5, 7], 1, true);
-    this.animations.add('walkLeft', [9, 11], 2, true);
-    this.animations.add('walkRight', [13, 15], 2, true);
+    this.animations.add('walkForward', [1, 3], 5, true);
+    this.animations.add('walkBack', [5, 7], 5, true);
+    this.animations.add('walkLeft', [9, 11], 5, true);
+    this.animations.add('walkRight', [13, 15], 5, true);
     
     // just a number if 0 it is facing forward, if 1 facing backward, if 2 facing right, if 3 facing left
     this.direction = 0;
@@ -335,6 +335,9 @@ mushroom.prototype.animateMovement = function(){
     }else if(this.direction == 3){
         this.animations.play('walkLeft');
     }
+}
+mushroom.prototype.playBurnAnimation = function(){
+    
 }
 mushroom.prototype.getDirection = function(){
     return this.direction;

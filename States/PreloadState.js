@@ -113,7 +113,8 @@ PreloadState.prototype.preload = function(){
     
     game.load.audio('seperatel3', ['Sound/level1Join.mp3']);
     
-    
+    //game over screen
+    game.load.image('gameOver', 'Assets/gameOver.png');
 };
 
 PreloadState.prototype.create = function(){

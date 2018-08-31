@@ -77,6 +77,8 @@ GamePlayLevel3.prototype.create = function() {
     midFire.animations.play('moveMidFlames');
     
     this.topFire = game.add.sprite(this.game.camera.x,this.game.camera.y, 'fireTop1');
+    game.physics.enable(this.topFire, Phaser.Physics.ARCADE);
+    this.topFire.body.setSize(this.game.camera.width, 80, 0, 0);
     //topFire.animations.add('moveTopFlames', []);
     //topFire.animations.play('moveTopFlames', 7, true);
     
@@ -105,8 +107,8 @@ GamePlayLevel3.prototype.create = function() {
     p1.moving = true;
     p2.moving = true;
     
-    var moveCamera = game.add.tween(this.game.camera).to({ y: this.game.world.height - this.game.camera.height}, 20000, Phaser.Easing.Linear.None, true);
-    moveCamera.onComplete.add(allowMovement, this); function allowMovement() {   }  
+    this.moveCamera = game.add.tween(this.game.camera).to({ y: this.game.world.height - this.game.camera.height}, 20000, Phaser.Easing.Linear.None, true);
+    this.moveCamera.onComplete.add(allowMovement, this); function allowMovement() {   }  
     
     this.shadingAlpha = .5;
     this.shadingAlphaText = this.shadingAlpha.toString();
@@ -125,6 +127,8 @@ GamePlayLevel3.prototype.create = function() {
     this.topFire = game.add.sprite(this.game.camera.x,this.game.camera.y, 'fireTop1');
     this.topFireFrameNum = 0;
     this.topFireSheet = 1;
+    
+    this.pauseOn = false;
     
     this.attach = false;
 };
@@ -153,11 +157,19 @@ GamePlayLevel3.prototype.update = function() {
                 this.topFireSheet = 1;
             }
         }
-        //this.topFire.fixedToCamera = true;
+        game.physics.enable(this.topFire, Phaser.Physics.ARCADE);
+        this.topFire.body.setSize(this.game.camera.width, 80, 0, 0);
     }
     
     
+    var collide1 = game.physics.arcade.collide(p1, this.topFire);
+    var collide2 = game.physics.arcade.collide(p2, this.topFire);
     
+    if(collide1){
+        p1.moving = true;
+    }if(collide2){
+        p2.moving = true;
+    }
     
     if(p2.grabbingObstacle1){
         obstacle1.x = p2.x - 208;
@@ -177,7 +189,9 @@ GamePlayLevel3.prototype.update = function() {
         }
     }
     
-    
+    if(this.pauseOn){
+        this.topFire.visible = false;
+    }
     if(p2.grabbingObstacle3){
         obstacle3.y = p2.y + 32;
         if(p2.mapArrayLocation[0] == 18 && !p2.moving){
@@ -274,7 +288,7 @@ GamePlayLevel3.prototype.update = function() {
     
 };
 GamePlayLevel3.prototype.render = function(){
-    //game.debug.body(p1);
+    game.debug.body(this.topFire);
     //game.debug.body(p2);
 //    game.debug.body(map);
 //    for(i = 0; i < this.FLIES.length; i++){
@@ -330,9 +344,9 @@ GamePlayLevel3.prototype.updateShadowTexture = function(){
     
 };
 GamePlayLevel3.prototype.pause = function(){
-    if(this.timer != null){
-        this.timer.pause();
-    }
+    this.moveCamera.pause();
+    this.topFire.visible = false;
+    this.pauseOn = true;
     p1.moving = true;
     p2.moving = true;
     p3.moving = true;
@@ -372,9 +386,9 @@ GamePlayLevel3.prototype.pauseScreenUpdate = function(){
     }
 };
 GamePlayLevel3.prototype.resumeGame = function(){
-    if(this.timer != null){
-        this.timer.resume();
-    }
+    this.topFire.visible = true;
+    this.pauseOn = false;
+    this.moveCamera.resume();
     p1.moving = false;
     p2.moving = false;
     p3.moving = false;
@@ -384,12 +398,12 @@ GamePlayLevel3.prototype.resumeGame = function(){
     this.quitButton.destroy();
 };
 GamePlayLevel3.prototype.quitGame = function(){
-    music.pause();
+    music2.pause();
     this.game.world.removeAll();
-    game.state.start('MainMenu');  
+    game.state.start('BootState');  
 };
 GamePlayLevel3.prototype.restartGame = function(){
-    music.pause();
+    music2.pause();
     this.game.world.removeAll();
     game.state.start('GamePlay');
 };
