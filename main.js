@@ -1,8 +1,10 @@
 var game;
+var p3Radius;
 
 window.onload = function(){
     game = new Phaser.Game(896, 480, Phaser.AUTO, 'game');//, '', { preload: preload, create: create, update: update });
-
+    
+    p3Radius = 100;
     game.state.add('MainMenu', MainMenu);
     game.state.add('GamePlay', GamePlay);
     game.state.add('GamePlayLevel2', GamePlayLevel2);

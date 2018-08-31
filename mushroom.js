@@ -57,6 +57,7 @@ function mushroom(game, key, playerNum, xPos, yPos, map, mapLocation1, mapLocati
         this.pressInstanceFrame = 0;
         this.movementPenalty = 10;
         this.hasLight = true;
+        this.inputWorked = false;
     }
     
     this.moving = false;
@@ -115,8 +116,10 @@ mushroom.prototype.update = function () {
                 }
             }
         }else {
+            this.lightRadius = p3Radius;
                 if (game.input.keyboard.justPressed(this.upInput) && this.helper.canTakeU1){
                     if(this.helper.keyIn(0)){
+                        this.inputWorked = true;
                         this.direction = 1;
                         if(this.maze[this.mapArrayLocation[0] - 1][this.mapArrayLocation[1]] == 0 && this.maze[this.mapArrayLocation[0] - 1][this.mapArrayLocation[1] + 1] == 0){
                             this.legalMove(this.x, this.y - 32, 150);
@@ -125,7 +128,7 @@ mushroom.prototype.update = function () {
                             this.hitWall(this.x, this.y - 5, 150, this.x, this.y, 150);
                         }
                     }else if(this.helper.total() > 1){
-                        this.lightRadius -= this.movementPenalty;
+                        p3Radius -= this.movementPenalty;
                     }
                     if(this.helper.total() == 1){
                         this.pressInstanceFrame = this.frameCount;
@@ -135,6 +138,7 @@ mushroom.prototype.update = function () {
                 }
             if (game.input.keyboard.justPressed(this.upInput2) && this.helper.canTakeU2){
                     if(this.helper.keyIn(0.2)){
+                        this.inputWorked = true;
                         this.direction = 1;
                         if(this.maze[this.mapArrayLocation[0] - 1][this.mapArrayLocation[1]] == 0 && this.maze[this.mapArrayLocation[0] - 1][this.mapArrayLocation[1] + 1] == 0){
                             this.legalMove(this.x, this.y - 32, 150);
@@ -143,7 +147,7 @@ mushroom.prototype.update = function () {
                             this.hitWall(this.x, this.y - 5, 150, this.x, this.y, 150);
                         }
                     }else if(this.helper.total() > 1){
-                        this.lightRadius -= this.movementPenalty;
+                        p3Radius -= this.movementPenalty;
                     }
                     if(this.helper.total() == 1){
                         this.pressInstanceFrame = this.frameCount;
@@ -153,6 +157,7 @@ mushroom.prototype.update = function () {
                 }
                 if (game.input.keyboard.justPressed(this.rightInput) && this.helper.canTakeR1){
                     if(this.helper.keyIn(2)){
+                        this.inputWorked = true;
                         this.direction = 2;
                         if(this.maze[this.mapArrayLocation[0]][this.mapArrayLocation[1] + 2] == 0){
                             this.legalMove(this.x + 32, this.y, 150);
@@ -161,7 +166,7 @@ mushroom.prototype.update = function () {
                             this.hitWall(this.x + 20, this.y, 150, this.x, this.y, 150);
                         }
                     }else if(this.helper.total() > 1){
-                        this.lightRadius -= this.movementPenalty;
+                        p3Radius -= this.movementPenalty;
                     }
                     if(this.helper.total() == 1){
                         this.pressInstanceFrame = this.frameCount;
@@ -171,6 +176,7 @@ mushroom.prototype.update = function () {
                 }
             if (game.input.keyboard.justPressed(this.rightInput2) && this.helper.canTakeR2){
                     if(this.helper.keyIn(2.2)){
+                        this.inputWorked = true;
                         this.direction = 2;
                         if(this.maze[this.mapArrayLocation[0]][this.mapArrayLocation[1] + 2] == 0){
                             this.legalMove(this.x + 32, this.y, 150);
@@ -179,7 +185,7 @@ mushroom.prototype.update = function () {
                             this.hitWall(this.x + 20, this.y, 150, this.x, this.y, 150);
                         }
                     }else if(this.helper.total() > 1){
-                        this.lightRadius -= this.movementPenalty;
+                        p3Radius -= this.movementPenalty;
                     }
                     if(this.helper.total() == 1){
                         this.pressInstanceFrame = this.frameCount;
@@ -189,6 +195,7 @@ mushroom.prototype.update = function () {
                 }
             if (game.input.keyboard.justPressed(this.leftInput) && this.helper.canTakeL1){
                     if(this.helper.keyIn(1)){
+                        this.inputWorked = true;
                         this.direction = 3;
                         if(this.maze[this.mapArrayLocation[0]][this.mapArrayLocation[1] - 1] == 0){
                             this.legalMove(this.x - 32, this.y, 150);
@@ -197,7 +204,7 @@ mushroom.prototype.update = function () {
                             this.hitWall(this.x - 15, this.y, 150, this.x, this.y, 150);
                         }
                     }else if(this.helper.total() > 1){
-                        this.lightRadius -= this.movementPenalty;
+                        p3Radius -= this.movementPenalty;
                     }
                     if(this.helper.total() == 1){
                         this.pressInstanceFrame = this.frameCount;
@@ -207,6 +214,7 @@ mushroom.prototype.update = function () {
                 }
             if (game.input.keyboard.justPressed(this.leftInput2) && this.helper.canTakeL2){
                     if(this.helper.keyIn(1.2)){
+                        this.inputWorked = true;
                         this.direction = 3;
                         if(this.maze[this.mapArrayLocation[0]][this.mapArrayLocation[1] - 1] == 0){
                             this.legalMove(this.x - 32, this.y, 150);
@@ -215,7 +223,7 @@ mushroom.prototype.update = function () {
                             this.hitWall(this.x - 15, this.y, 150, this.x, this.y, 150);
                         }
                     }else if(this.helper.total() > 1){
-                        this.lightRadius -= this.movementPenalty;
+                        p3Radius -= this.movementPenalty;
                     }
                     if(this.helper.total() == 1){
                         this.pressInstanceFrame = this.frameCount;
@@ -225,6 +233,7 @@ mushroom.prototype.update = function () {
                 }
             if (game.input.keyboard.justPressed(this.downInput) && this.helper.canTakeD1){
                     if(this.helper.keyIn(3)){
+                        this.inputWorked = true;
                         this.direction = 0;
                         if(this.maze[this.mapArrayLocation[0] + 1][this.mapArrayLocation[1]] == 0 && this.maze[this.mapArrayLocation[0] + 1][this.mapArrayLocation[1] + 1] == 0){
                             this.legalMove(this.x, this.y + 32, 150);
@@ -233,7 +242,7 @@ mushroom.prototype.update = function () {
                             this.hitWall(this.x, this.y + 5, 150, this.x, this.y, 150);
                         }
                     }else if(this.helper.total() > 1){
-                        this.lightRadius -= this.movementPenalty;
+                        p3Radius -= this.movementPenalty;
                     }
                     if(this.helper.total() == 1){
                         this.pressInstanceFrame = this.frameCount;
@@ -243,6 +252,7 @@ mushroom.prototype.update = function () {
                 }
             if (game.input.keyboard.justPressed(this.downInput2) && this.helper.canTakeD2){
                     if(this.helper.keyIn(3.2)){
+                        this.inputWorked = true;
                         this.direction = 0;
                         if(this.maze[this.mapArrayLocation[0] + 1][this.mapArrayLocation[1]] == 0 && this.maze[this.mapArrayLocation[0] + 1][this.mapArrayLocation[1] + 1] == 0){
                             this.legalMove(this.x, this.y + 32, 150);
@@ -251,7 +261,7 @@ mushroom.prototype.update = function () {
                             this.hitWall(this.x, this.y + 5, 150, this.x, this.y, 150);
                         }
                     }else if(this.helper.total() > 1){
-                        this.lightRadius -= this.movementPenalty;
+                        p3Radius -= this.movementPenalty;
                     }
                     if(this.helper.total() == 1){
                         this.pressInstanceFrame = this.frameCount;
@@ -259,8 +269,9 @@ mushroom.prototype.update = function () {
                         this.helper.clearVals();
                     }
                 }
-            if(this.frameCount - this.pressInstanceFrame == 30){
-                this.lightRadius -= this.movementPenalty;
+            if(this.frameCount - this.pressInstanceFrame == 30 && !this.inputWorked){
+                this.inputWorked = false;
+                p3Radius -= this.movementPenalty;
                 this.helper.clearVals();
             }
             this.frameCount += 1;

@@ -20,6 +20,8 @@ GamePlayLevel2.prototype.preload = function() {
     game.load.audio('softStrike', ['Sound/softerStrike.mp3']);
     game.load.audio('rainSound', ['Sound/rain.mp3']);
     
+    game.load.video('Video', ['Video/level2End.mp4']);
+    
     var mushrooms;
     var back;
     var p3;
@@ -39,6 +41,8 @@ GamePlayLevel2.prototype.create = function() {
     music = game.add.audio('night2');
     music.loopFull();
     music.volume = 1;
+    
+    vid = game.add.video('Video');
     
     rainSound = game.add.audio('rainSound');
     rainSound.loopFull();
@@ -184,7 +188,8 @@ GamePlayLevel2.prototype.update = function() {
     }
     
     if(p3.y + 32 == 1600){
-        game.state.start('GameOver');
+        this.playEndVideo();
+        //game.state.start('GameOver');
     }
     
     if(p3.lightRadius <= 15 && p3.hasLight){
@@ -435,6 +440,21 @@ GamePlayLevel2.prototype.quitGame = function(){
 };
 GamePlayLevel2.prototype.restartGame = function(){
     music.pause();
+    rainSound.pause();
+    thunderBuild.pause();
     this.game.world.removeAll();
     game.state.start('GamePlay');
+};
+GamePlayLevel2.prototype.playEndVideo = function(){
+    music.pause();
+    rainSound.pause();
+    thunderBuild.pause();
+    vid.play(false);
+    vid.addToWorld(0, 0, 0, 0, 1, 1);
+    vid.onComplete.add(this.startLevel3, this);
+};
+GamePlayLevel2.prototype.startLevel3 = function(){
+    vid.destroy();
+    this.game.world.removeAll();
+    game.state.start('GamePlayLevel3');
 };

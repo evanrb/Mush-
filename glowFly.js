@@ -35,7 +35,8 @@ glowFly.prototype.update = function() {
     }else if(collide3){
         this.gone();
         twinkle.play();
-        p3.lightRadius += 10;
+        p3Radius += 10;
+        //p3.lightRadius += 10;
     }
 }
 glowFly.prototype.gone = function(){

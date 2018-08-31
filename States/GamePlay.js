@@ -298,6 +298,7 @@ GamePlay.prototype.update = function() {
         p3.visible = true;
         p3.moving = true;
         p3.lightRadius = p2.lightRadius+p1.lightRadius;
+        p3Radius = p2.lightRadius+p1.lightRadius;
         p1.destroy();
         p2.destroy();
         
