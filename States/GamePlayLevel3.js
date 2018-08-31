@@ -255,7 +255,7 @@ GamePlayLevel3.prototype.update = function() {
         
         p3.destroy();
         p1.x = 464;
-        p1.y = 480;
+        p1.y = 490;
         p1.direction = 0;
         p1.legalMove(p1.x, p1.y + 32, 150);
         

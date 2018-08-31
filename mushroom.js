@@ -48,6 +48,7 @@ function mushroom(game, key, playerNum, xPos, yPos, map, mapLocation1, mapLocati
         this.leftInput = p2L;
         this.downInput = p2D;
     }else{
+        this.y -= 5;
         this.upInput = p1U;
         this.rightInput = p1R;
         this.leftInput = p1L;

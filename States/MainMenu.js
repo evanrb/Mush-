@@ -157,8 +157,8 @@ MainMenu.prototype.startGame = function(){
         this.game.world.removeAll();
         music.pause();
         //game.state.start('GamePlay');
-        game.state.start('GamePlayLevel2');
-        //game.state.start('GamePlayLevel3');
+        //game.state.start('GamePlayLevel2');
+        game.state.start('GamePlayLevel3');
     }
 };
 

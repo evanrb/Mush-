@@ -116,7 +116,7 @@ GamePlay.prototype.create = function() {
     
     //a group that holds all the player characters
     this.mushrooms = this.game.add.group();
-    p1 = new mushroom(game, 'RED', 1, 48, 42, level1, 1, 1);
+    p1 = new mushroom(game, 'RED', 1, 48, 40, level1, 1, 1);
     p2 = new mushroom(game, 'BLUE', 2, 848, 32, level1, 1, 26);
     p3 = new mushroom(game, 'together', 3, -60, -2, level1, 13, 13);
     this.mushrooms.add(p1);

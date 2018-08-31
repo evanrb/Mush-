@@ -36,9 +36,9 @@ PreloadState.prototype.preload = function(){
     
     //load level 1 stuff
     //Load Character and GlowFly spritesheets
-    game.load.spritesheet('RED', 'Assets/Red.png', 32, 47);
-    game.load.spritesheet('BLUE', 'Assets/Blue.png',32, 64 );
-    game.load.spritesheet('together', 'Assets/joined.png', 64, 64);
+    game.load.spritesheet('RED', 'Assets/redSized.png', 35, 47);
+    game.load.spritesheet('BLUE', 'Assets/blueSized.png',34, 67 );
+    game.load.spritesheet('together', 'Assets/joinedSized.png', 70, 70);
     game.load.spritesheet('glowfly', 'Assets/glowFly.png', 32, 32);
     
     game.load.spritesheet('tutorial1', 'Assets/tutorial1.png', 896, 97);
