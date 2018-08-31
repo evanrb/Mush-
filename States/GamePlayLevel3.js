@@ -1,61 +1,12 @@
 
 var GamePlayLevel3 = function(game){};
-GamePlayLevel3.prototype.preload = function() {
- 
-    //Load Character
-    game.load.spritesheet('RED', 'Assets/Red.png', 32, 47);
-    game.load.spritesheet('BLUE', 'Assets/Blue.png',32, 64 );
-    game.load.spritesheet('together', 'Assets/joined.png', 64, 64)
-   
-    //Load Maze Background
-    game.load.image('background', 'Assets/level3-background.png');
-    game.load.image('backgroundOverlay', 'Assets/level3Overlay.png');
-    
-    game.load.spritesheet('fireTop1', 'Assets/fire1.png', 896, 160);
-    game.load.spritesheet('fireTop2', 'Assets/fire2.png', 896, 160);
-    game.load.spritesheet('fireTop3', 'Assets/fire3.png', 896, 160);
-    game.load.spritesheet('fireTop4', 'Assets/fire4.png', 896, 160);
-    
-    game.load.spritesheet('fireMid', 'Assets/fireBarrier.png', 385, 768);
-    
-    game.load.image('pauseBackground', 'Assets/pauseBackground.png');
-    game.load.spritesheet('quitButton', 'Assets/quit.png', 128, 92);
-    game.load.spritesheet('restartButton', 'Assets/restart.png', 128, 92);
-    
-    game.load.image('obstacle1', 'Assets/obstacle1.png');
-    game.load.image('obstacle2', 'Assets/obstacle2.png');
-    game.load.image('obstacle3', 'Assets/obstacle3.png');
-    game.load.image('obstacle4', 'Assets/obstacle4.png');
-    
-    game.load.image('ash1', 'Assets/ash1.png');
-    game.load.image('ash2', 'Assets/ash2.png');
-    game.load.image('ember1', 'Assets/ember1.png');
-    game.load.image('ember2', 'Assets/ember2.png');
-    
-    //Load Audio
-    game.load.audio('night3', ['Sound/3rd-Night.wav']);
-    game.load.audio('night4', ['Sound/4th-Night.wav']);
-    
-    game.load.audio('seperate', ['Sound/level1Join.mp3']);
-    
-    var mushrooms;
-    var back;
-    var p1;
-    var p2;
-    var p3;
-    var markerP1;
-    var markerP2;
-    var markerP3;
-    var mapArray;
-    var music;
-    var isPaused;
-};
+
 GamePlayLevel3.prototype.create = function() {
     
    // Set stage background color(required for shading)
     this.game.stage.backgroundColor = 0x78453A;
     game.world.setBounds(0, 0, 960, 1184);
-    back = game.add.sprite(0,0, 'background');
+    back = game.add.sprite(0,0, 'backgroundl3');
     
     //Add and loop background music
     music = game.add.audio('night3');
@@ -64,7 +15,7 @@ GamePlayLevel3.prototype.create = function() {
     music2 = game.add.audio('night4');
     music2.loopFull();
     
-    seperateSound = game.add.audio('seperate');
+    seperateSound = game.add.audio('seperatel3');
 
     this.isPaused = false;
     
@@ -130,7 +81,7 @@ GamePlayLevel3.prototype.create = function() {
     //topFire.animations.play('moveTopFlames', 7, true);
     
     
-    overlay = game.add.sprite(0,0, 'backgroundOverlay');
+    overlay = game.add.sprite(0,0, 'backgroundOverlayl3');
     
     this.LIGHT_RADIUS = 0;
     

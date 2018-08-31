@@ -1,33 +1,6 @@
 var MainMenu = function(game) {};
 //MainMenu.prototype = {
-MainMenu.prototype.preload = function() {
-    console.log('MainMenu: preload');
-    game.load.spritesheet('startButton', 'Assets/start.png', 128, 92);
-    game.load.spritesheet('creditsButton', 'Assets/creditsButton.png', 128, 92 );
-    game.load.spritesheet('glowfly', 'Assets/glowFly.png', 32, 32);
-    game.load.spritesheet('mainMenuBackground', 'Assets/mainMenu.png', 896, 480);
-    game.load.spritesheet('mainMenuLogo1', 'Assets/t1.png', 896, 480);
-    game.load.spritesheet('mainMenuLogo2', 'Assets/t2.png', 896, 480);
-    game.load.spritesheet('mainMenuLogo3', 'Assets/t3.png', 896, 480);
-    game.load.spritesheet('mainMenuLogo4', 'Assets/t4.png', 896, 480);
-    game.load.spritesheet('mainMenuLogo5', 'Assets/t5.png', 896, 480);
-    game.load.spritesheet('mainMenuLogo6', 'Assets/t6.png', 896, 480);
-    game.load.spritesheet('mainMenuLogo7', 'Assets/t7.png', 896, 480);
-    game.load.spritesheet('mainMenuLogo8', 'Assets/t8.png', 896, 480);
-    game.load.spritesheet('mainMenuLogo9', 'Assets/t9.png', 896, 480);
-    game.load.spritesheet('mainMenuLogo10', 'Assets/t10.png', 896, 480);
-    
-    game.load.image('creditsText', 'Assets/credits.png');
-    
-    game.load.video('introVideo', ['Video/introVid.mp4']);
-    
-    //Load Audio
-    game.load.audio('menuMusic', ['Sound/mainMenuMusic.mp3']);
-    
-    var startButton;
-    var mouseFly;
-    var mouseOver;
-};
+
 MainMenu.prototype.create = function() {
     console.log('MainMenu: create');
     var back = game.add.sprite(0, 0, 'mainMenuBackground');

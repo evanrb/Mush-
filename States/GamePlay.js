@@ -1,62 +1,12 @@
 
 var GamePlay = function(game){};
-GamePlay.prototype.preload = function() {
- 
-    //Load Character and GlowFly spritesheets
-    game.load.spritesheet('RED', 'Assets/Red.png', 32, 47);
-    game.load.spritesheet('BLUE', 'Assets/Blue.png',32, 64 );
-    game.load.spritesheet('together', 'Assets/joined.png', 64, 64)
-    game.load.spritesheet('glowfly', 'Assets/glowFly.png', 32, 32);
-    
-    game.load.spritesheet('tutorial1', 'Assets/tutorial1.png', 896, 97);
-    game.load.spritesheet('tutorial2', 'Assets/tutorial2.png', 896, 97);
-    game.load.spritesheet('tutorial3', 'Assets/tutorial3.png', 896, 97);
-    game.load.spritesheet('tutorial4', 'Assets/tutorial4.png', 896, 97);
-    game.load.spritesheet('tutorial5', 'Assets/tutorial5.png', 896, 97);
-    game.load.spritesheet('tutorial6', 'Assets/tutorial6.png', 896, 97);
-    game.load.spritesheet('tutorial7', 'Assets/tutorial7.png', 896, 97);
-    game.load.image('tutorial8', 'Assets/tutorial8.png');
-    
-    //Load Maze Background
-    game.load.image('background', 'Assets/level1-background.png');
-    
-    game.load.image('pauseBackground', 'Assets/pauseBackground.png');
-    game.load.spritesheet('quitButton', 'Assets/quit.png', 128, 92);
-    game.load.spritesheet('restartButton', 'Assets/restart.png', 128, 92);
-    
-    game.load.image('yellowLight', 'Assets/yellow.png');
-    
-    //Load Audio
-    game.load.audio('night1', ['Sound/in-his-own-way.ogg']);
-    game.load.audio('glowfly', ['Sound/glowfly_Chime_1.ogg']);
-    
-    game.load.audio('seperate', ['Sound/level1Seperate.mp3']);
-    game.load.audio('join', ['Sound/level1Join.mp3']);
-    
-    game.load.audio('night1-2', ['Sound/1st-Night.ogg']);
-    
-    var FLIES;
-    var mushrooms;
-    var back;
-    var p1;
-    var p2;
-    var p3;
-    var mapLayer
-    var fly;
-    var markerP1;
-    var markerP2;
-    var markerP3;
-    var mapArray;
-    var music;
-    var twinkle;
-    var isPaused;
-};
+
 GamePlay.prototype.create = function() {
     
    // Set stage background color(required for shading)
     this.game.stage.backgroundColor = 0x78453A;
     game.world.setBounds(0, 0, 896, 1600);
-    back = game.add.sprite(0,0, 'background');
+    back = game.add.sprite(0,0, 'backgroundl1');
     
     this.p1Arrived = false;
     this.p2Arrived = false;

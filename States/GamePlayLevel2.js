@@ -1,41 +1,12 @@
 
 var GamePlayLevel2 = function(game, p3Rad){};
-GamePlayLevel2.prototype.preload = function() {
- 
-    //Load Character
-    game.load.spritesheet('together', 'Assets/joined.png', 70, 70)
-  
-    //Load Maze Background
-    game.load.image('background', 'Assets/level2-background.png');
-    game.load.image('rainDrop', 'Assets/rainDrop.png');
-    
-    game.load.image('invisLight', 'Assets/invisibleLight.png');
-    game.load.image('pauseBackground', 'Assets/pauseBackground.png');
-    game.load.spritesheet('quitButton', 'Assets/quit.png', 128, 92);
-    game.load.spritesheet('restartButton', 'Assets/restart.png', 128, 92);
-    
-    //Load Audio
-    game.load.audio('night2', ['Sound/2nd-Night.wav']);
-    game.load.audio('thunderBuild', ['Sound/buildThunder.mp3']);
-    game.load.audio('softStrike', ['Sound/softerStrike.mp3']);
-    game.load.audio('rainSound', ['Sound/rain.mp3']);
-    
-    game.load.video('Video', ['Video/level2End.mp4']);
-    
-    var mushrooms;
-    var back;
-    var p3;
-    var markerP3;
-    var mapArray;
-    var music;
-    var isPaused;
-};
+
 GamePlayLevel2.prototype.create = function() {
     
    // Set stage background color(required for shading)
     this.game.stage.backgroundColor = 0x78453A;
     game.world.setBounds(0, 0, 1600, 1600);
-    back = game.add.sprite(0,0, 'background');
+    back = game.add.sprite(0,0, 'backgroundl2');
     
     //Add and loop background music
     music = game.add.audio('night2');
