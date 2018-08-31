@@ -177,9 +177,9 @@ MainMenu.prototype.startGame = function(){
         intro.destroy();
         this.game.world.removeAll();
         music.pause();
-        game.state.start('GamePlay');
+        //game.state.start('GamePlay');
         //game.state.start('GamePlayLevel2', 100);
-        //game.state.start('GamePlayLevel3');
+        game.state.start('GamePlayLevel3');
     }
 };
 
@@ -187,39 +187,12 @@ MainMenu.prototype.startVideo = function() {
     
     if(!this.creditsOn){
         this.videoOn = true;
-        intro.play(false);
-        intro.addToWorld(0, 0, 0, 0, 1, 1);
-        intro.onComplete.add(this.startGame, this);
-        //this.startGame();
+        //intro.play(false);
+        //intro.addToWorld(0, 0, 0, 0, 1, 1);
+        //intro.onComplete.add(this.startGame, this);
+        this.startGame();
     }
     
-};
-
-MainMenu.prototype.animationStopped = function(anim){
-    this.logo.destroy();
-    var nextAnim = 0;
-    var speed = 10;
-    if(anim == 1){
-        this.logo = game.add.sprite(0, 0, 'mainMenuLogo1');
-        nextAnim = 2;
-    }else if(anim == 2){
-        this.logo = game.add.sprite(0, 0, 'mainMenuLogo2');
-        nextAnim = 3;
-    }else if(anim == 3){
-        this.logo = game.add.sprite(0, 0, 'mainMenuLogo3');
-        nextAnim = 4;
-    }else if(anim == 4){
-        this.logo = game.add.sprite(0, 0, 'mainMenuLogo4');
-        nextAnim = 5;
-    }else if(anim == 5){
-        this.logo = game.add.sprite(0, 0, 'mainMenuLogo5');
-        nextAnim = 1;
-        speed = 1;
-    }
-    this.logo = game.add.sprite(0, 0, 'mainMenuLogo1');
-    var liveLogo = this.logo.animations.add('liveTitle');
-    this.logo.animations.play('liveTitle', speed , false);
-    liveLogo.onComplete.add(this.animationStopped(nextAnim), this);
 };
 MainMenu.prototype.credits = function(){
     this.creditsOn = true;

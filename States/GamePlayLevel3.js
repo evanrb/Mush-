@@ -11,7 +11,11 @@ GamePlayLevel3.prototype.preload = function() {
     game.load.image('background', 'Assets/level3-background.png');
     game.load.image('backgroundOverlay', 'Assets/level3Overlay.png');
     
-    game.load.spritesheet('fireTop', 'Assets/fire.png', 896, 160);
+    game.load.spritesheet('fireTop1', 'Assets/fire1.png', 896, 160);
+    game.load.spritesheet('fireTop2', 'Assets/fire2.png', 896, 160);
+    game.load.spritesheet('fireTop3', 'Assets/fire3.png', 896, 160);
+    game.load.spritesheet('fireTop4', 'Assets/fire4.png', 896, 160);
+    
     game.load.spritesheet('fireMid', 'Assets/fireBarrier.png', 385, 768);
     
     game.load.image('pauseBackground', 'Assets/pauseBackground.png');
@@ -120,8 +124,8 @@ GamePlayLevel3.prototype.create = function() {
     midFire.animations.add('moveMidFlames', [0, 1, 2, 3], 12, true);
     midFire.animations.play('moveMidFlames');
     
-    //topFire = game.add.sprite(this.game.camera.x,this.game.camera.y, 'fireTop');
-    //topFire.animations.add('moveTopFlames');
+    this.topFire = game.add.sprite(this.game.camera.x,this.game.camera.y, 'fireTop1');
+    //topFire.animations.add('moveTopFlames', []);
     //topFire.animations.play('moveTopFlames', 7, true);
     
     
@@ -149,7 +153,7 @@ GamePlayLevel3.prototype.create = function() {
     p1.moving = true;
     p2.moving = true;
     
-    var moveCamera = game.add.tween(this.game.camera).to({ y: this.game.world.height - this.game.camera.height}, 20000, Phaser.Easing.Linear.None, true);
+    var moveCamera = game.add.tween(this.game.camera).to({ y: this.game.world.height - this.game.camera.height}, 50000, Phaser.Easing.Linear.None, true);
     moveCamera.onComplete.add(allowMovement, this); function allowMovement() {   }  
     
     this.shadingAlpha = .5;
@@ -165,10 +169,39 @@ GamePlayLevel3.prototype.create = function() {
     emitter.setYSpeed(100, 200);
     let area = new Phaser.Rectangle(game.world.centerX, 0, game.world.width, 1);
     emitter.area = area;
+    
+    this.topFire = game.add.sprite(this.game.camera.x,this.game.camera.y, 'fireTop1');
+    this.topFireFrameNum = 0;
+    this.topFireSheet = 1;
 };
 GamePlayLevel3.prototype.update = function() {
     
     emitter.y = game.camera.y;
+    
+    
+    if(this.frameCount % 6 == 0){
+        this.topFire.destroy();
+        if(this.topFireSheet == 1){
+            this.topFire = game.add.sprite(game.camera.x, game.camera.y, 'fireTop1');
+        }else if(this.topFireSheet == 2){
+            this.topFire = game.add.sprite(game.camera.x, game.camera.y, 'fireTop2');
+        }else if(this.topFireSheet == 3){
+            this.topFire = game.add.sprite(game.camera.x, game.camera.y, 'fireTop3');
+        }else if(this.topFireSheet == 4){
+            this.topFire = game.add.sprite(game.camera.x, game.camera.y, 'fireTop4');
+        }
+        this.topFire.frame = this.topFireFrameNum;
+        this.topFireFrameNum += 1;
+        if(this.topFireFrameNum == 4){
+            this.topFireFrameNum = 0;
+            this.topFireSheet += 1;
+            if(this.topFireSheet == 5){
+                this.topFireSheet = 1;
+            }
+        }
+        //this.topFire.fixedToCamera = true;
+    }
+    
     
     if(game.input.keyboard.justPressed(Phaser.Keyboard.P)){
         if(this.isPaused){

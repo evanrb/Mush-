@@ -3,7 +3,7 @@ var GamePlayLevel2 = function(game, p3Rad){};
 GamePlayLevel2.prototype.preload = function() {
  
     //Load Character
-    game.load.spritesheet('together', 'Assets/joined.png', 64, 64)
+    game.load.spritesheet('together', 'Assets/joined.png', 70, 70)
   
     //Load Maze Background
     game.load.image('background', 'Assets/level2-background.png');
