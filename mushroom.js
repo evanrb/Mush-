@@ -79,14 +79,14 @@ function mushroom(game, key, playerNum, xPos, yPos, map, mapLocation1, mapLocati
     this.grabbingObstacle4 = false;
     
     //animation declarations
-    this.animations.add('idleLeft', [8], 7, true);
-    this.animations.add('idleRight', [12], 7, true);
+    this.animations.add('idleLeft', [6], 7, true);
+    this.animations.add('idleRight', [9], 7, true);
     this.animations.add('idleForward', [0], 7, true);
-    this.animations.add('idleBack', [4], 7, true);
-    this.animations.add('walkForward', [1, 3], 5, true);
-    this.animations.add('walkBack', [5, 7], 5, true);
-    this.animations.add('walkLeft', [9, 11], 5, true);
-    this.animations.add('walkRight', [13, 15], 5, true);
+    this.animations.add('idleBack', [3], 7, true);
+    this.animations.add('walkForward', [1, 2], 5, true);
+    this.animations.add('walkBack', [4, 5], 5, true);
+    this.animations.add('walkLeft', [7, 8], 5, true);
+    this.animations.add('walkRight', [10, 11], 5, true);
     
     
     //if 0 it is facing forward, if 1 facing backward, if 2 facing right, if 3 facing left
@@ -341,22 +341,24 @@ mushroom.prototype.hitWall = function(xPos, yPos, speed, endXPos, endYPos, endSp
 };
 
 mushroom.prototype.createP1P2Animations = function(){
-    this.animations.add('fireLeft', [22, 23, 24, 25, 26], 3, false);
-    this.animations.add('fireRight', [27, 28, 29, 30, 31], 3, false);
-    this.animations.add('fireForward', [17, 18, 19, 20, 21], 3, false);
-    this.animations.add('bumpForward', [32], 1, false);
-    this.animations.add('bumpBack', [34], 1, false);
-    this.animations.add('bumpLeft', [36, 37], 2, false);
-    this.animations.add('bumpRight', [40, 41], 2, false);
+    this.animations.add('fireLeft', [17, 18, 19, 20, 21], 3, false);
+    this.animations.add('fireRight', [22, 23, 24, 25, 26], 3, false);
+    this.animations.add('fireForward', [12, 13, 14, 15, 16], 3, false);
+    this.animations.add('bumpForward', [27], 1, true);
+    this.animations.add('bumpBack', [28], 1, true);
+    this.animations.add('bumpLeft', [29, 30], 2, false);
+    this.animations.add('bumpRight', [31, 32], 2, false);
 };
 mushroom.prototype.createP3Animations = function(){
-//    this.animations.add('fireLeft', [22, 23, 24, 25, 26], 3, false);
-//    this.animations.add('fireRight', [27, 28, 29, 30, 31], 3, false);
-//    this.animations.add('fireForward', [17, 18, 19, 20, 21], 3, false);
-//    this.animations.add('bumpForward', [32], 1, false);
-//    this.animations.add('bumpBack', [34], 1, false);
-//    this.animations.add('bumpLeft', [36, 37], 2, false);
-//    this.animations.add('bumpRight', [40, 41], 2, false);
+    this.animations.add('fireLeft', [29, 30, 31, 32, 33, 34, 35, 36], 3, false);
+    this.animations.add('fireRight', [37, 38, 39, 40, 41, 42, 43, 44], 3, false);
+    this.animations.add('fireForward', [21, 22, 23, 24, 25, 26, 27], 3, false);
+    this.animations.add('fireBackward', [28, 22, 23, 24, 25, 26, 27], 3, false);
+    this.animations.add('bumpForward', [45], 1, false);
+    this.animations.add('bumpBack', [46], 1, false);
+    this.animations.add('bumpLeft', [47, 48], 2, false);
+    this.animations.add('bumpRight', [49, 50], 2, false);
+     this.animations.add('lightsOut', [12, 13, 14, 15, 16, 17, 18, 19, 20], 3, false);
 };
 //set the idle direction of player
 mushroom.prototype.endMotion = function(){

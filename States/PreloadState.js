@@ -7,7 +7,7 @@ PreloadState.prototype.preload = function(){
     loadShrooms = game.add.sprite(game.world.centerX, game.world.centerY, 'mushroomLoad');
     loadShrooms.anchor.x = .5;
     loadShrooms.anchor.y = .5;
-    loadShrooms.animations.add('moveLoadingShrooms', [1, 3], 4, true);
+    loadShrooms.animations.add('moveLoadingShrooms', [1, 2], 4, true);
     loadShrooms.animations.play('moveLoadingShrooms');
     
     //loading MainMenu Assets
@@ -38,7 +38,7 @@ PreloadState.prototype.preload = function(){
     //Load Character and GlowFly spritesheets
     game.load.spritesheet('RED', 'Assets/lessRed.png', 35, 47);
     game.load.spritesheet('BLUE', 'Assets/lessBlue.png',34, 67 );
-    game.load.spritesheet('together', 'Assets/joinedSized.png', 70, 70);
+    game.load.spritesheet('together', 'Assets/lessJoined.png', 70, 70);
     game.load.spritesheet('glowfly', 'Assets/glowFly.png', 32, 32);
     
     game.load.spritesheet('tutorial1', 'Assets/tutorial1.png', 896, 97);
