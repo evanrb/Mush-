@@ -13,7 +13,7 @@ GamePlayLevel2.prototype.create = function() {
     music.loopFull();
     music.volume = 1;
     
-    vid = game.add.video('Video');
+    this.vid = game.add.video('Video');
     
     //add souns
     rainSound = game.add.audio('rainSound');
@@ -81,7 +81,8 @@ GamePlayLevel2.prototype.create = function() {
         [1,0,0,1,1,1,0,0,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,0,0,1,0,0,1,1,1,0,0,1,0,0,1,0,0,1],
         [1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,1],
         [1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,1],
-        [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1]
+        [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1],
+        [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
     ];
     
     
@@ -160,7 +161,8 @@ GamePlayLevel2.prototype.update = function() {
     }
     
     //when the player wins
-    if(p3.y + 32 == 1600){
+    if(p3.y + 32 >= 1600){
+        game.camera.follow(null);
         this.playEndVideo();
         //game.state.start('GameOver');
     }
@@ -428,20 +430,20 @@ GamePlayLevel2.prototype.restartGame = function(){
     rainSound.pause();
     thunderBuild.pause();
     this.game.world.removeAll();
-    game.state.start('GamePlay');
-};
-//play the ending video
-GamePlayLevel2.prototype.playEndVideo = function(){
-    music.pause();
-    rainSound.pause();
-    thunderBuild.pause();
-    vid.play(false);
-    vid.addToWorld(0, 0, 0, 0, 1, 1);
-    vid.onComplete.add(this.startLevel3, this);
+    game.state.start('GamePlayLevel2');
 };
 //start the next level
 GamePlayLevel2.prototype.startLevel3 = function(){
-    vid.destroy();
+    music.pause();
+    rainSound.pause();
+    thunderBuild.pause();
+    //this.vid.destroy();
     this.game.world.removeAll();
     game.state.start('GamePlayLevel3');
+};
+//play the ending video
+GamePlayLevel2.prototype.playEndVideo = function(){
+    this.vid.play(false);
+    this.vid.addToWorld(game.camera.x, game.camera.y, 0, 0, 1, 1);
+    this.vid.onComplete.add(this.startLevel3, this);
 };
