@@ -13,7 +13,7 @@ class p3MovementHelper{
         this.canTakeD1 = true;
         this.canTakeD2 = true;
     }
-    
+    //incriment the values according to input and return if valid inputs have been pressed
     keyIn(keyValue){
         if(keyValue == 0 && this.canTakeU1){
             this.canTakeU1 = false;
@@ -46,6 +46,7 @@ class p3MovementHelper{
         return false;
     };
     
+    //reset all values
     clearVals(){
         this.up = 0;
         this.left = 0;
@@ -61,6 +62,7 @@ class p3MovementHelper{
         this.canTakeD2 = true;
     };
     
+    //return the total number of inputs pressed 
     total(){
         var total = this.up + this.left + this.right + this.down;
         return total;
