@@ -110,15 +110,15 @@ mushroom.prototype.update = function () {
                 }
             } else if (game.input.keyboard.justPressed(this.leftInput) && !this.grabbingObstacle3 && !this.grabbingObstacle1) {
                 this.direction = 3;
-                if (this.maze[this.mapArrayLocation[0]][this.mapArrayLocation[1] - 1] == 0) {
+                if (this.maze[this.mapArrayLocation[0]][this.mapArrayLocation[1] - 1] == 0 || this.maze[this.mapArrayLocation[0]][this.mapArrayLocation[1] - 1] == 5) {
+                    if(this.maze[this.mapArrayLocation[0]][this.mapArrayLocation[1] - 1] == 5){
+                        this.grabbingObstacle4 = true;
+                    }
                     this.legalMove(this.x - 32, this.y, 150);
                     this.mapArrayLocation[1] -= 1;
                 } else{
                     if (this.maze[this.mapArrayLocation[0]][this.mapArrayLocation[1] - 1] == 3) {
                         this.grabbingObstacle1 = true;
-                    }
-                    if (this.maze[this.mapArrayLocation[0]][this.mapArrayLocation[1] - 1] == 5) {
-                        this.grabbingObstacle4 = true;
                     }
                     this.hitWall(this.x - 5, this.y, 150, this.x, this.y, 150);
                 }

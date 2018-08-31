@@ -99,7 +99,7 @@ GamePlayLevel3.prototype.create = function() {
         [1,1,1,1,1,1,1,1,1,0,1,0,1,0,0,0,1,0,0,2,0,0,1,1,0,1,1,1,0,1], //27
         [1,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,0,0,2,0,0,0,1,0,0,0,1,0,1], //28
         [1,1,1,1,1,1,0,1,1,1,1,0,0,0,1,0,0,0,0,2,0,1,0,1,1,1,0,1,0,1], //29
-        [1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,2,0,0,5,2,2,2,5,1,0,1], //30
+        [1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,2,0,0,5,2,2,2,2,1,0,1], //30
         [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,0,1,1,1,1,1] //31
 
     ];
@@ -154,7 +154,7 @@ GamePlayLevel3.prototype.create = function() {
     p1.moving = true;
     p2.moving = true;
     
-    var moveCamera = game.add.tween(this.game.camera).to({ y: this.game.world.height - this.game.camera.height}, 30000, Phaser.Easing.Linear.None, true);
+    var moveCamera = game.add.tween(this.game.camera).to({ y: this.game.world.height - this.game.camera.height}, 20000, Phaser.Easing.Linear.None, true);
     moveCamera.onComplete.add(allowMovement, this); function allowMovement() {   }  
     
     this.shadingAlpha = .5;
@@ -228,8 +228,6 @@ GamePlayLevel3.prototype.update = function() {
     
     
     if(p2.grabbingObstacle3){
-        console.log(p2.mapArrayLocation[0]);
-    
         obstacle3.y = p2.y + 32;
         if(p2.mapArrayLocation[0] == 18 && !p2.moving){
             p2.grabbingObstacle3 = false;
@@ -242,6 +240,34 @@ GamePlayLevel3.prototype.update = function() {
         }
     }
     
+    if(p1.grabbingObstacle4){
+        obstacle4.x = p1.x + 16;
+        if(p1.mapArrayLocation[1] == 17 && !p1.moving){
+            p1.grabbingObstacle4 = false;
+            p1.maze[30][18] = 2;
+            p2.maze[30][23] = 0;
+        }else if(p1.mapArrayLocation[1] == 18 && !p1.moving){
+            p1.maze[30][19] = 2;
+            p2.maze[30][24] = 0;
+        }else if(p1.mapArrayLocation[1] == 19 && !p1.moving){
+            p1.maze[30][20] = 2;
+            p2.maze[30][25] = 0;
+        }else if(p1.mapArrayLocation[1] == 20 && !p1.moving){
+            p1.maze[30][21] = 2;
+            p2.maze[30][26] = 0;
+        }
+    }
+    
+    if(p2.grabbingObstacle4){
+        obstacle4.x = p2.x - 168 - 32;
+        if(!p1.moving){
+            p2.grabbingObstacle4 = false;
+            p1.maze[30][22] = 0;
+            p1.maze[30][21] = 2;
+            p1.maze[30][17] = 2;
+            p2.maze[30][21] = 2;
+        }
+    }
     
     
     if(game.input.keyboard.justPressed(Phaser.Keyboard.P)){
