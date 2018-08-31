@@ -15,6 +15,7 @@ GamePlayLevel2.prototype.create = function() {
     
     vid = game.add.video('Video');
     
+    //add souns
     rainSound = game.add.audio('rainSound');
     rainSound.loopFull();
     rainSound.volume = .65;
@@ -29,6 +30,7 @@ GamePlayLevel2.prototype.create = function() {
     
     this.isPaused = false;
     
+    //level array
     var level2 = [///////////////////////////////////////0,0/////////////////////////////
         [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
         [1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
@@ -92,7 +94,7 @@ GamePlayLevel2.prototype.create = function() {
     game.camera.follow(p3);
     this.mushrooms.add(p3)   
     
-     //rain taken from nathan's eexample particles04.js, thanks Nathan.
+     //rain adapted from nathan's example particles04.js, thanks Nathan.
     emitter = game.add.emitter(game.world.centerX, 0, 500);
     emitter.makeParticles(['rainDrop']);
     emitter.start(false, 1600, 1, 0);
@@ -103,7 +105,6 @@ GamePlayLevel2.prototype.create = function() {
     emitter.area = area;
     
     invisLight = game.add.sprite(game.world.centerX, game.world.centerY, 'invisLight');
-    
     
     this.LIGHT_RADIUS = 0;
     
@@ -136,8 +137,6 @@ GamePlayLevel2.prototype.create = function() {
     // x and y coordinate of where we want the lightning to appear from.
     this.lightning.anchor.setTo(0.5, 0);
 
-    // Trigger lightning on mouse clicks and taps
-    //this.game.input.onTap.add(this.zap, this);
     
     this.lightFrameInstance = 0;
     this.lightAlpha = 1;
@@ -147,9 +146,11 @@ GamePlayLevel2.prototype.create = function() {
 };
 GamePlayLevel2.prototype.update = function() {
    
+    //update rain and lightning start positions
     emitter.y = game.camera.y;
     this.lightning.y = game.camera.y;
     
+    //pause game
     if(game.input.keyboard.justPressed(Phaser.Keyboard.P)){
         if(this.isPaused){
             this.resumeGame();
@@ -158,11 +159,13 @@ GamePlayLevel2.prototype.update = function() {
         }
     }
     
+    //when the player wins
     if(p3.y + 32 == 1600){
         this.playEndVideo();
         //game.state.start('GameOver');
     }
     
+    //remove light when it becomes too small
     if(p3.lightRadius <= 15 && p3.hasLight){
         console.log('here');
         p3.hasLight = false;
@@ -177,10 +180,12 @@ GamePlayLevel2.prototype.update = function() {
         });
     }
     
+    //update pause 
     if(this.isPaused){
         this.pauseScreenUpdate();
     }else{this.updateShadowTexture();}
     
+    //change lighting effects with lightning
     if(invisLight.exists = true && this.frameCount - this.lightFrameInstance < 350){
         this.lightAlpha -= .01;
         this.lightAlphaString = this.lightAlpha.toString();
@@ -191,6 +196,7 @@ GamePlayLevel2.prototype.update = function() {
         //this.lightFrameInstance = this.frameCount;
     }
     
+    //trigger lightning strikes at semi-random times
     if(this.frameCount % this.lightningTime == 0){
         this.lightningTime = Math.floor((Math.random() * 500) + 300);
         this.lightning.x = this.game.camera.x + (Math.random() * 896);
@@ -208,6 +214,8 @@ GamePlayLevel2.prototype.update = function() {
         this.frameCount = 1;
     }
 };
+
+//debug info
 GamePlayLevel2.prototype.render = function(){
     //game.debug.body(p1);
     //game.debug.body(p2);
@@ -219,7 +227,8 @@ GamePlayLevel2.prototype.render = function(){
 //        game.debug.body(p3);
 //    }
 };
-// Create a lightning bolt
+
+// Create a lightning bolt CODE ADDAPTED FROM: https://gamemechanicexplorer.com/#lightning-3
 GamePlayLevel2.prototype.zap = function() {
     console.log("in zap");
     // Create the lightning texture
@@ -238,7 +247,7 @@ GamePlayLevel2.prototype.zap = function() {
         .to({ alpha: 0 }, 250, Phaser.Easing.Cubic.In)
         .start();
 };
-// This function creates a texture that looks like a lightning bolt
+// This function creates a texture that looks like a lightning bolt CODE ADDAPTED FROM: https://gamemechanicexplorer.com/#lightning-3
 GamePlayLevel2.prototype.createLightningTexture = function(x, y, segments, boltWidth, branch) {
     // Get the canvas drawing context for the lightningBitmap
     var ctx = this.lightningBitmap.context;
@@ -308,6 +317,7 @@ GamePlayLevel2.prototype.createLightningTexture = function(x, y, segments, boltW
     // This just tells the engine it should update the texture cache
     this.lightningBitmap.dirty = true;
 };
+//update the lighting effects CODE ADAPTED FROM: https://gamemechanicexplorer.com/#lighting-3
 GamePlayLevel2.prototype.updateShadowTexture = function(){
     //'rgb(100, 0, 0)'; save for fire level
     // or 300, 100, 200
@@ -358,6 +368,8 @@ GamePlayLevel2.prototype.updateShadowTexture = function(){
     this.shadowTexture.dirty = true;
     
 };
+
+//pause game
 GamePlayLevel2.prototype.pause = function(){
     p3.moving = true;
     this.isPaused = true;
@@ -379,6 +391,8 @@ GamePlayLevel2.prototype.pause = function(){
     this.mouseOverQ = false;
     this.mouseOverR = false;
 };
+
+//update the pause screen
 GamePlayLevel2.prototype.pauseScreenUpdate = function(){
     if (this.quitButton.input.pointerOver() && this.mouseOverQ == false){
         this.quitButton.animations.play('mouseOverQ');
@@ -416,6 +430,7 @@ GamePlayLevel2.prototype.restartGame = function(){
     this.game.world.removeAll();
     game.state.start('GamePlay');
 };
+//play the ending video
 GamePlayLevel2.prototype.playEndVideo = function(){
     music.pause();
     rainSound.pause();
@@ -424,6 +439,7 @@ GamePlayLevel2.prototype.playEndVideo = function(){
     vid.addToWorld(0, 0, 0, 0, 1, 1);
     vid.onComplete.add(this.startLevel3, this);
 };
+//start the next level
 GamePlayLevel2.prototype.startLevel3 = function(){
     vid.destroy();
     this.game.world.removeAll();

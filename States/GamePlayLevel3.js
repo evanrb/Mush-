@@ -10,8 +10,6 @@ GamePlayLevel3.prototype.create = function() {
     
     //Add and loop background music
     music = game.add.audio('night3');
-    
-    
     music2 = game.add.audio('night4');
     music2.loopFull();
     
@@ -19,6 +17,7 @@ GamePlayLevel3.prototype.create = function() {
 
     this.isPaused = false;
     
+    //level 3 map 2's represent game world objects and 3,5 represent game world object interaction points 
     var level3 = [///////////////////0,0////////////////////////////
         [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1], //0
         [1,0,0,1,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1], //1
@@ -67,22 +66,23 @@ GamePlayLevel3.prototype.create = function() {
     p3.alive = true;
     p3.visible = true;
     
+    //add game obstacles
     obstacle1 = game.add.sprite(352, 608, 'obstacle1');
     obstacle2 = game.add.sprite(416, 672, 'obstacle2');
     obstacle3 = game.add.sprite(608, 864, 'obstacle3');
     obstacle4 = game.add.sprite(704, 1120, 'obstacle4');
     
+    //add fire sprite for aesthetics
     midFire = game.add.sprite(416, 416, 'fireMid');
     midFire.animations.add('moveMidFlames', [0, 1, 2, 3], 12, true);
     midFire.animations.play('moveMidFlames');
     
+    //add the fire to the top of the screen to kill players
     this.topFire = game.add.sprite(this.game.camera.x,this.game.camera.y, 'fireTop1');
     game.physics.enable(this.topFire, Phaser.Physics.ARCADE);
     this.topFire.body.setSize(this.game.camera.width, 80, 0, 0);
-    //topFire.animations.add('moveTopFlames', []);
-    //topFire.animations.play('moveTopFlames', 7, true);
     
-    
+    //overlat for asethetics
     overlay = game.add.sprite(0,0, 'backgroundOverlayl3');
     
     this.LIGHT_RADIUS = 0;
@@ -107,6 +107,7 @@ GamePlayLevel3.prototype.create = function() {
     p1.moving = true;
     p2.moving = true;
     
+    //move camera constantly
     this.moveCamera = game.add.tween(this.game.camera).to({ y: this.game.world.height - this.game.camera.height}, 20000, Phaser.Easing.Linear.None, true);
     this.moveCamera.onComplete.add(allowMovement, this); function allowMovement() {   }  
     
@@ -115,6 +116,7 @@ GamePlayLevel3.prototype.create = function() {
     
     this.frameCount = 0;
     
+    //emitters for ash and ember adapted from Nathan's rain example in particles
     emitter = game.add.emitter(game.world.centerX, 0, 500);
     emitter.makeParticles(['ash1', 'ash2', 'ember1', 'ember2']);
     emitter.start(false, 2000, 1, 0);
@@ -124,7 +126,7 @@ GamePlayLevel3.prototype.create = function() {
     let area = new Phaser.Rectangle(game.world.centerX, 0, game.world.width, 1);
     emitter.area = area;
     
-    this.topFire = game.add.sprite(this.game.camera.x,this.game.camera.y, 'fireTop1');
+    //variables to keep track of artificial animation loop for top fire since sprite was too big for phaser animation
     this.topFireFrameNum = 0;
     this.topFireSheet = 1;
     
@@ -136,7 +138,7 @@ GamePlayLevel3.prototype.update = function() {
     
     emitter.y = game.camera.y;
     
-    
+    //artificial animation loop for top fire
     if(this.frameCount % 6 == 0){
         this.topFire.destroy();
         if(this.topFireSheet == 1){
@@ -161,7 +163,7 @@ GamePlayLevel3.prototype.update = function() {
         this.topFire.body.setSize(this.game.camera.width, 80, 0, 0);
     }
     
-    
+    //colision detection with the top fire
     var collide1 = game.physics.arcade.collide(p1, this.topFire);
     var collide2 = game.physics.arcade.collide(p2, this.topFire);
     
@@ -171,6 +173,7 @@ GamePlayLevel3.prototype.update = function() {
         p2.moving = true;
     }
     
+    //hard coded obstacle inteactions
     if(p2.grabbingObstacle1){
         obstacle1.x = p2.x - 208;
         if(p2.mapArrayLocation[1] == 18 && !p2.moving){
@@ -179,7 +182,6 @@ GamePlayLevel3.prototype.update = function() {
             p2.maze[14][17] = 1;
         }
     }
-    
     if(p1.grabbingObstacle2){
         obstacle2.x = p1.x + 16;
         if(p1.mapArrayLocation[1] == 8 && !p1.moving){
@@ -187,10 +189,6 @@ GamePlayLevel3.prototype.update = function() {
             p1.maze[16][9] = 1;
             p2.maze[16][19] = 0;
         }
-    }
-    
-    if(this.pauseOn){
-        this.topFire.visible = false;
     }
     if(p2.grabbingObstacle3){
         obstacle3.y = p2.y + 32;
@@ -204,7 +202,6 @@ GamePlayLevel3.prototype.update = function() {
             p1.maze[30][19] = 0;
         }
     }
-    
     if(p1.grabbingObstacle4){
         obstacle4.x = p1.x + 16;
         if(p1.mapArrayLocation[1] == 17 && !p1.moving){
@@ -222,7 +219,6 @@ GamePlayLevel3.prototype.update = function() {
             p2.maze[30][26] = 0;
         }
     }
-    
     if(p2.grabbingObstacle4){
         obstacle4.x = p2.x - 168 - 32;
         if(!p1.moving){
@@ -234,6 +230,9 @@ GamePlayLevel3.prototype.update = function() {
         }
     }
     
+    if(this.pauseOn){
+        this.topFire.visible = false;
+    }
     
     if(game.input.keyboard.justPressed(Phaser.Keyboard.P)){
         if(this.isPaused){
@@ -243,6 +242,7 @@ GamePlayLevel3.prototype.update = function() {
         }
     }
     
+    //seperate players when they reach designated location
     if(p3.mapArrayLocation[0] == 10 && p3.mapArrayLocation[1] == 14 && !p3.moving){
         p3.moving = true;
         
@@ -265,10 +265,7 @@ GamePlayLevel3.prototype.update = function() {
         p2.legalMove(p2.x, p2.y + 32, 150);
     }
     
-    if(p3.lightRadius <= 0){
-        game.state.start('GameOver');
-    }
-    
+    //meant to make a slight shading change it lighting for aesthetics
     if(this.frameCount % 10 == 0){
         if(this.shadingAlpha == .9){
             this.shadingAlpha += .1
@@ -282,11 +279,10 @@ GamePlayLevel3.prototype.update = function() {
         this.pauseScreenUpdate();
     }else{this.updateShadowTexture();}
     
-    
-    
     this.frameCount += 1;
     
 };
+//debug code
 GamePlayLevel3.prototype.render = function(){
     game.debug.body(this.topFire);
     //game.debug.body(p2);
@@ -298,6 +294,7 @@ GamePlayLevel3.prototype.render = function(){
 //        game.debug.body(p3);
 //    }
 };
+//update the lighting effects CODE ADAPTED FROM: https://gamemechanicexplorer.com/#lighting-3
 GamePlayLevel3.prototype.updateShadowTexture = function(){
     //'rgb(100, 0, 0)'; save for fire level
     // or 300, 100, 200
