@@ -1,7 +1,12 @@
 var PreloadState = function(game) {};
 
 PreloadState.prototype.preload = function(){
-    game.add.sprite(game.world.centerX, game.world.centerY, 'loading');
+    game.add.sprite(game.world.width - 190 , game.world.height - 55, 'loading');
+    loadShrooms = game.add.sprite(game.world.centerX, game.world.centerY, 'mushroomLoad');
+    loadShrooms.anchor.x = .5;
+    loadShrooms.anchor.y = .5;
+    loadShrooms.animations.add('moveLoadingShrooms', [1, 3], 4, true);
+    loadShrooms.animations.play('moveLoadingShrooms');
     
     //loading MainMenu Assets
     game.load.spritesheet('startButton', 'Assets/start.png', 128, 92);
@@ -31,7 +36,7 @@ PreloadState.prototype.preload = function(){
     //Load Character and GlowFly spritesheets
     game.load.spritesheet('RED', 'Assets/Red.png', 32, 47);
     game.load.spritesheet('BLUE', 'Assets/Blue.png',32, 64 );
-    game.load.spritesheet('together', 'Assets/joined.png', 64, 64)
+    game.load.spritesheet('together', 'Assets/joined.png', 64, 64);
     game.load.spritesheet('glowfly', 'Assets/glowFly.png', 32, 32);
     
     game.load.spritesheet('tutorial1', 'Assets/tutorial1.png', 896, 97);
