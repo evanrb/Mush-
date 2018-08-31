@@ -36,8 +36,8 @@ PreloadState.prototype.preload = function(){
     
     //load level 1 stuff
     //Load Character and GlowFly spritesheets
-    game.load.spritesheet('RED', 'Assets/redSized.png', 35, 47);
-    game.load.spritesheet('BLUE', 'Assets/blueSized.png',34, 67 );
+    game.load.spritesheet('RED', 'Assets/lessRed.png', 35, 47);
+    game.load.spritesheet('BLUE', 'Assets/lessBlue.png',34, 67 );
     game.load.spritesheet('together', 'Assets/joinedSized.png', 70, 70);
     game.load.spritesheet('glowfly', 'Assets/glowFly.png', 32, 32);
     
@@ -114,6 +114,8 @@ PreloadState.prototype.preload = function(){
     game.load.audio('night4', ['Sound/4th-Night.wav']);
     
     game.load.audio('seperatel3', ['Sound/level1Join.mp3']);
+    
+    game.load.video('endVideo', ['Video/end.mp4']);
     
     //game over screen
     game.load.image('gameOver', 'Assets/gameOver.png');

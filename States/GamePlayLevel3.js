@@ -13,6 +13,8 @@ GamePlayLevel3.prototype.create = function() {
     music2 = game.add.audio('night4');
     music2.loopFull();
     
+    this.vid = game.add.video('endVideo');
+    
     seperateSound = game.add.audio('seperatel3');
 
     this.isPaused = false;
@@ -50,8 +52,8 @@ GamePlayLevel3.prototype.create = function() {
         [1,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,0,0,2,0,0,0,1,0,0,0,1,0,1], //28
         [1,1,1,1,1,1,0,1,1,1,1,0,0,0,1,0,0,0,0,2,0,1,0,1,1,1,0,1,0,1], //29
         [1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,2,0,0,5,2,2,2,2,1,0,1], //30
-        [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,0,1,1,1,1,1] //31
-
+        [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,0,1,1,1,1,1], //31
+        [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1] //32
     ];
     
     //a group that holds all the player characters
@@ -133,6 +135,8 @@ GamePlayLevel3.prototype.create = function() {
     this.pauseOn = false;
     
     this.attach = false;
+    
+    this.bothExist = true;
 };
 GamePlayLevel3.prototype.update = function() {
     
@@ -227,6 +231,23 @@ GamePlayLevel3.prototype.update = function() {
             p1.maze[30][21] = 2;
             p1.maze[30][17] = 2;
             p2.maze[30][21] = 2;
+        }
+    }
+    
+    if(p2.y + 32 >= 1184){
+        if(this.bothExist){
+            p2.destroy();
+            this.bothExist = false;
+        }else{
+            this.playEndVideo();
+        }
+    }
+    if(p1.y + 32 >= 1184){
+        if(this.bothExist){
+            p1.destroy();
+            this.bothExist = false;
+        }else{
+            this.playEndVideo();
         }
     }
     
@@ -403,4 +424,10 @@ GamePlayLevel3.prototype.restartGame = function(){
     music2.pause();
     this.game.world.removeAll();
     game.state.start('GamePlay');
+};
+//play the ending video
+GamePlayLevel3.prototype.playEndVideo = function(){
+    this.vid.play(false);
+    this.vid.addToWorld(game.camera.x, game.camera.y, 0, 0, 1, 1);
+    this.vid.onComplete.add(this.quitGame, this);
 };

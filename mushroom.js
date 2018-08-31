@@ -42,11 +42,13 @@ function mushroom(game, key, playerNum, xPos, yPos, map, mapLocation1, mapLocati
         this.rightInput = p1R;
         this.leftInput = p1L;
         this.downInput = p1D;
+        this.createP1P2Animations();
     }else if(this.player == 2){
         this.upInput = p2U;
         this.rightInput = p2R;
         this.leftInput = p2L;
         this.downInput = p2D;
+        this.createP1P2Animations();
     }else{
         this.y -= 5;
         this.upInput = p1U;
@@ -64,6 +66,7 @@ function mushroom(game, key, playerNum, xPos, yPos, map, mapLocation1, mapLocati
         this.movementPenalty = 10;
         this.hasLight = true;
         this.inputWorked = false;
+        this.createP3Animations();
     }
     
     //moving is basically a pause boolean
@@ -84,6 +87,7 @@ function mushroom(game, key, playerNum, xPos, yPos, map, mapLocation1, mapLocati
     this.animations.add('walkBack', [5, 7], 5, true);
     this.animations.add('walkLeft', [9, 11], 5, true);
     this.animations.add('walkRight', [13, 15], 5, true);
+    
     
     //if 0 it is facing forward, if 1 facing backward, if 2 facing right, if 3 facing left
     this.direction = 0;
@@ -324,7 +328,7 @@ mushroom.prototype.legalMove = function(xPos, yPos, speed){
     this.moving = true;
     var tween = game.add.tween(this).to({ x: xPos, y: yPos }, speed, Phaser.Easing.Linear.None, true);
     tween.onComplete.add(doSomething, this); function doSomething() { this.endMotion(); }              
-}
+};
 //crash player into a wall on invalid movement input
 mushroom.prototype.hitWall = function(xPos, yPos, speed, endXPos, endYPos, endSpeed){
     this.animateMovement();
@@ -334,7 +338,26 @@ mushroom.prototype.hitWall = function(xPos, yPos, speed, endXPos, endYPos, endSp
         var tweenBack = game.add.tween(this).to({ x: endXPos, y: endYPos }, endSpeed, Phaser.Easing.Linear.None, true);
         tweenBack.onComplete.add(moveBack, this); function moveBack() { this.endMotion(); }
     }
-}
+};
+
+mushroom.prototype.createP1P2Animations = function(){
+    this.animations.add('fireLeft', [22, 23, 24, 25, 26], 3, false);
+    this.animations.add('fireRight', [27, 28, 29, 30, 31], 3, false);
+    this.animations.add('fireForward', [17, 18, 19, 20, 21], 3, false);
+    this.animations.add('bumpForward', [32], 1, false);
+    this.animations.add('bumpBack', [34], 1, false);
+    this.animations.add('bumpLeft', [36, 37], 2, false);
+    this.animations.add('bumpRight', [40, 41], 2, false);
+};
+mushroom.prototype.createP3Animations = function(){
+//    this.animations.add('fireLeft', [22, 23, 24, 25, 26], 3, false);
+//    this.animations.add('fireRight', [27, 28, 29, 30, 31], 3, false);
+//    this.animations.add('fireForward', [17, 18, 19, 20, 21], 3, false);
+//    this.animations.add('bumpForward', [32], 1, false);
+//    this.animations.add('bumpBack', [34], 1, false);
+//    this.animations.add('bumpLeft', [36, 37], 2, false);
+//    this.animations.add('bumpRight', [40, 41], 2, false);
+};
 //set the idle direction of player
 mushroom.prototype.endMotion = function(){
     if(this.direction == 0){
@@ -347,7 +370,7 @@ mushroom.prototype.endMotion = function(){
         this.animations.play('idleLeft');
     }
     this.moving = false;
-}
+};
 //animate player motion
 mushroom.prototype.animateMovement = function(){
     if(this.direction == 0){
@@ -359,10 +382,10 @@ mushroom.prototype.animateMovement = function(){
     }else if(this.direction == 3){
         this.animations.play('walkLeft');
     }
-}
+};
 mushroom.prototype.playBurnAnimation = function(){
     
-}
+};
 mushroom.prototype.getDirection = function(){
     return this.direction;
 }
