@@ -85,7 +85,7 @@ GamePlayLevel3.prototype.create = function() {
         [1,0,0,0,1,0,0,0,0,1,1,0,1,1,1,1,1,1,1,0,1,0,1,1,1,1,1,1,1,1],
         [1,0,1,1,1,1,0,1,0,1,1,2,2,2,2,2,3,0,0,0,1,0,0,0,0,0,0,0,0,1],
         [1,0,0,0,0,1,0,1,0,0,1,0,1,0,1,0,1,0,0,0,1,0,1,1,1,1,1,1,0,1],
-        [1,1,1,1,0,1,0,1,0,0,0,0,0,3,2,2,2,2,2,2,2,2,0,1,0,0,0,1,0,1],
+        [1,1,1,1,0,1,0,1,0,0,0,0,0,3,2,2,2,2,2,2,0,0,0,1,0,0,0,1,0,1],
         [1,0,0,0,0,1,0,1,0,1,1,0,1,0,1,0,1,0,1,1,1,1,0,1,0,1,0,1,1,1],
         [1,1,1,0,1,1,0,1,0,0,1,0,1,0,1,0,1,0,1,0,0,0,0,0,0,1,0,0,0,1],
         [1,0,0,0,0,0,0,1,1,0,1,0,0,0,1,0,1,0,1,0,1,0,1,1,0,1,0,1,0,1],
@@ -99,7 +99,7 @@ GamePlayLevel3.prototype.create = function() {
         [1,1,1,1,1,1,1,1,1,0,1,0,1,0,0,0,1,0,0,2,0,0,1,1,0,1,1,1,0,1],
         [1,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,0,0,2,0,0,0,1,0,0,0,1,0,1],
         [1,1,1,1,1,1,0,1,1,1,1,0,0,0,1,0,0,0,0,2,0,1,0,1,1,1,0,1,0,1],
-        [1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,2,0,0,3,2,2,2,3,1,0,1],
+        [1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,2,0,0,5,2,2,2,5,1,0,1],
         [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,0,1,1,1,1,1]
 
     ];
@@ -174,6 +174,8 @@ GamePlayLevel3.prototype.create = function() {
     this.topFire = game.add.sprite(this.game.camera.x,this.game.camera.y, 'fireTop1');
     this.topFireFrameNum = 0;
     this.topFireSheet = 1;
+    
+    this.attach = false;
 };
 GamePlayLevel3.prototype.update = function() {
     
@@ -203,7 +205,27 @@ GamePlayLevel3.prototype.update = function() {
         //this.topFire.fixedToCamera = true;
     }
     
-    if(p2.mapArrayLocation )
+    
+    
+    
+    if(p2.grabbingObstacle1){
+        obstacle1.x = p2.x - 208;
+        if(p2.mapArrayLocation[1] == 18 && !p2.moving){
+            p2.grabbingObstacle1 = false;
+            p1.maze[14][11] = 0;
+            p2.maze[14][17] = 1;
+        }
+    }
+    
+    if(p1.grabbingObstacle2){
+        obstacle2.x = p1.x + 16;
+        if(p1.mapArrayLocation[1] == 8 && !p1.moving){
+            p1.grabbingObstacle2 = false;
+            p1.maze[16][9] = 1;
+            p2.maze[16][19] = 0;
+        }
+    }
+    
     
     
     if(game.input.keyboard.justPressed(Phaser.Keyboard.P)){
