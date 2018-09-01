@@ -423,7 +423,8 @@ GamePlayLevel2.prototype.quitGame = function(){
     rainSound.pause();
     thunderBuild.pause();
     this.game.world.removeAll();
-    game.state.start('MainMenu');  
+    location.reload();
+    //game.state.start('MainMenu');  
 };
 GamePlayLevel2.prototype.restartGame = function(){
     music.pause();

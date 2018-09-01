@@ -181,16 +181,33 @@ GamePlayLevel3.prototype.update = function() {
     //colision detection with the top fire
     var collide1 = game.physics.arcade.collide(p1, this.topFire);
     var collide2 = game.physics.arcade.collide(p2, this.topFire);
+    var collide3 = game.physics.arcade.collide(p3, this.topFire);
     
     if(collide1 && !playerBurned){
+        p2.moving = true;
         playerBurned = true;
         this.moveCamera.pause();
         p1.burned();
-        var timer = game.time.create(false);
-        timer.add(10000, this.restartGame());
-        timer.start();
-    }if(collide2){
-        p2.moving = true;
+//        var timer = game.time.create(false);
+//        timer.add(10000, this.restartGame());
+//        timer.start();
+    }
+    if(collide2 && !playerBurned){
+        p1.moving = true;
+        playerBurned = true;
+        this.moveCamera.pause();
+        p2.burned();
+//        var timer = game.time.create(false);
+//        timer.add(10000, this.restartGame());
+//        timer.start();
+    }
+    if(collide3 && !playerBurned){
+        playerBurned = true;
+        this.moveCamera.pause();
+        p3.burned();
+//        var timer = game.time.create(false);
+//        timer.add(10000, this.restartGame());
+//        timer.start();
     }
     
     
@@ -330,7 +347,7 @@ GamePlayLevel3.prototype.update = function() {
 };
 //debug code
 GamePlayLevel3.prototype.render = function(){
-    game.debug.body(this.topFire);
+   // game.debug.body(this.topFire);
     //game.debug.body(p2);
 //    game.debug.body(map);
 //    for(i = 0; i < this.FLIES.length; i++){
@@ -445,7 +462,9 @@ GamePlayLevel3.prototype.resumeGame = function(){
 GamePlayLevel3.prototype.quitGame = function(){
     music2.pause();
     this.game.world.removeAll();
-    game.state.start('PreloadState');  
+    //this.main();
+    location.reload();
+    //game.state.start('PreloadState');  
 };
 GamePlayLevel3.prototype.restartGame = function(){
     music2.pause();
@@ -454,6 +473,7 @@ GamePlayLevel3.prototype.restartGame = function(){
 };
 //play the ending video
 GamePlayLevel3.prototype.playEndVideo = function(){
+    music2.pause();
     this.vid.play(false);
     this.vid.addToWorld(game.camera.x, game.camera.y, 0, 0, 1, 1);
     this.vid.onComplete.add(this.quitGame, this);

@@ -176,6 +176,7 @@ GamePlay.prototype.create = function() {
     p1.moving = true;
     p2.moving = true;
     this.timer.pause();
+    this.lostLight = false;
 };
 
 GamePlay.prototype.update = function() {
@@ -222,26 +223,28 @@ GamePlay.prototype.update = function() {
         moveCamera.onComplete.add(allowMovement, this); function allowMovement() { p3.moving = false; game.camera.follow(p3); music2.loopFull();}  
         
         p1.direction = 3;
-        p1.animateMovement();
+        p1.animateLegalMovement();
         var tween = game.add.tween(p1).to({ x: p1.x - 20, y: p1.y }, 1000, Phaser.Easing.Linear.None, true);
         tween.onComplete.add(moveBack, p1); function moveBack() {
             p1.direction = 2;
-            p1.animateMovement();
+            p1.animateLegalMovement();
             var tweenBack = game.add.tween(p1).to({ x: p1.x + 30, y: p1.y }, 50, Phaser.Easing.Linear.None, true);
         }
         p2.direction = 3;
-        p2.animateMovement();
+        p2.animateLegalMovement();
         var tween2 = game.add.tween(p2).to({ x: p2.x + 20, y: p2.y }, 1000, Phaser.Easing.Linear.None, true);
         tween2.onComplete.add(moveBack2, p2); function moveBack2() {
             p2.direction = 2;
-            p2.animateMovement();
+            p2.animateLegalMovement();
             var tweenBack2 = game.add.tween(p2).to({ x: p2.x - 30, y: p2.y }, 50, Phaser.Easing.Linear.None, true);
         }
     }
     
     //if player light is less then 0 they lose
-    if(p3.lightRadius <= 0){
-        game.state.start('GameOver');
+    if(p3.lightRadius <= 0 && !this.lostLight){
+        this.lostLight = true;
+        p3.animateLightsOut();
+        //game.state.start('GameOver');
     }
     
     //on collision combine players
@@ -447,13 +450,16 @@ GamePlay.prototype.resumeGame = function(){
 //quit game
 GamePlay.prototype.quitGame = function(){
     music.pause();
+    music2.pause();
     this.game.world.removeAll();
-    game.state.start('MainMenu');  
+    location.reload();
+    //game.state.start('MainMenu');  
 };
 
 //restart the level
 GamePlay.prototype.restartGame = function(){
     music.pause();
+    music2.pause();
     this.game.world.removeAll();
     game.state.start('GamePlay');
 };

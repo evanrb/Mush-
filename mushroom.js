@@ -358,7 +358,12 @@ mushroom.prototype.createP3Animations = function(){
     this.animations.add('bumpBack', [46], 1, false);
     this.animations.add('bumpLeft', [47, 48], 2, false);
     this.animations.add('bumpRight', [49, 50], 2, false);
-     this.animations.add('lightsOut', [12, 13, 14, 15, 16, 17, 18, 19, 20], 3, false);
+    this.animations.add('lightsOut', [12, 13, 14, 15, 16, 17, 18, 19, 20], 3, false);
+};
+
+mushroom.prototype.animateLightsOut = function(){
+    this.moving = true;
+    this.animations.play('lightsOut');
 };
 mushroom.prototype.burned = function(){
     this.moving = true;

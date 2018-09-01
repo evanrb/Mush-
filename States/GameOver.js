@@ -13,10 +13,12 @@ GameOver.prototype = {
     },
     update: function() {
         if(game.input.keyboard.isDown(Phaser.Keyboard.ENTER)) {
-            game.state.start('MainMenu');
+            location.reload();
+            //game.state.start('MainMenu');
         }
         if(this.frameCount == 300){
-            game.state.start('MainMenu');
+            location.reload();
+            //game.state.start('MainMenu');
         }
         this.frameCount += 1;
         

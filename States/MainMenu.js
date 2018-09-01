@@ -156,9 +156,9 @@ MainMenu.prototype.startGame = function(){
         intro.destroy();
         this.game.world.removeAll();
         music.pause();
-        //game.state.start('GamePlay');
+        game.state.start('GamePlay');
         //game.state.start('GamePlayLevel2');
-        game.state.start('GamePlayLevel3');
+        //game.state.start('GamePlayLevel3');
     }
 };
 
@@ -167,10 +167,10 @@ MainMenu.prototype.startVideo = function() {
     
     if(!this.creditsOn){
         this.videoOn = true;
-        //intro.play(false);
-        //intro.addToWorld(0, 0, 0, 0, 1, 1);
-        //intro.onComplete.add(this.startGame, this);
-        this.startGame();
+        intro.play(false);
+        intro.addToWorld(0, 0, 0, 0, 1, 1);
+        intro.onComplete.add(this.startGame, this);
+        //this.startGame();
     }
     
 };
