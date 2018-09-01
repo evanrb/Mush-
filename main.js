@@ -4,7 +4,7 @@ var game;
 var p3Radius;
     
 window.onload = function(){
-    game = new Phaser.Game(896, 480, Phaser.AUTO, 'game');//, '', { preload: preload, create: create, update: update });
+    game = new Phaser.Game(896, 480, Phaser.AUTO, 'Mush');//, '', { preload: preload, create: create, update: update });
     
     p3Radius = 100;
     

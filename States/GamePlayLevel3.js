@@ -119,7 +119,7 @@ GamePlayLevel3.prototype.create = function() {
     p2.moving = true;
     
     //move camera constantly
-    this.moveCamera = game.add.tween(this.game.camera).to({ y: this.game.world.height - this.game.camera.height}, 20000, Phaser.Easing.Linear.None, true);
+    this.moveCamera = game.add.tween(this.game.camera).to({ y: this.game.world.height - this.game.camera.height}, 50000, Phaser.Easing.Linear.None, true);
     this.moveCamera.onComplete.add(allowMovement, this); function allowMovement() {   }  
     
     this.shadingAlpha = .5;

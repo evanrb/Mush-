@@ -2,17 +2,22 @@
 <html lang="en"> 
 <head> 
 	<meta charset="UTF-8" />
-    <title>Phaser - testing motion</title>
+    <title>Mush!</title>
     <script src="Framework/phaser.min.js"></script>
+    
     <style type="text/css">
         body {
-            margin: 0;
+            background: green;
+            margin: 800, 800;
+        }
+        #Mush {
+            border: 3px solid #ffb;
         }
     </style>
 </head>
 <body>
-
-<script type="text/javascript" src="main.js"></script>
+    <div id="Mush">
+    <script type="text/javascript" src="main.js"></script>
     <script type="text/javascript" src="States/BootState.js"></script>
     <script type="text/javascript" src="States/PreloadState.js"></script>
     <script type="text/javascript" src="States/MainMenu.js"></script>
@@ -23,5 +28,7 @@
     <script type="text/javascript" src="mushroom.js"></script>
     <script type="text/javascript" src="glowFly.js"></script>
     <script type="text/javascript" src="p3MovementHelper.js"></script>
+    </div>
+
 </body>
 </html>
