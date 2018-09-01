@@ -102,9 +102,18 @@ GamePlayLevel3.prototype.create = function() {
     // Create the lights group
     this.lights = this.game.add.group();
     
+    ob1 = game.add.sprite(544, 632, 'invisLight');
+    ob2 = game.add.sprite(416, 720, 'invisLight');
+    ob3 = game.add.sprite(624, 864, 'invisLight');
+    ob4 = game.add.sprite(704, 1144, 'invisLight');
+    
     this.lights.add(p1);
     this.lights.add(p2);
     this.lights.add(p3);
+    this.lights.add(ob1);
+    this.lights.add(ob2);
+    this.lights.add(ob3);
+    this.lights.add(ob4);
    
     p1.moving = true;
     p2.moving = true;
@@ -166,7 +175,7 @@ GamePlayLevel3.prototype.update = function() {
             }
         }
         game.physics.enable(this.topFire, Phaser.Physics.ARCADE);
-        this.topFire.body.setSize(this.game.camera.width, 80, 0, 0);
+        this.topFire.body.setSize(this.game.camera.width, 60, 0, 0);
     }
     
     //colision detection with the top fire
@@ -188,6 +197,7 @@ GamePlayLevel3.prototype.update = function() {
     
     //hard coded obstacle inteactions
     if(p2.grabbingObstacle1){
+        ob1.destroy();
         obstacle1.x = p2.x - 208;
         if(p2.mapArrayLocation[1] == 18 && !p2.moving){
             p2.grabbingObstacle1 = false;
@@ -196,6 +206,7 @@ GamePlayLevel3.prototype.update = function() {
         }
     }
     if(p1.grabbingObstacle2){
+        ob2.destroy();
         obstacle2.x = p1.x + 16;
         if(p1.mapArrayLocation[1] == 8 && !p1.moving){
             p1.grabbingObstacle2 = false;
@@ -204,6 +215,7 @@ GamePlayLevel3.prototype.update = function() {
         }
     }
     if(p2.grabbingObstacle3){
+        ob3.destroy();
         obstacle3.y = p2.y + 32;
         if(p2.mapArrayLocation[0] == 18 && !p2.moving){
             p2.grabbingObstacle3 = false;
@@ -216,8 +228,11 @@ GamePlayLevel3.prototype.update = function() {
         }
     }
     if(p1.grabbingObstacle4){
+        ob4.destroy();
         obstacle4.x = p1.x + 16;
         if(p1.mapArrayLocation[1] == 17 && !p1.moving){
+            ob5 = game.add.sprite(704, 1160, 'invisLight');
+            this.lights.add(ob5);
             p1.grabbingObstacle4 = false;
             p1.maze[30][18] = 2;
             p2.maze[30][23] = 0;
@@ -233,6 +248,7 @@ GamePlayLevel3.prototype.update = function() {
         }
     }
     if(p2.grabbingObstacle4){
+        ob5.destroy();
         obstacle4.x = p2.x - 168 - 32;
         if(!p1.moving){
             p2.grabbingObstacle4 = false;
@@ -345,6 +361,8 @@ GamePlayLevel3.prototype.updateShadowTexture = function(){
                 this.LIGHT_RADIUS = p2.lightRadius;
             }else if(light.player === 3){
                 this.LIGHT_RADIUS = p3.lightRadius;
+            }else{
+                this.LIGHT_RADIUS = 40;
             }
         
             var radius = this.LIGHT_RADIUS + this.game.rnd.integerInRange(1,10);
@@ -427,7 +445,7 @@ GamePlayLevel3.prototype.resumeGame = function(){
 GamePlayLevel3.prototype.quitGame = function(){
     music2.pause();
     this.game.world.removeAll();
-    game.state.start('BootState');  
+    game.state.start('PreloadState');  
 };
 GamePlayLevel3.prototype.restartGame = function(){
     music2.pause();
