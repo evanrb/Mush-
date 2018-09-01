@@ -33,6 +33,7 @@ PreloadState.prototype.preload = function(){
     //Load Audio
     game.load.audio('menuMusic', ['Sound/mainMenuMusic.mp3']);
     
+    game.load.image('pressPause', 'Assets/pressPause.png');
     
     //load level 1 stuff
     //Load Character and GlowFly spritesheets

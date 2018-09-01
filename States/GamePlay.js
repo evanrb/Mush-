@@ -244,6 +244,7 @@ GamePlay.prototype.update = function() {
     if(p3.lightRadius <= 0 && !this.lostLight){
         this.lostLight = true;
         p3.animateLightsOut();
+        game.add.image(game.camera.x, game.camera.y + 172, 'pressPause');
         //window.setTimeout(this.restartGame(), 100000);
         //game.state.start('GameOver');
     }

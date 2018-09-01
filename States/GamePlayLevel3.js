@@ -188,6 +188,7 @@ GamePlayLevel3.prototype.update = function() {
         playerBurned = true;
         this.moveCamera.pause();
         p1.burned();
+        game.add.image(game.camera.x, game.camera.y + 172, 'pressPause');
 //        var timer = game.time.create(false);
 //        timer.add(10000, this.restartGame());
 //        timer.start();
@@ -197,6 +198,7 @@ GamePlayLevel3.prototype.update = function() {
         playerBurned = true;
         this.moveCamera.pause();
         p2.burned();
+        game.add.image(game.camera.x, game.camera.y + 172, 'pressPause');
 //        var timer = game.time.create(false);
 //        timer.add(10000, this.restartGame());
 //        timer.start();
@@ -205,6 +207,7 @@ GamePlayLevel3.prototype.update = function() {
         playerBurned = true;
         this.moveCamera.pause();
         p3.burned();
+        game.add.image(game.camera.x, game.camera.y + 172, 'pressPause');
 //        var timer = game.time.create(false);
 //        timer.add(10000, this.restartGame());
 //        timer.start();
