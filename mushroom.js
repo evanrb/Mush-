@@ -324,14 +324,14 @@ mushroom.prototype.update = function () {
 
 //move the player when there is a valid move input
 mushroom.prototype.legalMove = function(xPos, yPos, speed){
-    this.animateMovement();
+    this.animateLegalMovement();
     this.moving = true;
     var tween = game.add.tween(this).to({ x: xPos, y: yPos }, speed, Phaser.Easing.Linear.None, true);
     tween.onComplete.add(doSomething, this); function doSomething() { this.endMotion(); }              
 };
 //crash player into a wall on invalid movement input
 mushroom.prototype.hitWall = function(xPos, yPos, speed, endXPos, endYPos, endSpeed){
-    this.animateMovement();
+    this.animateIllegalMovement();
     this.moving = true;
     var tween = game.add.tween(this).to({ x: xPos, y: yPos }, speed, Phaser.Easing.Linear.None, true);
     tween.onComplete.add(doSomething, this); function doSomething() {
@@ -360,6 +360,22 @@ mushroom.prototype.createP3Animations = function(){
     this.animations.add('bumpRight', [49, 50], 2, false);
      this.animations.add('lightsOut', [12, 13, 14, 15, 16, 17, 18, 19, 20], 3, false);
 };
+mushroom.prototype.burned = function(){
+    this.moving = true;
+    if(this.direction == 0){
+        this.animations.play('fireForward');
+    }else if(this.direction == 1){
+        if(this.player == 3){
+            this.animations.play('fireBackward');
+        }else{
+            this.animations.play('fireForward');
+        }
+    }else if(this.direction == 2){
+        this.animations.play('fireRight');
+    }else if(this.direction == 3){
+        this.animations.play('fireLeft');
+    }
+}
 //set the idle direction of player
 mushroom.prototype.endMotion = function(){
     if(this.direction == 0){
@@ -374,7 +390,19 @@ mushroom.prototype.endMotion = function(){
     this.moving = false;
 };
 //animate player motion
-mushroom.prototype.animateMovement = function(){
+mushroom.prototype.animateIllegalMovement = function(){
+    if(this.direction == 0){
+        this.animations.play('bumpForward');
+    }else if(this.direction == 1){
+        this.animations.play('bumpBack');
+    }else if(this.direction == 2){
+        this.animations.play('bumpRight');
+    }else if(this.direction == 3){
+        this.animations.play('bumpLeft');
+    }
+};
+//animate player motion
+mushroom.prototype.animateLegalMovement = function(){
     if(this.direction == 0){
         this.animations.play('walkForward');
     }else if(this.direction == 1){

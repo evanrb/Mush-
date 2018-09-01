@@ -137,6 +137,8 @@ GamePlayLevel3.prototype.create = function() {
     this.attach = false;
     
     this.bothExist = true;
+    
+    playerBurned = false;
 };
 GamePlayLevel3.prototype.update = function() {
     
@@ -171,11 +173,18 @@ GamePlayLevel3.prototype.update = function() {
     var collide1 = game.physics.arcade.collide(p1, this.topFire);
     var collide2 = game.physics.arcade.collide(p2, this.topFire);
     
-    if(collide1){
-        p1.moving = true;
+    if(collide1 && !playerBurned){
+        playerBurned = true;
+        this.moveCamera.pause();
+        p1.burned();
+        var timer = game.time.create(false);
+        timer.add(10000, this.restartGame());
+        timer.start();
     }if(collide2){
         p2.moving = true;
     }
+    
+    
     
     //hard coded obstacle inteactions
     if(p2.grabbingObstacle1){
@@ -423,7 +432,7 @@ GamePlayLevel3.prototype.quitGame = function(){
 GamePlayLevel3.prototype.restartGame = function(){
     music2.pause();
     this.game.world.removeAll();
-    game.state.start('GamePlay');
+    game.state.start('GamePlayLevel3');
 };
 //play the ending video
 GamePlayLevel3.prototype.playEndVideo = function(){
